@@ -1,0 +1,8 @@
+.python-version
+data
+outputs
+models
+reference-coreference-scorers
+__pycache__
+.vscode
+cache
