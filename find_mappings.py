@@ -17,7 +17,6 @@ max_num_words_in_entity = 7
 cos_sim_threshold = 0.85
 entities_mapping_final_threshold = 1.0
 beam = 7
-
 verbose = True
 
 
