@@ -1,0 +1,3 @@
+from qasrl.modules.set_classifier.set_classifier import SetClassifier
+from qasrl.modules.set_classifier.set_binary_classifier import SetBinaryClassifier
+# from qasrl.modules.set_classifier.set_density_classifier import SetDensityClassifier

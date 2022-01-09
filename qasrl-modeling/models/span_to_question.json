@@ -1,0 +1,104 @@
+{
+    "dataset_reader": {
+        "type": "qfirst_qasrl",
+        "instance_reader": {
+            "type": "verb_qas"
+        },
+        "qasrl_filter": {
+            "min_answers": 1,
+            "min_valid_answers": 0
+        },
+        "token_indexers": {
+            "bert": {
+                "type": "bert-pretrained",
+                "do_lowercase": true,
+                "pretrained_model": "bert-base-uncased",
+                "use_starting_offsets": true
+            },
+            "token_characters": {
+                "type": "characters",
+                "min_padding_length": 3
+            }
+        }
+    },
+    "iterator": {
+        "type": "bucket",
+        "batch_size": 16.0,
+        "biggest_batch_first": true,
+        "sorting_keys": [
+            [
+                "text",
+                "num_tokens"
+            ]
+        ]
+    },
+    "model": {
+        "type": "qasrl_span_to_question",
+        "inject_predicate": true,
+        "question_generator": {
+            "input_dim": 2304,
+            "num_layers": 4,
+            "rnn_hidden_dim": 200,
+            "slot_embedding_dim": 200,
+            "slot_hidden_dim": 100,
+            "slot_names": [
+                "wh",
+                "aux",
+                "subj",
+                "verb",
+                "obj",
+                "prep",
+                "obj2"
+            ]
+        },
+        "sentence_encoder": {
+            "text_field_embedder": {
+                "allow_unmatched_keys": true,
+                "embedder_to_indexer_map": {
+                    "bert": [
+                        "bert",
+                        "bert-offsets"
+                    ],
+                    "token_characters": [
+                        "token_characters"
+                    ]
+                },
+                "token_embedders": {
+                    "bert": {
+                        "type": "bert-pretrained",
+                        "pretrained_model": "bert-base-uncased",
+                        "requires_grad": true,
+                        "top_layer_only": true
+                    }
+                }
+            }
+        }
+    },
+    "train_data_path": "https://qasrl.org/data/qasrl-v2_1/expanded/train.jsonl.gz",
+    "validation_data_path": "https://qasrl.org/data/qasrl-v2_1/expanded/dev.jsonl.gz",
+    "trainer": {
+        "cuda_device": 0,
+        "grad_norm": 1,
+        "num_epochs": 10,
+        "num_serialized_models_to_keep": 2,
+        "optimizer": {
+            "type": "bert_adam",
+            "lr": 5e-05,
+            "parameter_groups": [
+                [
+                    [
+                        "bert_model"
+                    ],
+                    {
+                        "lr": 1e-05,
+                        "schedule": "warmup_constant",
+                        "t_total": 10000
+                    }
+                ]
+            ]
+        },
+        "patience": 5,
+        "should_log_parameter_statistics": false,
+        "validation_metric": "-perplexity-per-question"
+    }
+}

@@ -1,0 +1,8 @@
+allennlp==0.8.2
+numpydoc
+networkx
+overrides==3.1.0
+scikit-learn==0.22.2
+pytorch-pretrained-bert==0.6.0
+spacy==2.2.4
+lemminflect==0.2.2

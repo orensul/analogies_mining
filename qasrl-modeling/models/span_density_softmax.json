@@ -1,0 +1,103 @@
+{
+    "dataset_reader": {
+        "type": "qfirst_qasrl",
+        "instance_reader": {
+            "type": "verb_answers"
+        },
+        "qasrl_filter": {
+            "min_answers": 3,
+            "min_valid_answers": 3
+        },
+        "token_indexers": {
+            "bert": {
+                "type": "bert-pretrained",
+                "do_lowercase": true,
+                "pretrained_model": "bert-base-uncased",
+                "use_starting_offsets": true
+            },
+            "token_characters": {
+                "type": "characters",
+                "min_padding_length": 3
+            }
+        }
+    },
+    "iterator": {
+        "type": "bucket",
+        "batch_size": 16.0,
+        "biggest_batch_first": true,
+        "sorting_keys": [
+            [
+                "text",
+                "num_tokens"
+            ]
+        ]
+    },
+    "model": {
+        "type": "qasrl_span",
+        "inject_predicate": false,
+        "sentence_encoder": {
+            "embedding_dropout": 0,
+            "predicate_feature_dim": 100,
+            "stacked_encoder": {
+                "type": "alternating_lstm",
+                "hidden_size": 300,
+                "input_size": 868,
+                "num_layers": 4,
+                "recurrent_dropout_probability": 0.1,
+                "use_highway": true
+            },
+            "text_field_embedder": {
+                "allow_unmatched_keys": true,
+                "embedder_to_indexer_map": {
+                    "bert": [
+                        "bert",
+                        "bert-offsets"
+                    ],
+                    "token_characters": [
+                        "token_characters"
+                    ]
+                },
+                "token_embedders": {
+                    "bert": {
+                        "type": "bert-pretrained",
+                        "pretrained_model": "bert-base-uncased",
+                        "requires_grad": false,
+                        "top_layer_only": false
+                    }
+                }
+            }
+        },
+        "span_selector": {
+            "classifier": {
+                "type": "density",
+                "objective": "softmax_with_null"
+            },
+            "extra_input_dim": 0,
+            "input_dim": 300,
+            "span_ffnn": {
+                "activations": "relu",
+                "dropout": 0.1,
+                "hidden_dims": 500,
+                "input_dim": 100,
+                "num_layers": 1
+            },
+            "span_hidden_dim": 100
+        }
+    },
+    "train_data_path": "https://qasrl.org/data/qasrl-v2_1/expanded/train.jsonl.gz",
+    "validation_data_path": "https://qasrl.org/data/qasrl-v2_1/expanded/dev.jsonl.gz",
+    "trainer": {
+        "cuda_device": 0,
+        "grad_norm": 1,
+        "num_epochs": 30,
+        "num_serialized_models_to_keep": 2,
+        "optimizer": {
+            "type": "bert_adam",
+            "lr": 5e-05,
+            "parameter_groups": []
+        },
+        "patience": 2,
+        "should_log_parameter_statistics": false,
+        "validation_metric": "+f1"
+    }
+}
