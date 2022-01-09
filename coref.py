@@ -1,10 +1,13 @@
+import os, stat
 
-
+coref_predict_file_path = 'predict.py'
+coref_input_file_path = 'input_files/input.jsonl'
 
 def main():
-    genre = "nw"
+    os.chmod(coref_predict_file_path, stat.S_IRWXU)
+    command = "python " + coref_predict_file_path + " --input_file " + coref_input_file_path
+    os.system(command)
 
-    model_name = "spanbert_base"
 
 
 if __name__ == '__main__':
