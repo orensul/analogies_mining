@@ -1,9 +1,25 @@
 import os, stat
 import json
-coref_predict_file_path = 's2e-coref/predict.py'
-coref_input_file_path = 's2e-coref/input_files/input.jsonl'
-text_input_file_path = 'data/animal_cell.txt'
+coref_predict_file_path = 'predict.py'
+coref_input_file_path = 'input_files/input.jsonl'
+text_input_file_path = '../data/animal_cell.txt'
+text_input_to_clustering_file_path = '../data/animal_cell_input_to_clustering.txt'
 
+
+def main():
+    # create_coref_input_file(text_input_file_path, coref_input_file_path)
+    # os.chmod(coref_predict_file_path, stat.S_IRWXU)
+    # command = "python " + coref_predict_file_path + " --input_file " + coref_input_file_path
+    # os.system(command)
+
+    read_coref_file(coref_input_file_path)
+
+def choose_list(lists_of_tokens):
+    lists_of_tokens.sort(key=len, reverse=True)
+    chosen_list = lists_of_tokens[0]
+    if len(lists_of_tokens[1]) > 1:
+        chosen_list = lists_of_tokens[1]
+    return chosen_list
 
 def create_coref_input_file(text_input_file_path, coref_input_file_path):
     input_file = open(text_input_file_path, 'r')
@@ -27,15 +43,61 @@ def create_coref_input_file(text_input_file_path, coref_input_file_path):
     with open(coref_input_file_path, 'w') as output_file:
         json.dump(dictionary, output_file)
 
+def list_to_tokens_range(list_of_tokens, cluster, tokens):
+    for tokens_range in cluster:
+        if tokens[tokens_range[0]:tokens_range[1]+1] == list_of_tokens:
+            return tokens_range
+
+
+def read_coref_file(coref_input_file_path):
+    input_file = open(coref_input_file_path, 'r')
+    output_file = open(text_input_to_clustering_file_path, 'w')
+    tokens_range_result = []
+    for json_dict in input_file:
+        json_object = json.loads(json_dict)
+        clusters = json_object["clusters"]
+        tokens = json_object["tokens"]
+        for cluster in clusters:
+            lists_of_tokens = []
+            for tokens_range in cluster:
+                list_tokens = tokens[tokens_range[0]:tokens_range[1]+1]
+                print(list_tokens)
+                lists_of_tokens.append(list_tokens)
+            print("chosen: ")
+            chosen_list_of_tokens = choose_list(lists_of_tokens)
+            chosen_tokens_range = list_to_tokens_range(chosen_list_of_tokens, cluster, tokens)
+            for tokens_range in cluster:
+                if tokens_range == chosen_tokens_range:
+                    continue
+                tokens_range_result.append((tokens_range, chosen_tokens_range))
+
+    print(tokens_range_result)
+
+    sorted_tokens_range_result = sorted(tokens_range_result, key=lambda x: x[0][0])
+    output = []
+    curr_idx = 0
+    for tokens_range in sorted_tokens_range_result:
+        if tokens_range[0][0] <= curr_idx:
+            continue
+        for i in range(curr_idx, tokens_range[0][0]):
+            output.append(tokens[i])
+        curr_idx = tokens_range[0][1]+1
+        for i in range(tokens_range[1][0], tokens_range[1][1]+1):
+            output.append(tokens[i])
+
+    for i in range(curr_idx, len(tokens)):
+        output.append(tokens[i])
+
+
+    output_str = " ".join(output)
+    output_str = output_str.replace(".", ".\n")
+    output_file.write(output_str)
 
 
 
 
-def main():
-    create_coref_input_file(text_input_file_path, coref_input_file_path)
-    os.chmod(coref_predict_file_path, stat.S_IRWXU)
-    command = "python " + coref_predict_file_path + " --input_file " + coref_input_file_path
-    os.system(command)
+
+
 
 
 
