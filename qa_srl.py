@@ -1,19 +1,22 @@
 import json
 import os, stat
+from shutil import copyfile
+qasrl_input_file_path = 'data/input.txt'
+qasrl_output_file_path = 'data/out.jsonl'
 
-qasrl_input_file_path = './qasrl-modeling/data/input.txt'
-qasrl_output_file_path = './qasrl-modeling/data/out.jsonl'
 
+coref_text_files_dir = '../data/coref_text_files'
+coref_text_files_after_qasrl_dir = './data'
 
 text_files = ['qasrl-modeling/data/animal_cell.txt', 'qasrl-modeling/data/factory.txt']
 text_files_after_qasrl = ['qasrl-modeling/data/animal_cell_span_to_question.jsonl',
                           'qasrl-modeling/data/factory_span_to_question.jsonl']
 
 
-prepare_input_file_path = "./qasrl-modeling/scripts/utils/prepare_input_file.py"
-afirst_pipeline_sequential_file_path = "./qasrl-modeling/qasrl/pipelines/afirst_pipeline_sequential.py"
-span_density_softmax_file_path = "./qasrl-modeling/models/span_density_softmax.tar.gz"
-span_to_question_file_path = "./qasrl-modeling/models/span_to_question.tar.gz"
+prepare_input_file_path = "./scripts/utils/prepare_input_file.py"
+afirst_pipeline_sequential_file_path = "./qasrl/pipelines/afirst_pipeline_sequential.py"
+span_density_softmax_file_path = "./models/span_density_softmax.tar.gz"
+span_to_question_file_path = "./models/span_to_question.tar.gz"
 
 
 possible_questions = {'what', 'who', 'which'}
@@ -25,25 +28,30 @@ should_run_qasrl = True
 
 def main():
     if should_run_qasrl:
-        write_qasrl_output_files(text_files)
+        write_qasrl_output_files(coref_text_files_dir)
 
 
-def write_input_qasrl_file(input_file, output_file):
-    input_file = open(input_file, 'r')
-    output_file = open(output_file, 'w')
-    for i, line in enumerate(input_file):
-        new_line = str(i+1) + '\t' + line
-        output_file.write(new_line)
-    input_file.close()
-    output_file.close()
+def prepare_file_to_qasrl(src, dst):
+    input = open(src, 'r')
+    output = open(dst, 'w')
+
+    for i, line in enumerate(input):
+        new_line = str(i + 1) + '\t' + line
+        output.write(new_line)
+    input.close()
+    output.close()
 
 
-def write_qasrl_output_files(text_files):
-    for i in range(len(text_files)):
-        text_file_name, text_file_after_qasrl = text_files[i], text_files_after_qasrl[i]
-        write_input_qasrl_file(text_file_name, qasrl_input_file_path)
-        os.chmod(prepare_input_file_path, stat.S_IRWXU)
-        command = "python " + prepare_input_file_path + " --input " + qasrl_input_file_path + " --output " + qasrl_output_file_path
+def write_qasrl_output_files(coref_text_files_dir):
+    for coref_text_file in os.listdir(coref_text_files_dir):
+        coref_text_file_name = coref_text_file.replace(".txt", "")
+        coref_text_file_after_qasrl = os.path.join(coref_text_files_after_qasrl_dir, coref_text_file_name +
+                                              "_span_to_question.jsonl")
+        src, qasrl_input_file_path = os.path.join(coref_text_files_dir, coref_text_file), os.path.join(coref_text_files_after_qasrl_dir, coref_text_file)
+        prepare_file_to_qasrl(src, qasrl_input_file_path)
+
+        os.chmod(qasrl_input_file_path, stat.S_IRWXU)
+        command = "python " + prepare_input_file_path + " --input " + qasrl_input_file_path + " --output " + coref_text_file_after_qasrl
         os.system(command)
 
         os.chmod(afirst_pipeline_sequential_file_path, stat.S_IRWXU)
@@ -52,9 +60,8 @@ def write_qasrl_output_files(text_files):
                   " --span " + span_density_softmax_file_path + " --span_to_question " + \
                   span_to_question_file_path + " --cuda_device " + cuda_device + " --span_min_prob " + \
                   span_min_prob + " --question_min_prob " + question_min_prob + " --question_beam_size " + \
-                  question_beam_size + " --input_file " + qasrl_output_file_path + " --output_file " + text_file_after_qasrl
+                  question_beam_size + " --input_file " + qasrl_output_file_path + " --output_file " + coref_text_file_after_qasrl
         os.system(command)
-
 
 def get_question_from_questions_slots(question_slots, verb):
     result = []
