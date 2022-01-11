@@ -1,7 +1,10 @@
-1	Security guards monitor the doors of the factory.
-2	Security guards control the movement of people into and out of the factory.
-3	Factory activities may be coordinated by a control center.
-4	Factory activities require energy.
-5	The electrical generators in the factory provide energy.
-6	The factory synthesizes products from raw materials using machines.
-7	The factory has hallways to move products through the factory.
+1	the plasma membrane encloses the cell.
+2	the plasma membrane controls the movement of materials into and out of the cell.
+3	the nucleus controls these cellular activities.
+4	these cellular activities require energy.
+5	the mitochondria extract energy from food molecules to provide the energy needs of the cell.
+6	animal cells must also synthesize a variety of these proteins.
+7	ribosomes produce these proteins.
+8	the cell may use these proteins or move these proteins out of the cell for use in other cells.
+9	to move organic molecules, the cell contains this system of membranes.
+10	this system of membranes is called the endoplasmic reticulum .

@@ -22,7 +22,6 @@ def create_coref_text_files(text_files_dir, coref_text_files_dir):
 
 
 
-
 def choose_list(lists_of_tokens):
     lists_of_tokens.sort(key=len, reverse=True)
     chosen_list = lists_of_tokens[0]

@@ -15,37 +15,26 @@ clustering_embedder = questions_similarity_embedder
 
 max_num_words_in_entity = 7
 cos_sim_threshold = 0.85
-entities_mapping_final_threshold = 1.0
+entities_mapping_final_threshold = 2.0
 beam = 7
 verbose = True
 
 
 
-text1_coref_clusters = {
-'the animal cell': 'the cell',
-'the movement of materials into and out of the cell': 'these cellular activities',
-'a variety of proteins and other organic molecules necessary for growth and repair': 'these proteins',
-'a complex system of membranes that create channels within the cell': 'this system of membranes'}
-
-text2_coref_clusters = {'factory activities': 'these activities'}
-
-
-def main():
-    text1_answer_question_map = read_parsed_qasrl('./qasrl-modeling/data/animal_cell_span_to_question.jsonl')
-    text2_answer_question_map = read_parsed_qasrl('./qasrl-modeling/data/factory_span_to_question.jsonl')
+def generate_mappings(pair):
+    text1_answer_question_map = read_parsed_qasrl(pair[0])
+    text2_answer_question_map = read_parsed_qasrl(pair[1])
     text1_corpus_entities = [key for key in text1_answer_question_map.keys()]
     text2_corpus_entities = [key for key in text2_answer_question_map.keys()]
 
     if verbose:
         print_corpus_entities(text1_corpus_entities, text2_corpus_entities)
 
-    text1_clusters_of_entities = get_clustering_result(text1_answer_question_map, text1_corpus_entities,
-                                                       text1_coref_clusters, distance_threshold=1, include_coref=True)
+    text1_clusters_of_entities = get_clustering_result(text1_answer_question_map, text1_corpus_entities, distance_threshold=1)
 
     text1_clusters_of_questions = get_clusters_of_questions(text1_clusters_of_entities, text1_answer_question_map)
 
-    text2_clusters_of_entities = get_clustering_result(text2_answer_question_map, text2_corpus_entities,
-                                                       text2_coref_clusters, distance_threshold=1, include_coref=True)
+    text2_clusters_of_entities = get_clustering_result(text2_answer_question_map, text2_corpus_entities, distance_threshold=1)
 
     text2_clusters_of_questions = get_clusters_of_questions(text2_clusters_of_entities, text2_answer_question_map)
 
@@ -86,15 +75,18 @@ def main():
         solution = [mappings_no_duplicates[mapping_id] for mapping_id in best_solution]
         solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
 
-    mappings_after_coref = get_mappings_solution_after_coref(solution)
 
-    if verbose:
-        print()
-        print("mappings after coreference: ")
-        for mapping in mappings_after_coref:
-            print(mapping)
+    plot_bipartite_graph(solution)
 
-    plot_bipartite_graph(mappings_after_coref)
+    # mappings_after_coref = get_mappings_solution_after_coref(solution)
+    #
+    # if verbose:
+    #     print()
+    #     print("mappings after coreference: ")
+    #     for mapping in mappings_after_coref:
+    #         print(mapping)
+    #
+    # plot_bipartite_graph(mappings_after_coref)
 
 
 def get_mappings_solution_after_coref(solution):
@@ -380,7 +372,7 @@ def get_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_q
 
 
 def convert_cluster_set_to_string(cluster_set):
-    cluster_set = str(cluster_set)
+    cluster_set = str(cluster_set[1])
     cluster_set = cluster_set[1:-1]
     cluster_set = cluster_set.split(',')
     cluster_set = "\n".join(cluster_set)
@@ -428,20 +420,7 @@ def plot_bipartite_graph(clusters_scores):
     #     else:
     #         print(right, left)
 
-def get_clustering_result(answer_question_map, corpus_entities, coref_clusters, distance_threshold, include_coref):
-    if include_coref:
-        for i in range(len(corpus_entities)):
-            if corpus_entities[i] in coref_clusters:
-                new_entity_after_coref = coref_clusters[corpus_entities[i]]
-                answer_question_map[new_entity_after_coref] = answer_question_map[
-                    corpus_entities[i]] if new_entity_after_coref not in answer_question_map else answer_question_map[
-                                                                                                      new_entity_after_coref] + \
-                                                                                                  answer_question_map[
-                                                                                                      corpus_entities[
-                                                                                                          i]]
-                del answer_question_map[corpus_entities[i]]
-                corpus_entities[i] = new_entity_after_coref
-
+def get_clustering_result(answer_question_map, corpus_entities, distance_threshold):
     filtered_corpus_entities = []
     filtered_answer_question_map = {}
     for entity in corpus_entities:
@@ -494,8 +473,3 @@ def get_clusters_of_questions(clusters_of_entities, answer_question_map):
 
 
 
-
-
-
-if __name__ == '__main__':
-    main()

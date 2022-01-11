@@ -8,11 +8,6 @@ qasrl_output_file_path = 'data/out.jsonl'
 coref_text_files_dir = '../data/coref_text_files'
 coref_text_files_after_qasrl_dir = './data'
 
-text_files = ['qasrl-modeling/data/animal_cell.txt', 'qasrl-modeling/data/factory.txt']
-text_files_after_qasrl = ['qasrl-modeling/data/animal_cell_span_to_question.jsonl',
-                          'qasrl-modeling/data/factory_span_to_question.jsonl']
-
-
 prepare_input_file_path = "./scripts/utils/prepare_input_file.py"
 afirst_pipeline_sequential_file_path = "./qasrl/pipelines/afirst_pipeline_sequential.py"
 span_density_softmax_file_path = "./models/span_density_softmax.tar.gz"
@@ -47,11 +42,11 @@ def write_qasrl_output_files(coref_text_files_dir):
         coref_text_file_name = coref_text_file.replace(".txt", "")
         coref_text_file_after_qasrl = os.path.join(coref_text_files_after_qasrl_dir, coref_text_file_name +
                                               "_span_to_question.jsonl")
-        src, qasrl_input_file_path = os.path.join(coref_text_files_dir, coref_text_file), os.path.join(coref_text_files_after_qasrl_dir, coref_text_file)
+        src = os.path.join(coref_text_files_dir, coref_text_file)
         prepare_file_to_qasrl(src, qasrl_input_file_path)
 
         os.chmod(qasrl_input_file_path, stat.S_IRWXU)
-        command = "python " + prepare_input_file_path + " --input " + qasrl_input_file_path + " --output " + coref_text_file_after_qasrl
+        command = "python " + prepare_input_file_path + " --input " + qasrl_input_file_path + " --output " + qasrl_output_file_path
         os.system(command)
 
         os.chmod(afirst_pipeline_sequential_file_path, stat.S_IRWXU)

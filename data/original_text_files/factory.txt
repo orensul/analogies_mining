@@ -1,0 +1,7 @@
+Security guards monitor the doors of the factory.
+They control the movement of people into and out of the factory.
+Factory activities may be coordinated by a control center.
+These activities require energy.
+The electrical generators in the factory provide energy.
+The factory synthesizes products from raw materials using machines.
+The factory has hallways to move products through it.
