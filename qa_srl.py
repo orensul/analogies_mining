@@ -37,11 +37,10 @@ def prepare_file_to_qasrl(src, dst):
     output.close()
 
 
-def write_qasrl_output_files(coref_text_files_dir):
-    for coref_text_file in os.listdir(coref_text_files_dir):
-        coref_text_file_name = coref_text_file.replace(".txt", "")
-        coref_text_file_after_qasrl = os.path.join(coref_text_files_after_qasrl_dir, coref_text_file_name +
-                                              "_span_to_question.jsonl")
+def write_qasrl_output_files(text_file_names):
+    for coref_text_file in text_file_names:
+        coref_text_file_after_qasrl = os.path.join(coref_text_files_after_qasrl_dir, coref_text_file.replace(".txt", "") +
+                                                   "_span_to_question.jsonl")
         src = os.path.join(coref_text_files_dir, coref_text_file)
         prepare_file_to_qasrl(src, qasrl_input_file_path)
 
@@ -57,6 +56,7 @@ def write_qasrl_output_files(coref_text_files_dir):
                   span_min_prob + " --question_min_prob " + question_min_prob + " --question_beam_size " + \
                   question_beam_size + " --input_file " + qasrl_output_file_path + " --output_file " + coref_text_file_after_qasrl
         os.system(command)
+
 
 def get_question_from_questions_slots(question_slots, verb):
     result = []

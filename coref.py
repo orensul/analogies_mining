@@ -7,18 +7,18 @@ coref_text_files_dir = '../data/coref_text_files'
 
 
 def main():
-    create_coref_text_files(text_files_dir, coref_text_files_dir)
+    create_coref_text_files(text_files_dir)
 
 
-def create_coref_text_files(text_files_dir, coref_text_files_dir):
-    for text_input_file_path in os.listdir(text_files_dir):
-        create_coref_input_file(os.path.join(text_files_dir, text_input_file_path), coref_input_file_path)
+def create_coref_text_files(original_text_files):
+    for text_input_file in original_text_files:
+        text_input_file_path = text_files_dir + "/" + text_input_file
+        create_coref_input_file(text_input_file_path, coref_input_file_path)
         os.chmod(coref_predict_file_path, stat.S_IRWXU)
         command = "python " + coref_predict_file_path + " --input_file " + coref_input_file_path
         os.system(command)
         sorted_tokens_range_result, tokens = read_coref_file(coref_input_file_path)
-        write_coref_files(os.path.join(coref_text_files_dir, text_input_file_path),
-                                  sorted_tokens_range_result, tokens)
+        write_coref_files(os.path.join(coref_text_files_dir, text_input_file), sorted_tokens_range_result, tokens)
 
 
 
@@ -98,6 +98,7 @@ def write_coref_files(output_file_path, sorted_tokens_range_result, tokens):
 
     output_str = " ".join(output)
     output_str = output_str.replace(" . ", ".\n")
+    output_str = output_str[:-2] + "."
     output_file.write(output_str)
 
 

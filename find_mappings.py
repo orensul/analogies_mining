@@ -15,7 +15,7 @@ clustering_embedder = questions_similarity_embedder
 
 max_num_words_in_entity = 7
 cos_sim_threshold = 0.85
-entities_mapping_final_threshold = 2.0
+entities_mapping_final_threshold = 2 * cos_sim_threshold
 beam = 7
 verbose = True
 
@@ -69,14 +69,12 @@ def generate_mappings(pair):
         for mapping in mappings_no_duplicates:
             print(mapping)
 
-    cache = beam_search(beam, mappings_no_duplicates)
+    cache = beam_search(min(len(mappings_no_duplicates), beam), mappings_no_duplicates)
     if cache:
         best_solution, best_score = cache[0][0], cache[0][1]
         solution = [mappings_no_duplicates[mapping_id] for mapping_id in best_solution]
         solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
-
-
-    plot_bipartite_graph(solution)
+        plot_bipartite_graph(solution)
 
     # mappings_after_coref = get_mappings_solution_after_coref(solution)
     #
@@ -358,8 +356,6 @@ def get_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_q
                                                                           questions2, cos_sim_threshold)
             total_count += 1
             if curr_score > 0:
-                if curr_score < 1:
-                    print(1)
                 pass_threshold_count += 1
                 clusters_scores.append(((i + 1, text1_clusters_of_entities[i][1]),
                                         (j + 1, text2_clusters_of_entities[j][1]), similar_questions, curr_score))
@@ -372,7 +368,7 @@ def get_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_q
 
 
 def convert_cluster_set_to_string(cluster_set):
-    cluster_set = str(cluster_set[1])
+    cluster_set = str(cluster_set)
     cluster_set = cluster_set[1:-1]
     cluster_set = cluster_set.split(',')
     cluster_set = "\n".join(cluster_set)

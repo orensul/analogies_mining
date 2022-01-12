@@ -1,10 +1,7 @@
-1	the plasma membrane encloses the cell.
-2	the plasma membrane controls the movement of materials into and out of the cell.
-3	the nucleus controls these cellular activities.
-4	these cellular activities require energy.
-5	the mitochondria extract energy from food molecules to provide the energy needs of the cell.
-6	animal cells must also synthesize a variety of these proteins.
-7	ribosomes produce these proteins.
-8	the cell may use these proteins or move these proteins out of the cell for use in other cells.
-9	to move organic molecules, the cell contains this system of membranes.
-10	this system of membranes is called the endoplasmic reticulum .
+1	you inhale the air through your nose and mouth.
+2	the air travels down into your lungs.
+3	oxygen from the air goes into your bloodstream.
+4	oxygen circulates throughout the body due to the heart's pumping.
+5	carbon dioxide travels from the blood into the lungs.
+6	carbon dioxide travels from the lungs up the windpipe.
+7	carbon dioxide is exhaled.
