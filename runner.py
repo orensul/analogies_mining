@@ -5,9 +5,7 @@ from qa_srl import write_qasrl_output_files
 from find_mappings import generate_mappings
 
 text_files_dir = '../data/original_text_files'
-pair_of_inputs = [('animal_cell', 'factory')]
-                  # ('how_snow_forms1', 'how_snow_forms2'),
-                  # ('what_happens_during_photosynthesis1', 'what_happens_during_photosynthesis2')]
+pair_of_inputs = [('digestion1', 'digestion2')]
 # pair_of_inputs = [('animal_cell', 'factory')]
 
 qasrl_prefix_path = './qasrl-modeling/data/'

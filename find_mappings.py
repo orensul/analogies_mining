@@ -14,8 +14,9 @@ clustering_embedder = questions_similarity_embedder
 
 
 max_num_words_in_entity = 7
-cos_sim_threshold = 0.85
-entities_mapping_final_threshold = 2 * cos_sim_threshold
+cos_sim_threshold = 0.65
+entities_mapping_final_threshold = cos_sim_threshold
+num_mappings_to_show = 5
 beam = 7
 verbose = True
 
@@ -74,7 +75,7 @@ def generate_mappings(pair):
         best_solution, best_score = cache[0][0], cache[0][1]
         solution = [mappings_no_duplicates[mapping_id] for mapping_id in best_solution]
         solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
-        plot_bipartite_graph(solution)
+        plot_bipartite_graph(solution[:num_mappings_to_show])
 
     # mappings_after_coref = get_mappings_solution_after_coref(solution)
     #

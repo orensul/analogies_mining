@@ -1,0 +1,10 @@
+Food is taken into the mouth.
+The food is chewed.
+Saliva mixes with the food and starts breaking it down.
+The chewed food travels down the esophagus to the stomach.
+The stomach secretes acid.
+Grinds and mixes the food.
+The food moves to the small intestine.
+The small intestine uses enzymes to further break down the food.
+The food passes into the colon.
+The food is expelled from the body.
