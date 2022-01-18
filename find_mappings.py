@@ -14,15 +14,12 @@ clustering_embedder = questions_similarity_embedder
 
 
 max_num_words_in_entity = 7
-cos_sim_threshold = 0.65
-entities_mapping_final_threshold = cos_sim_threshold
-num_mappings_to_show = 5
+score_boosting_same_sentence = 1
 beam = 7
 verbose = True
 
 
-
-def generate_mappings(pair):
+def generate_mappings(pair, cos_sim_threshold):
     text1_answer_question_map = read_parsed_qasrl(pair[0])
     text2_answer_question_map = read_parsed_qasrl(pair[1])
     text1_corpus_entities = [key for key in text1_answer_question_map.keys()]
@@ -44,7 +41,7 @@ def generate_mappings(pair):
         print_clusters_of_questions(text1_clusters_of_questions, text2_clusters_of_questions)
 
     clusters_scores = get_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions,
-                                                   text2_clusters_of_entities, text2_clusters_of_questions)
+                                                   text2_clusters_of_entities, text2_clusters_of_questions, cos_sim_threshold)
     clusters_scores = sorted(clusters_scores, key=lambda t: t[::-1], reverse=True)
     if verbose:
         print()
@@ -75,7 +72,8 @@ def generate_mappings(pair):
         best_solution, best_score = cache[0][0], cache[0][1]
         solution = [mappings_no_duplicates[mapping_id] for mapping_id in best_solution]
         solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
-        plot_bipartite_graph(solution[:num_mappings_to_show])
+        return solution
+    return None
 
     # mappings_after_coref = get_mappings_solution_after_coref(solution)
     #
@@ -137,9 +135,6 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
     extended_mappings = []
     for map in clusters_scores:
         cluster_base, cluster_target, similar_questions, score = map[0], map[1], map[2], map[3]
-        if score < entities_mapping_final_threshold:
-            continue
-        extended_mappings.append((cluster_base, cluster_target, similar_questions, score))
         base_connected_clusters = get_connected_clusters(text1_clusters_of_questions, cluster_base[0])
         target_connected_clusters = get_connected_clusters(text2_clusters_of_questions, cluster_target[0])
 
@@ -150,11 +145,14 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
 
         curr_new_mappings = []
         for tup_connected_base in base_connected_clusters:
+
             verb_connected_base, cluster_connected_base, side_connected_base = tup_connected_base[1], \
                                                                                text1_clusters_of_entities[
                                                                                    tup_connected_base[0] - 1], \
                                                                                tup_connected_base[2]
             for tup_connected_target in target_connected_clusters:
+                if cluster_connected_base[0] == 9:
+                    print(1)
                 verb_connected_target, cluster_connected_target, side_connected_target = tup_connected_target[1], \
                                                                                          text2_clusters_of_entities[
                                                                                              tup_connected_target[
@@ -164,12 +162,12 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
                     continue
 
                 if are_verbs_in_similar_questions(verb_connected_base, verb_connected_target, similar_questions):
-                    added_maps, added_score = get_mapping_score(clusters_scores, cluster_connected_base,
-                                                                cluster_connected_target)
-                    extended_mappings.append((cluster_connected_base, cluster_connected_target,
-                                              similar_questions + added_maps, score + added_score))
-                    curr_new_mappings.append((cluster_connected_base, cluster_connected_target,
-                                              similar_questions + added_maps, score + added_score))
+                    new_map_similar_questions, new_map_score = get_mapping_score(clusters_scores, cluster_connected_base, cluster_connected_target)
+                    if new_map_similar_questions:
+                        extended_mappings.append((cluster_base, cluster_target, similar_questions, score + score_boosting_same_sentence))
+                        extended_mappings.append((cluster_connected_base, cluster_connected_target, new_map_similar_questions, new_map_score + score_boosting_same_sentence))
+
+                        curr_new_mappings.append((cluster_connected_base, cluster_connected_target, new_map_similar_questions, new_map_score + score_boosting_same_sentence))
 
                     if verbose:
                         if side_connected_base == 'R':
@@ -178,6 +176,15 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
                         else:
                             print(cluster_connected_base, verb_connected_base, cluster_base)
                             print(cluster_connected_target, verb_connected_target, cluster_target)
+
+
+
+        found = False
+        for item in extended_mappings:
+            if item[0] == cluster_base and item[1] == cluster_target and item[2] == similar_questions:
+                found = True
+        if not found:
+            extended_mappings.append((cluster_base, cluster_target, similar_questions, score))
 
         if verbose:
             print("more mappings:")
@@ -341,7 +348,7 @@ def get_sent_bert_similarity_map_between_questions(questions1, questions2):
 
 
 def get_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions, text2_clusters_of_entities,
-                                 text2_clusters_of_questions):
+                                 text2_clusters_of_questions, cos_sim_threshold):
     questions1 = get_questions_list_from_cluster(text1_clusters_of_questions)
     questions2 = get_questions_list_from_cluster(text2_clusters_of_questions)
     sent_bert_similarity_map = get_sent_bert_similarity_map_between_questions(questions1, questions2)
@@ -376,7 +383,7 @@ def convert_cluster_set_to_string(cluster_set):
     return cluster_set
 
 
-def plot_bipartite_graph(clusters_scores):
+def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
     B = nx.Graph()
     left_vertices = []
 
@@ -394,18 +401,21 @@ def plot_bipartite_graph(clusters_scores):
 
     for i, quadruple in enumerate(clusters_scores):
         left, right, similar_questions, score = quadruple
-        B.add_edge(convert_cluster_set_to_string(left), convert_cluster_set_to_string(right), weight=score)
+        B.add_edge(convert_cluster_set_to_string(left), convert_cluster_set_to_string(right), weight=round(score, 2))
 
     plt.figure(figsize=(24, 8))
 
     top_nodes = [n for n in B.nodes if B.nodes[n]['bipartite'] == 0]
 
     pos = nx.bipartite_layout(B, top_nodes)
-    nx.draw_networkx_nodes(B, pos, node_size=50)
-    nx.draw_networkx_labels(B, pos, font_size=1)
+    nx.draw_networkx_nodes(B, pos)
+    nx.draw_networkx_labels(B, pos)
     labels = nx.get_edge_attributes(B, 'weight')
-    nx.draw_networkx_edge_labels(B, pos, label_pos=0.25, edge_labels=labels)
-    nx.draw(B, pos=pos, with_labels=True)
+    nx.draw_networkx_edge_labels(B, pos, label_pos=0.1, font_size=36, edge_labels=labels)
+
+    weights = nx.get_edge_attributes(B, 'weight').values()
+    nx.draw(B, pos=pos, edge_color=colors, width=list(weights), with_labels=True, node_color='lightgreen')
+    plt.title("Analogies found(chosen cosine similarity threshold=" + str(cos_similarity_threshold) + "):")
     plt.show()
 
     # matching = nx.max_weight_matching(B, maxcardinality=True)

@@ -1,5 +1,7 @@
 import json
 import os, stat
+import spacy
+nlp = spacy.load('en_core_web_sm')
 from shutil import copyfile
 qasrl_input_file_path = 'data/input.txt'
 qasrl_output_file_path = 'data/out.jsonl'
@@ -16,8 +18,9 @@ span_to_question_file_path = "./models/span_to_question.tar.gz"
 
 possible_questions = {'what', 'who', 'which'}
 ans_prob_threshold = 0.05
+q_prob_threshold = 0.15
 
-verbose = False
+verbose = True
 should_run_qasrl = True
 
 
@@ -89,6 +92,19 @@ def entity_contains_verb(sentence_tokens, sentence_verbs_indices, entity):
             return True
     return False
 
+def entity_contains_noun(entity):
+    doc = nlp(entity)
+    count = 0
+    for chunk in doc.noun_chunks:
+        if verbose:
+            print("noun:")
+            print(chunk)
+        count += 1
+    return count > 0
+
+
+
+
 
 def read_parsed_qasrl(filename):
     f = open(filename, "r")
@@ -119,79 +135,111 @@ def read_parsed_qasrl(filename):
                     beams_after_verb.append(beam)
 
             for beam_before in beams_before_verb:
-                question = beam_before['questions'][0]
-                if question['questionSlots']['wh'] not in possible_questions:
-                    continue
-                q_slots, q, verb_time = get_question_from_questions_slots(question['questionSlots'], verb)
-                q_verb = '<verb>' if q_slots['verb'] != '_' else '_'
-                q_subj = '<subj>' if q_slots['subj'] != '_' else '_'
-                q_obj = '<obj>' if q_slots['obj'] != '_' else '_'
-                q_sub_verb_obj = q_subj + q_verb + q_obj
-                entity_before = " ".join(sentence_tokens[beam_before['span'][0]:beam_before['span'][1]])
-                if verbose:
-                    print("Entity before: " + entity_before)
-
-                ans_prob = round(beam_before['spanProb'], 2)
-                q_prob = round(question['questionProb'], 2)
-                if verbose:
-                    print("question with answer before verb: " + q + "\nanswer: " + entity_before + ", answer prob:" + str(
-                    ans_prob) + ", question_prob:" + str(q_prob))
-
-                if ans_prob <= ans_prob_threshold:
+                for question in beam_before['questions']:
+                    if question['questionProb'] <= q_prob_threshold:
+                        continue
+                    if question['questionSlots']['wh'] not in possible_questions:
+                        continue
+                    q_slots, q, verb_time = get_question_from_questions_slots(question['questionSlots'], verb)
+                    q_verb = '<verb>' if q_slots['verb'] != '_' else '_'
+                    q_subj = '<subj>' if q_slots['subj'] != '_' else '_'
+                    q_obj = '<obj>' if q_slots['obj'] != '_' else '_'
+                    q_sub_verb_obj = q_subj + q_verb + q_obj
+                    entity_before = " ".join(sentence_tokens[beam_before['span'][0]:beam_before['span'][1]])
                     if verbose:
-                        print("Filter out QA because of answer probability which is below the threshold: " + entity_before + ", " + q)
-                    continue
+                        print("Entity before: " + entity_before)
 
-                if q_slots['subj'] != '_' and q_slots['verb'] != '_' and q_slots['obj'] != '_':
+                    ans_prob = round(beam_before['spanProb'], 2)
+                    q_prob = round(question['questionProb'], 2)
                     if verbose:
-                        print("Filter out QA because this question contains subj+verb+obj: " + entity_before + ", " + q)
-                    continue
-                if entity_contains_verb(sentence_tokens, sentence_verbs_indices, entity_before):
-                    if verbose:
-                        print("Filter out QA because entity contains verb: " + entity_before + ", " + q)
-                    continue
+                        print("question with answer before verb: " + q + "\nanswer: " + entity_before + ", answer prob:" + str(
+                        ans_prob) + ", question_prob:" + str(q_prob))
 
-                if (q, q_sub_verb_obj, original_verb, 'L', idx+1) in question_answers_map:
-                    question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', idx+1)].append(entity_before.lower())
-                else:
-                    question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', idx+1)] = [entity_before.lower()]
+                    if ans_prob <= ans_prob_threshold:
+                        if verbose:
+                            print("Filter out QA because of answer probability which is below the threshold: " + entity_before + ", " + q)
+                        continue
+
+                    if q_slots['wh'] != '_' and q_slots['aux'] == '_' and q_slots['subj'] == "_" \
+                            and q_slots['obj'] == "_" and q_slots['prep'] == "_" and q_slots['obj2'] == "_" \
+                            and verb['verbInflectedForms']['stem'].lower() == "be":
+                        if verbose:
+                            print("Filter out QA because this question contains only 'be' verb: " + entity_before + ", " + q)
+                        continue
+
+                    if q_slots['subj'] != '_' and q_slots['verb'] != '_' and q_slots['obj'] != '_':
+                        if verbose:
+                            print("Filter out QA because this question contains subj+verb+obj: " + entity_before + ", " + q)
+                        continue
+
+
+                    if entity_contains_verb(sentence_tokens, sentence_verbs_indices, entity_before):
+                        if verbose:
+                            print("Filter out QA because entity contains verb: " + entity_before + ", " + q)
+                        continue
+                    if not entity_contains_noun(entity_before):
+                        if verbose:
+                            print("Filter out QA because entity does not contains noun: " + entity_before + ", " + q)
+                        continue
+
+
+                    if (q, q_sub_verb_obj, original_verb, 'L', idx+1) in question_answers_map:
+                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', idx+1)].append(entity_before.lower())
+                    else:
+                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', idx+1)] = [entity_before.lower()]
 
             for beam_after in beams_after_verb:
-                question = beam_after['questions'][0]
-                if question['questionSlots']['wh'] not in possible_questions:
-                    continue
-                q_slots, q, changed_from_passive_to_active = get_question_from_questions_slots(question['questionSlots'], verb)
-                q_verb = '<verb>' if q_slots['verb'] != '_' else '_'
-                q_subj = '<subj>' if q_slots['subj'] != '_' else '_'
-                q_obj = '<obj>' if q_slots['obj'] != '_' else '_'
-                q_sub_verb_obj = q_subj + q_verb + q_obj
-                entity_after = " ".join(sentence_tokens[beam_after['span'][0]:beam_after['span'][1]])
-                if verbose:
-                    print("Entity after: " + entity_after)
-
-                ans_prob = round(beam_after['spanProb'], 2)
-                q_prob = round(question['questionProb'], 2)
-                if verbose:
-                    print("question with answer after verb: " + q + "\nanswer: " + entity_after + ", answer prob:" + str(
-                    ans_prob) + ", question_prob:" + str(q_prob))
-
-                if ans_prob <= ans_prob_threshold:
+                for question in beam_after['questions']:
+                    if question['questionProb'] <= q_prob_threshold:
+                        continue
+                    if question['questionSlots']['wh'] not in possible_questions:
+                        continue
+                    q_slots, q, changed_from_passive_to_active = get_question_from_questions_slots(question['questionSlots'], verb)
+                    q_verb = '<verb>' if q_slots['verb'] != '_' else '_'
+                    q_subj = '<subj>' if q_slots['subj'] != '_' else '_'
+                    q_obj = '<obj>' if q_slots['obj'] != '_' else '_'
+                    q_sub_verb_obj = q_subj + q_verb + q_obj
+                    entity_after = " ".join(sentence_tokens[beam_after['span'][0]:beam_after['span'][1]])
                     if verbose:
-                        print("Filter out QA because of answer probability which is below the threshold: " + entity_after + ", " + q)
-                    continue
-                if q_slots['subj'] != '_' and q_slots['verb'] != '_' and q_slots['obj'] != '_':
-                    if verbose:
-                        print("Filter out QA because this question contains subj+verb+obj: " + entity_after + ", " + q)
-                    continue
-                if entity_contains_verb(sentence_tokens, sentence_verbs_indices, entity_after):
-                    if verbose:
-                        print("Filter out QA because entity contains verb: " + entity_after + ", " + q)
-                    continue
+                        print("Entity after: " + entity_after)
 
-                if (q, q_sub_verb_obj, original_verb, 'R', idx+1) in question_answers_map:
-                    question_answers_map[(q, q_sub_verb_obj, original_verb, 'R', idx+1)].append(entity_after.lower())
-                else:
-                    question_answers_map[(q, q_sub_verb_obj, original_verb, 'R', idx+1)] = [entity_after.lower()]
+                    ans_prob = round(beam_after['spanProb'], 2)
+                    q_prob = round(question['questionProb'], 2)
+                    if verbose:
+                        print("question with answer after verb: " + q + "\nanswer: " + entity_after + ", answer prob:" + str(
+                        ans_prob) + ", question_prob:" + str(q_prob))
+
+
+                    if ans_prob <= ans_prob_threshold:
+                        if verbose:
+                            print("Filter out QA because of answer probability which is below the threshold: " + entity_after + ", " + q)
+                        continue
+
+                    if q_slots['wh'] != '_' and q_slots['aux'] == '_' and q_slots['subj'] == "_" \
+                            and q_slots['obj'] == "_" and q_slots['prep'] == "_" and q_slots['obj2'] == "_" \
+                            and verb['verbInflectedForms']['stem'].lower() == "be":
+                        if verbose:
+                            print("Filter out QA because this question contains only 'be' verb: " + entity_after + ", " + q)
+                        continue
+
+                    if q_slots['subj'] != '_' and q_slots['verb'] != '_' and q_slots['obj'] != '_':
+                        if verbose:
+                            print("Filter out QA because this question contains subj+verb+obj: " + entity_after + ", " + q)
+                        continue
+
+                    if entity_contains_verb(sentence_tokens, sentence_verbs_indices, entity_after):
+                        if verbose:
+                            print("Filter out QA because entity contains verb: " + entity_after + ", " + q)
+                        continue
+                    if not entity_contains_noun(entity_after):
+                        if verbose:
+                            print("Filter out QA because entity does not contains noun: " + entity_after + ", " + q)
+                        continue
+
+                    if (q, q_sub_verb_obj, original_verb, 'R', idx+1) in question_answers_map:
+                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'R', idx+1)].append(entity_after.lower())
+                    else:
+                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'R', idx+1)] = [entity_after.lower()]
 
     answer_question_map = {}
     for key, val in question_answers_map.items():
