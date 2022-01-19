@@ -20,7 +20,7 @@ possible_questions = {'what', 'who', 'which'}
 ans_prob_threshold = 0.05
 q_prob_threshold = 0.15
 
-verbose = True
+verbose = False
 should_run_qasrl = True
 
 
@@ -187,6 +187,8 @@ def read_parsed_qasrl(filename):
                         question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', idx+1)].append(entity_before.lower())
                     else:
                         question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', idx+1)] = [entity_before.lower()]
+
+
 
             for beam_after in beams_after_verb:
                 for question in beam_after['questions']:

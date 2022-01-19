@@ -56,7 +56,6 @@ def create_coref_input_file(text_input_file_path, coref_input_file_path):
     input_file = open(text_input_file_path, 'r')
     dictionary = {"tokens": []}
     for line in input_file:
-        line = line.lower()
         tokens = line.split(' ')
         for token in tokens:
             if "\n" in token:

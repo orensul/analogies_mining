@@ -72,6 +72,9 @@ def generate_mappings(pair, cos_sim_threshold):
         best_solution, best_score = cache[0][0], cache[0][1]
         solution = [mappings_no_duplicates[mapping_id] for mapping_id in best_solution]
         solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
+        print()
+        print("solution: ")
+        print(solution)
         return solution
     return None
 
@@ -151,8 +154,6 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
                                                                                    tup_connected_base[0] - 1], \
                                                                                tup_connected_base[2]
             for tup_connected_target in target_connected_clusters:
-                if cluster_connected_base[0] == 9:
-                    print(1)
                 verb_connected_target, cluster_connected_target, side_connected_target = tup_connected_target[1], \
                                                                                          text2_clusters_of_entities[
                                                                                              tup_connected_target[
@@ -403,6 +404,7 @@ def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
         left, right, similar_questions, score = quadruple
         B.add_edge(convert_cluster_set_to_string(left), convert_cluster_set_to_string(right), weight=round(score, 2))
 
+
     plt.figure(figsize=(24, 8))
 
     top_nodes = [n for n in B.nodes if B.nodes[n]['bipartite'] == 0]
@@ -411,10 +413,10 @@ def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
     nx.draw_networkx_nodes(B, pos)
     nx.draw_networkx_labels(B, pos)
     labels = nx.get_edge_attributes(B, 'weight')
-    nx.draw_networkx_edge_labels(B, pos, label_pos=0.1, font_size=36, edge_labels=labels)
+    nx.draw_networkx_edge_labels(B, pos, label_pos=0.1, font_size=18, verticalalignment="top", edge_labels=labels)
 
-    weights = nx.get_edge_attributes(B, 'weight').values()
-    nx.draw(B, pos=pos, edge_color=colors, width=list(weights), with_labels=True, node_color='lightgreen')
+    weights = list(nx.get_edge_attributes(B, 'weight').values())
+    nx.draw(B, pos=pos, edge_color=colors, width=weights, with_labels=True, node_color='lightgreen')
     plt.title("Analogies found(chosen cosine similarity threshold=" + str(cos_similarity_threshold) + "):")
     plt.show()
 

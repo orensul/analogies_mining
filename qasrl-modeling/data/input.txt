@@ -1,10 +1,5 @@
-1	food is put into mouth.
-2	food is chewed and mixed with saliva (spit).
-3	food travels down the esophagus (throat).
-4	the food travels into the stomach.
-5	acid in the stomach breaks the food down further.
-6	food travels into the small intestine.
-7	nutrients from food are absorbed into the blood stream.
-8	food travels into the large intestine.
-9	most of the remaining material is now the waste.
-10	the waste is eventually removed from the body.
+1	McGhee was a sailor who wanted a few days of vacation on land.
+2	One day, the captain's announced that the captain's would be taking a vacation in the mountains.
+3	However, the captain's said, everyone else would have to remain on the ship.
+4	After McGhee heard this McGhee became so upset that McGhee decided to get revenge.
+5	Within an hour McGhee blew up the captain's cabin with dynamite.

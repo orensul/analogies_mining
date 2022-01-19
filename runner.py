@@ -6,11 +6,20 @@ from find_mappings import generate_mappings
 from find_mappings import plot_bipartite_graph
 
 text_files_dir = '../data/original_text_files'
-pair_of_inputs = [('what_happens_during_photosynthesis1', 'what_happens_during_photosynthesis2')]
+# pair_of_inputs = [('what_happens_during_photosynthesis1', 'what_happens_during_photosynthesis2'), ('animal_cell', 'factory'),
+#                   ('electrical_circuit', 'water_pump'), ('digestion1', 'digestion2'), ('how_snow_forms1', 'how_snow_forms2')]
+# pair_of_inputs = [('what_happens_during_photosynthesis1', 'what_happens_during_photosynthesis2')]
 # pair_of_inputs = [('animal_cell', 'factory')]
 # pair_of_inputs = [('electrical_circuit', 'water_pump')]
+
 # pair_of_inputs = [('digestion1', 'digestion2')]
 # pair_of_inputs = [('how_snow_forms1', 'how_snow_forms2')]
+
+pair_of_inputs = [('keane_general', 'keane_surgeon')]
+# pair_of_inputs = [('wharton_story1_base', 'wharton_story1_target')]
+# pair_of_inputs = [('rattermann_story17_base', 'rattermann_story17_target')]
+
+
 qasrl_prefix_path = './qasrl-modeling/data/'
 qasrl_suffix_path = '_span_to_question.jsonl'
 
@@ -40,11 +49,10 @@ def main():
     if run_mappings:
         for pair in get_pair_of_inputs_qasrl_path():
             solution = generate_mappings(pair, default_cos_sim_threshold)
-            if more_precision_oriented:
-                plot_bipartite_graph(solution[:num_mappings_to_show], colors[:num_mappings_to_show])
+            if more_precision_oriented or len(solution) >= num_mappings_to_show - 1:
+                plot_bipartite_graph(solution[:num_mappings_to_show], colors[:num_mappings_to_show], default_cos_sim_threshold)
                 continue
-            len_solution = min(len(solution), num_mappings_to_show)
-            cos_sim_threshold = len_solution_cos_sim_threshold_map[len_solution]
+            cos_sim_threshold = len_solution_cos_sim_threshold_map[len(solution)]
             solution = generate_mappings(pair, cos_sim_threshold)
             plot_bipartite_graph(solution[:num_mappings_to_show], colors[:num_mappings_to_show], cos_sim_threshold)
 
