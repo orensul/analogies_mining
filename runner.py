@@ -8,23 +8,51 @@ from find_mappings import plot_bipartite_graph
 text_files_dir = '../data/original_text_files'
 # pair_of_inputs = [('what_happens_during_photosynthesis1', 'what_happens_during_photosynthesis2'), ('animal_cell', 'factory'),
 #                   ('electrical_circuit', 'water_pump'), ('digestion1', 'digestion2'), ('how_snow_forms1', 'how_snow_forms2')]
-# pair_of_inputs = [('what_happens_during_photosynthesis1', 'what_happens_during_photosynthesis2')]
-# pair_of_inputs = [('animal_cell', 'factory')]
-# pair_of_inputs = [('electrical_circuit', 'water_pump')]
 
+
+
+
+# pair_of_inputs = [('what_happens_during_photosynthesis1', 'what_happens_during_photosynthesis2')]
 # pair_of_inputs = [('digestion1', 'digestion2')]
 # pair_of_inputs = [('how_snow_forms1', 'how_snow_forms2')]
 
-pair_of_inputs = [('keane_general', 'keane_surgeon')]
-# pair_of_inputs = [('wharton_story1_base', 'wharton_story1_target')]
+# good with coref take the shortest
+# pair_of_inputs = [('animal_cell', 'factory')]
+
+# good with coref take the shortest
+# pair_of_inputs = [('electrical_circuit', 'water_pump')]
+
+
+# good with coref take the shortest
+# pair_of_inputs = [('keane_general', 'keane_surgeon')]
+
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story2_base', 'rattermann_story2_target')]
+
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story4_base', 'rattermann_story4_target')]
+
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story8_base', 'rattermann_story8_target')]
+
+pair_of_inputs = [('rattermann_story14_base', 'rattermann_story14_target')]
+
+
+
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story16_base', 'rattermann_story16_target')]
+
+
+# ok with coref take the shortest
 # pair_of_inputs = [('rattermann_story17_base', 'rattermann_story17_target')]
+
 
 
 qasrl_prefix_path = './qasrl-modeling/data/'
 qasrl_suffix_path = '_span_to_question.jsonl'
 
-run_coref = False
-run_qasrl = False
+run_coref = True
+run_qasrl = True
 run_mappings = True
 more_precision_oriented = False
 num_mappings_to_show = 5
