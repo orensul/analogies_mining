@@ -178,8 +178,6 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
                             print(cluster_connected_base, verb_connected_base, cluster_base)
                             print(cluster_connected_target, verb_connected_target, cluster_target)
 
-
-
         found = False
         for item in extended_mappings:
             if item[0] == cluster_base and item[1] == cluster_target and item[2] == similar_questions:
@@ -268,10 +266,10 @@ def get_connected_clusters(text_clusters_of_questions, text_cluster_entities_idx
     connected_clusters_ids = set()
     for set_of_questions in curr_cluster:
         for question_record in set_of_questions:
-            _, _, verb, side, timestep = question_record
+            _, _, verb, side, timestep, _ = question_record
             for j, set_of_other_questions in text_clusters_of_questions:
                 for other_question_record in set_of_other_questions:
-                    _, _, other_verb, other_side, other_timestep = other_question_record
+                    _, _, other_verb, other_side, other_timestep, _ = other_question_record
                     if other_verb == verb and other_timestep == timestep and other_side != side:
                         connected_clusters_ids.add((j, other_verb, other_side))
     return connected_clusters_ids

@@ -35,24 +35,25 @@ text_files_dir = '../data/original_text_files'
 # good with coref take the shortest
 # pair_of_inputs = [('rattermann_story8_base', 'rattermann_story8_target')]
 
-pair_of_inputs = [('rattermann_story14_base', 'rattermann_story14_target')]
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story12_base', 'rattermann_story12_target')]
 
-
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story14_base', 'rattermann_story14_target')]
 
 # good with coref take the shortest
 # pair_of_inputs = [('rattermann_story16_base', 'rattermann_story16_target')]
 
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story18_base', 'rattermann_story18_target')]
 
-# ok with coref take the shortest
-# pair_of_inputs = [('rattermann_story17_base', 'rattermann_story17_target')]
-
-
+pair_of_inputs = [('test_base', 'test_target')]
 
 qasrl_prefix_path = './qasrl-modeling/data/'
 qasrl_suffix_path = '_span_to_question.jsonl'
 
-run_coref = True
-run_qasrl = True
+run_coref = False
+run_qasrl = False
 run_mappings = True
 more_precision_oriented = False
 num_mappings_to_show = 5

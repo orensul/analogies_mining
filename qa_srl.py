@@ -118,20 +118,19 @@ def read_parsed_qasrl(filename):
             print("sentence " + sentence_id + ": " + " ".join(sentence_tokens))
 
         sentence_verbs_indices = [d['verbIndex'] for d in json_object['verbs']]
-        for idx, verb in enumerate(json_object['verbs']):
-            verb_idx = verb['verbIndex']
-            original_verb, stemmed_verb = sentence_tokens[verb_idx].lower(), verb['verbInflectedForms']['stem'].lower()
+        for verb_idx, verb in enumerate(json_object['verbs']):
+            original_verb, stemmed_verb = sentence_tokens[verb['verbIndex']].lower(), verb['verbInflectedForms']['stem'].lower()
             if verbose:
-                print("verb " + str(idx+1) + " (original): " + original_verb)
-                print("verb " + str(idx+1) + " (stem): " + stemmed_verb)
+                print("verb " + str(verb_idx+1) + " (original): " + original_verb)
+                print("verb " + str(verb_idx+1) + " (stem): " + stemmed_verb)
             beams_before_verb = []
             beams_after_verb = []
             for beam in verb['beam']:
                 span_start = beam['span'][0]
                 span_end = beam['span'][1]
-                if span_end <= verb_idx:
+                if span_end <= verb['verbIndex']:
                     beams_before_verb.append(beam)
-                elif span_start > verb_idx:
+                elif span_start > verb['verbIndex']:
                     beams_after_verb.append(beam)
 
             for beam_before in beams_before_verb:
@@ -183,10 +182,10 @@ def read_parsed_qasrl(filename):
                         continue
 
 
-                    if (q, q_sub_verb_obj, original_verb, 'L', idx+1) in question_answers_map:
-                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', idx+1)].append(entity_before.lower())
+                    if (q, q_sub_verb_obj, original_verb, 'L', line_idx+1, verb_idx+1) in question_answers_map:
+                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', line_idx+1, verb_idx+1)].append(entity_before.lower())
                     else:
-                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', idx+1)] = [entity_before.lower()]
+                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', line_idx+1, verb_idx+1)] = [entity_before.lower()]
 
 
 
@@ -238,10 +237,10 @@ def read_parsed_qasrl(filename):
                             print("Filter out QA because entity does not contains noun: " + entity_after + ", " + q)
                         continue
 
-                    if (q, q_sub_verb_obj, original_verb, 'R', idx+1) in question_answers_map:
-                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'R', idx+1)].append(entity_after.lower())
+                    if (q, q_sub_verb_obj, original_verb, 'R', line_idx+1, verb_idx+1) in question_answers_map:
+                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'R', line_idx+1, verb_idx+1)].append(entity_after.lower())
                     else:
-                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'R', idx+1)] = [entity_after.lower()]
+                        question_answers_map[(q, q_sub_verb_obj, original_verb, 'R', line_idx+1, verb_idx+1)] = [entity_after.lower()]
 
     answer_question_map = {}
     for key, val in question_answers_map.items():
