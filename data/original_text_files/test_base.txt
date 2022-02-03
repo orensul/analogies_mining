@@ -1,2 +1,3 @@
+The bees generates honey.
 The factory produces products.
 The electrical generator produces energy.

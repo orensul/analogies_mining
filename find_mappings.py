@@ -16,7 +16,7 @@ clustering_embedder = questions_similarity_embedder
 max_num_words_in_entity = 7
 score_boosting_same_sentence = 1
 beam = 7
-verbose = True
+verbose = False
 
 
 def generate_mappings(pair, cos_sim_threshold):
@@ -25,6 +25,8 @@ def generate_mappings(pair, cos_sim_threshold):
     text1_corpus_entities = [key for key in text1_answer_question_map.keys()]
     text2_corpus_entities = [key for key in text2_answer_question_map.keys()]
 
+    if not text1_corpus_entities or not text2_corpus_entities:
+        return None
     if verbose:
         print_corpus_entities(text1_corpus_entities, text2_corpus_entities)
 
@@ -437,7 +439,12 @@ def get_clustering_result(answer_question_map, corpus_entities, distance_thresho
 
     corpus_entities, answer_question_map = filtered_corpus_entities, filtered_answer_question_map
 
+    # for AgglomerativeClustering clustering at least two entities are needed
+    if len(corpus_entities) == 1:
+        corpus_entities.append(corpus_entities[0])
+
     corpus_embeddings = clustering_embedder.encode(corpus_entities)
+
 
     # Normalize the embeddings to unit length
     corpus_embeddings = corpus_embeddings / np.linalg.norm(corpus_embeddings, axis=1, keepdims=True)
@@ -445,6 +452,8 @@ def get_clustering_result(answer_question_map, corpus_entities, distance_thresho
     # Perform kmean clustering
     clustering_model = AgglomerativeClustering(n_clusters=None,
                                                distance_threshold=distance_threshold)  # , affinity='cosine', linkage='average', distance_threshold=0.4)
+    if corpus_embeddings.shape[0] == 1:
+        print(1)
     clustering_model.fit(corpus_embeddings)
     cluster_assignment = clustering_model.labels_
 

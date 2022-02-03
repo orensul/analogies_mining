@@ -1,2 +1,7 @@
-1	The cell produces proteins.
-2	The mitochondria produces energy.
+1	Adult mushrooms produce spores.
+2	Release spores into the air by process of sporulation.
+3	Spores are carried by the wind.
+4	Land in a hospitable growing environment.
+5	Spores germinate into the soil.
+6	The mushroom starts growing.
+7	The mushroom produce spores of The mushroom own to repeat the process.

@@ -1,8 +1,5 @@
 import os, stat
 import json
-
-import spacy
-from collections import Counter
 import en_core_web_sm
 nlp = en_core_web_sm.load()
 
@@ -12,7 +9,6 @@ coref_input_file_path = 'input_files/input.jsonl'
 text_files_dir = '../data/original_text_files'
 coref_text_files_dir = '../data/coref_text_files'
 
-max_num_of_words_coref_entity = 4
 
 pronouns = {"all", "another", "any", "anybody", "anyone", "anything", "as", "aught", "both", "each", "each other",
             "either", "enough", "everybody", "everyone", "everything", "few", "he", "her", "hers", "herself", "him",
@@ -40,13 +36,6 @@ def create_coref_text_files(original_text_files):
         os.system(command)
         sorted_tokens_range_result, tokens = read_coref_file(coref_input_file_path)
         write_coref_files(os.path.join(coref_text_files_dir, text_input_file), sorted_tokens_range_result, tokens)
-
-
-# def find_suitable_coref_entity(lists_of_tokens):
-#     chosen_list = lists_of_tokens[0]
-#     if len(lists_of_tokens[1]) > 1:
-#         chosen_list = lists_of_tokens[1]
-#     return chosen_list
 
 
 def filter_pronoun_tokens(lists_of_tokens):
@@ -99,8 +88,11 @@ def choose_list(lists_of_tokens):
 def read_coref_file(coref_input_file_path):
     input_file = open(coref_input_file_path, 'r')
     tokens_range_result = []
+
     for json_dict in input_file:
         json_object = json.loads(json_dict)
+        if "clusters" not in json_object:
+            return [], json_object["tokens"]
         clusters, tokens = json_object["clusters"], json_object["tokens"]
         for cluster in clusters:
             lists_of_tokens = []
@@ -132,6 +124,8 @@ def create_coref_input_file(text_input_file_path, coref_input_file_path):
     for line in input_file:
         tokens = line.split(' ')
         for token in tokens:
+            if not token:
+                continue
             if ".\n" in token:
                 token = token.replace(".\n", "")
                 dictionary["tokens"].append(token)
@@ -168,8 +162,9 @@ def write_coref_files(output_file_path, sorted_tokens_range_result, tokens):
         output.append(tokens[i])
 
     output_str = " ".join(output)
-    output_str = output_str.replace(" . ", ".\n")
-    output_str += "."
+    output_str = output_str.replace(" .", ".\n")
+    output_str = output_str.replace("\n ", "\n")
+    # output_str += "."
     output_file.write(output_str)
 
 
