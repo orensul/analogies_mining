@@ -167,12 +167,12 @@ def shouldIgnoreQA(question, q_slots, verb, ans_prob, entity, sentence_tokens, s
     return False
 
 
-def update_question_answers_map(question_answers_map, q, q_sub_verb_obj, original_verb, line_idx, verb_idx, entity):
-    if (q, q_sub_verb_obj, original_verb, 'L', line_idx + 1, verb_idx + 1) in question_answers_map:
-        question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', line_idx + 1, verb_idx + 1)].append(
+def update_question_answers_map(question_answers_map, q, q_sub_verb_obj, original_verb, side, line_idx, verb_idx, entity):
+    if (q, q_sub_verb_obj, original_verb, side, line_idx + 1, verb_idx + 1) in question_answers_map:
+        question_answers_map[(q, q_sub_verb_obj, original_verb, side, line_idx + 1, verb_idx + 1)].append(
             entity.lower())
     else:
-        question_answers_map[(q, q_sub_verb_obj, original_verb, 'L', line_idx + 1, verb_idx + 1)] = [
+        question_answers_map[(q, q_sub_verb_obj, original_verb, side, line_idx + 1, verb_idx + 1)] = [
             entity.lower()]
 
 
@@ -229,11 +229,11 @@ def read_parsed_qasrl(filename):
 
             q_list, q_sub_verb_obj_list, entity_before_list = process_beams(beams_before_verb, "before", sentence_tokens, verb, sentence_verbs_indices)
             for i in range(len(q_list)):
-                update_question_answers_map(question_answers_map, q_list[i], q_sub_verb_obj_list[i], original_verb, line_idx, verb_idx, entity_before_list[i])
+                update_question_answers_map(question_answers_map, q_list[i], q_sub_verb_obj_list[i], original_verb, 'L', line_idx, verb_idx, entity_before_list[i])
 
             q_list, q_sub_verb_obj_list, entity_after_list = process_beams(beams_after_verb, "after", sentence_tokens, verb, sentence_verbs_indices)
             for i in range(len(q_list)):
-                update_question_answers_map(question_answers_map, q_list[i], q_sub_verb_obj_list[i], original_verb, line_idx, verb_idx, entity_after_list[i])
+                update_question_answers_map(question_answers_map, q_list[i], q_sub_verb_obj_list[i], original_verb, 'R', line_idx, verb_idx, entity_after_list[i])
 
     answer_question_map = create_answer_question_map(question_answers_map)
     return answer_question_map

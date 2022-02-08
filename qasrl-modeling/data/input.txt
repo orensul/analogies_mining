@@ -1,7 +1,5 @@
-1	Adult mushrooms produce spores.
-2	Release spores into the air by process of sporulation.
-3	Spores are carried by the wind.
-4	Land in a hospitable growing environment.
-5	Spores germinate into the soil.
-6	The mushroom starts growing.
-7	The mushroom produce spores of The mushroom own to repeat the process.
+1	A surgeon was trying to destroy the cancer, by using these rays.
+2	A surgeon needed to use these rays at a high intensity in order to destroy the cancer,.
+3	However, at such an intensity the healthy brain tissue will also be destroyed.
+4	After considerable thought, A surgeon knew just what to do.
+5	A surgeon divided these rays up into batches of low-intensity rays, and then by sending these rays simultaneously from a number of different directions, these rays converged on the cancer, making up a sufficiently high intensity to destroy the cancer,

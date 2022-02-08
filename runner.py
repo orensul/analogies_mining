@@ -18,7 +18,7 @@ text_files_dir = '../data/original_text_files'
 # pair_of_inputs = [('how_snow_forms1', 'how_snow_forms2')]
 
 # good with coref take the shortest
-# pair_of_inputs = [('animal_cell', 'factory')]
+pair_of_inputs = [('animal_cell', 'factory')]
 
 # good with coref take the shortest
 # pair_of_inputs = [('electrical_circuit', 'water_pump')]
@@ -53,7 +53,7 @@ text_files_dir = '../data/original_text_files'
 
 # pair_of_inputs = [('test_base', 'test_target')]
 
-pair_of_inputs = [('propara_para_id_872', 'propara_para_id_687')]
+# pair_of_inputs = [('propara_para_id_915', 'propara_para_id_687')]
 
 qasrl_prefix_path = './qasrl-modeling/data/'
 qasrl_suffix_path = '_span_to_question.jsonl'
@@ -61,14 +61,14 @@ qasrl_suffix_path = '_span_to_question.jsonl'
 run_coref = False
 run_qasrl = False
 run_mappings = True
-more_precision_oriented = False
+generate_mappings_precision_oriented = False
 num_mappings_to_show = 5
 colors = ['r', 'g', 'b', 'y', 'm']
 default_cos_sim_threshold = 0.85
 len_solution_cos_sim_threshold_map = {0: 0.65, 1: 0.75, 2: 0.8, 3: 0.8, 4: 0.85, 5: 0.85}
 
 first_batch_from = 7
-first_batch_till = 700
+first_batch_till = 1150
 
 def calc_solution_total_score(solution):
     total_score = 0
@@ -89,7 +89,7 @@ def run_propara():
     text_file_names = [f.replace("../data/original_text_files/", "") for f in text_file_names]
 
     split_word = "propara_para_id_"
-    text_file_names = [file_name for file_name in text_file_names if int(file_name.partition(split_word)[2][:-4]) >= first_batch_from and int(file_name.partition(split_word)[2][:-4]) <= first_batch_till]
+    text_file_names = [file_name for file_name in text_file_names if int(file_name.partition(split_word)[2][:-4]) >= first_batch_from and int(file_name.partition(split_word)[2][:-4]) <= first_batch_till and int(file_name.partition(split_word)[2][:-4]) not in [915, 939] ]
 
     if run_coref:
         create_coref_text_files(text_file_names)
@@ -129,7 +129,7 @@ def run_propara():
             if not solution:
                 pair_results.append((path1, path2, 0))
                 continue
-            if more_precision_oriented or len(solution) >= num_mappings_to_show - 1:
+            if generate_mappings_precision_oriented or len(solution) >= num_mappings_to_show - 1:
                 score = calc_solution_total_score(solution)
                 pair_results.append((path1, path2, score))
                 # plot_bipartite_graph(solution[:num_mappings_to_show], colors[:num_mappings_to_show], default_cos_sim_threshold)
@@ -164,7 +164,7 @@ def main():
     if run_mappings:
         for pair in get_pair_of_inputs_qasrl_path(pair_of_inputs):
             solution = generate_mappings(pair, default_cos_sim_threshold)
-            if more_precision_oriented or len(solution) >= num_mappings_to_show - 1:
+            if generate_mappings_precision_oriented or len(solution) >= num_mappings_to_show - 1:
                 plot_bipartite_graph(solution[:num_mappings_to_show], colors[:num_mappings_to_show], default_cos_sim_threshold)
                 continue
             cos_sim_threshold = len_solution_cos_sim_threshold_map[len(solution)]
@@ -190,7 +190,7 @@ def get_text_file_names():
     return text_files_path
 
 if __name__ == '__main__':
-    # main()
-    run_propara()
+    main()
+    # run_propara()
 
 

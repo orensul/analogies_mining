@@ -22,19 +22,19 @@ verbose = False
 def generate_mappings(pair, cos_sim_threshold):
     text1_answer_question_map = read_parsed_qasrl(pair[0])
     text2_answer_question_map = read_parsed_qasrl(pair[1])
-    text1_corpus_entities = [key for key in text1_answer_question_map.keys()]
-    text2_corpus_entities = [key for key in text2_answer_question_map.keys()]
+    text1_corpus_entities = list(text1_answer_question_map.keys())
+    text2_corpus_entities = list(text2_answer_question_map.keys())
 
     if not text1_corpus_entities or not text2_corpus_entities:
         return None
     if verbose:
         print_corpus_entities(text1_corpus_entities, text2_corpus_entities)
 
-    text1_clusters_of_entities = get_clustering_result(text1_answer_question_map, text1_corpus_entities, distance_threshold=1)
+    text1_clusters_of_entities = get_clusters_of_entities(text1_answer_question_map, text1_corpus_entities, distance_threshold=1)
 
     text1_clusters_of_questions = get_clusters_of_questions(text1_clusters_of_entities, text1_answer_question_map)
 
-    text2_clusters_of_entities = get_clustering_result(text2_answer_question_map, text2_corpus_entities, distance_threshold=1)
+    text2_clusters_of_entities = get_clusters_of_entities(text2_answer_question_map, text2_corpus_entities, distance_threshold=1)
 
     text2_clusters_of_questions = get_clusters_of_questions(text2_clusters_of_entities, text2_answer_question_map)
 
@@ -42,9 +42,8 @@ def generate_mappings(pair, cos_sim_threshold):
         print_clusters_of_entities(text1_clusters_of_entities, text2_clusters_of_entities)
         print_clusters_of_questions(text1_clusters_of_questions, text2_clusters_of_questions)
 
-    clusters_scores = get_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions,
+    clusters_scores = get_sorted_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions,
                                                    text2_clusters_of_entities, text2_clusters_of_questions, cos_sim_threshold)
-    clusters_scores = sorted(clusters_scores, key=lambda t: t[::-1], reverse=True)
     if verbose:
         print()
         print("sorted clusters scores:")
@@ -70,15 +69,12 @@ def generate_mappings(pair, cos_sim_threshold):
             print(mapping)
 
     cache = beam_search(min(len(mappings_no_duplicates), beam), mappings_no_duplicates)
-    if cache:
-        best_solution, best_score = cache[0][0], cache[0][1]
-        solution = [mappings_no_duplicates[mapping_id] for mapping_id in best_solution]
-        solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
-        print()
-        print("solution: ")
-        print(solution)
-        return solution
-    return None
+    solution = [mappings_no_duplicates[mapping_id] for mapping_id in cache[0][0]]
+    solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
+    print()
+    print("solution: ")
+    print(solution)
+    return solution
 
     # mappings_after_coref = get_mappings_solution_after_coref(solution)
     #
@@ -89,6 +85,20 @@ def generate_mappings(pair, cos_sim_threshold):
     #         print(mapping)
     #
     # plot_bipartite_graph(mappings_after_coref)
+
+def get_solution_from_beam_search_cache(cache, mappings_no_duplicates):
+    if not cache:
+        return None
+    best_solution, best_score = cache[0][0], cache[0][1]
+    solution = [mappings_no_duplicates[mapping_id] for mapping_id in best_solution]
+    solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
+    print()
+    print("solution: ")
+    print(solution)
+    return solution
+
+
+
 
 
 def get_mappings_solution_after_coref(solution):
@@ -228,39 +238,37 @@ def print_clusters_of_entities(text1_clusters_of_entities, text2_clusters_of_ent
 
 
 def get_total_score_consistent_mappings(mapping_indices, mappings_no_dups):
-  total_score = 0
-  seen_base, seen_target = {}, {}
-  res_of_mapping_indices = set()
-  for mapping_idx in mapping_indices:
-    mapping = mappings_no_dups[mapping_idx]
-    if mapping[0][0] in seen_base or mapping[1][0] in seen_target:
-      continue
-    seen_base[mapping[0][0]] = True
-    seen_target[mapping[1][0]] = True
-    total_score += mapping[-1]
-    res_of_mapping_indices.add(mapping_idx)
-  return res_of_mapping_indices, total_score
+    total_score = 0
+    seen_base, seen_target = {}, {}
+    res_of_mapping_indices = set()
+    for mapping_idx in mapping_indices:
+        mapping = mappings_no_dups[mapping_idx]
+        if mapping[0][0] in seen_base or mapping[1][0] in seen_target:
+            continue
+        seen_base[mapping[0][0]] = True
+        seen_target[mapping[1][0]] = True
+        total_score += mapping[-1]
+        res_of_mapping_indices.add(mapping_idx)
+    return res_of_mapping_indices, total_score
 
 
 def beam_search(B, mappings_no_dups):
-  cache = []
-  if len(mappings_no_dups) >= B:
     cache = [({i}, mappings_no_dups[i][-1]) for i in range(B)]
     while True:
-      start_cache = cache.copy()
-      for tup in cache:
-        mapping_indices = tup[0]
-        for j in range(len(mappings_no_dups)):
-          if j in mapping_indices:
-            continue
-          new_mapping_indices, curr_score = get_total_score_consistent_mappings(mapping_indices.union({j}), mappings_no_dups)
-          if (new_mapping_indices, curr_score) not in cache:
-            cache.append((new_mapping_indices, curr_score))
-      cache = sorted(cache, key=lambda t: t[1], reverse=True)
-      cache = cache[:B]
-      if cache == start_cache:
-        break
-  return cache
+        start_cache = cache.copy()
+        for tup in cache:
+            mapping_indices = tup[0]
+            for j in range(len(mappings_no_dups)):
+                if j in mapping_indices:
+                    continue
+                new_mapping_indices, curr_score = get_total_score_consistent_mappings(mapping_indices.union({j}), mappings_no_dups)
+                if (new_mapping_indices, curr_score) not in cache:
+                    cache.append((new_mapping_indices, curr_score))
+        cache = sorted(cache, key=lambda t: t[1], reverse=True)
+        cache = cache[:B]
+        if cache == start_cache:
+            break
+    return cache
 
 def get_connected_clusters(text_clusters_of_questions, text_cluster_entities_idx):
     i = text_cluster_entities_idx
@@ -327,8 +335,8 @@ def get_questions_list_from_cluster(cluster_of_questions):
     return [q for tup in cluster_of_questions for q in tup[1]]
 
 
-def should_filter_questions(tup):
-    q1, qq_subject_verb_obj, q2, q2_subject_verb_obj = tup[1][0], tup[1][1], tup[2][0], tup[2][1]
+def should_filter_questions(triplet):
+    q1, qq_subject_verb_obj, q2, q2_subject_verb_obj = triplet[1][0], triplet[1][1], triplet[2][0], triplet[2][1]
     if qq_subject_verb_obj != q2_subject_verb_obj:
         return True
     q1_list, q2_list = q1.split(' '), q2.split(' ')
@@ -340,15 +348,15 @@ def should_filter_questions(tup):
 def get_sent_bert_similarity_map_between_questions(questions1, questions2):
     sent_bert_similarity_map = {}
     cos_sim_all_questions_result = get_cosine_sim_between_sentences(questions1, questions2)
-    for tup in cos_sim_all_questions_result:
-        if should_filter_questions(tup):
+    for triplet in cos_sim_all_questions_result:
+        if should_filter_questions(triplet):
             continue
-        cos_sim = round(tup[0].tolist(), 3)
-        sent_bert_similarity_map[(tup[1], tup[2])] = cos_sim
+        cos_sim = round(triplet[0].tolist(), 3)
+        sent_bert_similarity_map[(triplet[1], triplet[2])] = cos_sim
     return sent_bert_similarity_map
 
 
-def get_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions, text2_clusters_of_entities,
+def get_sorted_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions, text2_clusters_of_entities,
                                  text2_clusters_of_questions, cos_sim_threshold):
     questions1 = get_questions_list_from_cluster(text1_clusters_of_questions)
     questions2 = get_questions_list_from_cluster(text2_clusters_of_questions)
@@ -373,6 +381,8 @@ def get_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_q
         print("number of clusters in text2: " + str(len(text2_clusters_of_questions)))
         print("number of pairs of clusters above cosine similarity threshold: " + str(pass_threshold_count))
         print("out of total count of pairs: " + str(total_count))
+
+    clusters_scores = sorted(clusters_scores, key=lambda t: t[::-1], reverse=True)
     return clusters_scores
 
 
@@ -429,7 +439,7 @@ def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
     #     else:
     #         print(right, left)
 
-def get_clustering_result(answer_question_map, corpus_entities, distance_threshold):
+def get_clusters_of_entities(answer_question_map, corpus_entities, distance_threshold):
     filtered_corpus_entities = []
     filtered_answer_question_map = {}
     for entity in corpus_entities:
@@ -445,15 +455,13 @@ def get_clustering_result(answer_question_map, corpus_entities, distance_thresho
 
     corpus_embeddings = clustering_embedder.encode(corpus_entities)
 
-
     # Normalize the embeddings to unit length
     corpus_embeddings = corpus_embeddings / np.linalg.norm(corpus_embeddings, axis=1, keepdims=True)
 
     # Perform kmean clustering
     clustering_model = AgglomerativeClustering(n_clusters=None,
                                                distance_threshold=distance_threshold)  # , affinity='cosine', linkage='average', distance_threshold=0.4)
-    if corpus_embeddings.shape[0] == 1:
-        print(1)
+
     clustering_model.fit(corpus_embeddings)
     cluster_assignment = clustering_model.labels_
 
