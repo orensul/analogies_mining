@@ -23,6 +23,8 @@ q_prob_threshold = 0.15
 verbose = False
 should_run_qasrl = True
 
+from coref import pronouns
+
 
 def main():
     if should_run_qasrl:
@@ -141,10 +143,10 @@ def shouldIgnoreQA(question, q_slots, verb, ans_prob, entity, sentence_tokens, s
         if verbose:
             print("Filter out QA because of answer probability is: " + str(ans_prob) + " which is less or equal to: " + str(ans_prob_threshold))
         return True
-
-    if q_slots['wh'] != '_' and q_slots['aux'] == '_' and q_slots['subj'] == "_" \
-            and q_slots['obj'] == "_" and q_slots['prep'] == "_" and q_slots['obj2'] == "_" \
-            and verb['verbInflectedForms']['stem'].lower() == "be":
+    # q_slots['wh'] != '_' and q_slots['aux'] == '_' and q_slots['subj'] == "_" \
+    # and q_slots['obj'] == "_" and q_slots['prep'] == "_" and q_slots['obj2'] == "_" \
+    # and
+    if verb['verbInflectedForms']['stem'].lower() == "be":
         if verbose:
             print("Filter out QA because this question contains only 'be' verb")
         return True
@@ -162,6 +164,11 @@ def shouldIgnoreQA(question, q_slots, verb, ans_prob, entity, sentence_tokens, s
     if not entity_contains_noun(entity):
         if verbose:
             print("Filter out QA because entity does not contains noun: " + entity)
+        return True
+
+    if entity.lower() in pronouns:
+        if verbose:
+            print("Filter out QA because entity is a pronoun: " + entity)
         return True
 
     return False
@@ -204,6 +211,7 @@ def process_beams(beams, before_after, sentence_tokens, verb, sentence_verbs_ind
             q_sub_verb_obj_list.append(q_sub_verb_obj)
             entity_list.append(entity)
 
+
     return q_list, q_sub_verb_obj_list, entity_list
 
 
@@ -229,11 +237,11 @@ def read_parsed_qasrl(filename):
 
             q_list, q_sub_verb_obj_list, entity_before_list = process_beams(beams_before_verb, "before", sentence_tokens, verb, sentence_verbs_indices)
             for i in range(len(q_list)):
-                update_question_answers_map(question_answers_map, q_list[i], q_sub_verb_obj_list[i], original_verb, 'L', line_idx, verb_idx, entity_before_list[i])
+                update_question_answers_map(question_answers_map, q_list[i], q_sub_verb_obj_list[i], original_verb, 'L', line_idx, verb_idx, entity_before_list[i].strip())
 
             q_list, q_sub_verb_obj_list, entity_after_list = process_beams(beams_after_verb, "after", sentence_tokens, verb, sentence_verbs_indices)
             for i in range(len(q_list)):
-                update_question_answers_map(question_answers_map, q_list[i], q_sub_verb_obj_list[i], original_verb, 'R', line_idx, verb_idx, entity_after_list[i])
+                update_question_answers_map(question_answers_map, q_list[i], q_sub_verb_obj_list[i], original_verb, 'R', line_idx, verb_idx, entity_after_list[i].strip())
 
     answer_question_map = create_answer_question_map(question_answers_map)
     return answer_question_map

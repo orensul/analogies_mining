@@ -1,5 +1,9 @@
-1	A surgeon was trying to destroy the cancer, by using these rays.
-2	A surgeon needed to use these rays at a high intensity in order to destroy the cancer,.
-3	However, at such an intensity the healthy brain tissue will also be destroyed.
-4	After considerable thought, A surgeon knew just what to do.
-5	A surgeon divided these rays up into batches of low-intensity rays, and then by sending these rays simultaneously from a number of different directions, these rays converged on the cancer, making up a sufficiently high intensity to destroy the cancer,
+1	Aluminium cans are put into a recycling bin.
+2	Aluminium cans are then collected and taken to a treatment plant.
+3	At the treatment plant the aluminium is sorted and cleaned.
+4	Readied for reprocessing.
+5	The aluminum cans go through a re-melt process.
+6	Turned into molten aluminium.
+7	The molten aluminum is made into large blocks called ingots.
+8	The ingots are sent to mills and are rolled out into thin sheets.
+9	The rolls are ready to be made into new aluminum products.

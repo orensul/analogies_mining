@@ -13,7 +13,7 @@ clustering_embedder = questions_similarity_embedder
 # clustering_embedder = SentenceTransformer('msmarco-distilbert-base-v4')
 
 
-max_num_words_in_entity = 7
+max_num_words_in_entity = 5
 score_boosting_same_sentence = 1
 beam = 7
 verbose = False
@@ -67,7 +67,8 @@ def generate_mappings(pair, cos_sim_threshold):
         print("all mappings without duplicates:")
         for mapping in mappings_no_duplicates:
             print(mapping)
-
+    if len(mappings_no_duplicates) == 0:
+        return None
     cache = beam_search(min(len(mappings_no_duplicates), beam), mappings_no_duplicates)
     solution = [mappings_no_duplicates[mapping_id] for mapping_id in cache[0][0]]
     solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
@@ -190,11 +191,7 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
                             print(cluster_connected_base, verb_connected_base, cluster_base)
                             print(cluster_connected_target, verb_connected_target, cluster_target)
 
-        found = False
-        for item in extended_mappings:
-            if item[0] == cluster_base and item[1] == cluster_target and item[2] == similar_questions:
-                found = True
-        if not found:
+        if not has_found_connections(extended_mappings, cluster_base, cluster_target, similar_questions):
             extended_mappings.append((cluster_base, cluster_target, similar_questions, score))
 
         if verbose:
@@ -203,6 +200,14 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
                 print(new_map)
             print()
     return extended_mappings
+
+
+def has_found_connections(extended_mappings, cluster_base, cluster_target, similar_questions):
+    found = False
+    for item in extended_mappings:
+        if item[0] == cluster_base and item[1] == cluster_target and item[2] == similar_questions:
+            found = True
+    return found
 
 
 def print_corpus_entities(text1_corpus_entities, text2_corpus_entities):
@@ -237,7 +242,7 @@ def print_clusters_of_entities(text1_clusters_of_entities, text2_clusters_of_ent
     print()
 
 
-def get_total_score_consistent_mappings(mapping_indices, mappings_no_dups):
+def get_consistent_mapping_indices(mapping_indices, mappings_no_dups):
     total_score = 0
     seen_base, seen_target = {}, {}
     res_of_mapping_indices = set()
@@ -261,7 +266,7 @@ def beam_search(B, mappings_no_dups):
             for j in range(len(mappings_no_dups)):
                 if j in mapping_indices:
                     continue
-                new_mapping_indices, curr_score = get_total_score_consistent_mappings(mapping_indices.union({j}), mappings_no_dups)
+                new_mapping_indices, curr_score = get_consistent_mapping_indices(mapping_indices.union({j}), mappings_no_dups)
                 if (new_mapping_indices, curr_score) not in cache:
                     cache.append((new_mapping_indices, curr_score))
         cache = sorted(cache, key=lambda t: t[1], reverse=True)
@@ -294,12 +299,10 @@ def are_verbs_in_similar_questions(verb_connected_base, verb_connected_target, s
 
 
 def get_mapping_score(clusters_scores, cluster1, cluster2):
-  for map in clusters_scores:
-    if map[0][0] == cluster1[0] and map[1][0] == cluster2[0]:
-      return map[-2], map[-1]
-  return [], 0
-
-
+    for map in clusters_scores:
+        if map[0][0] == cluster1[0] and map[1][0] == cluster2[0]:
+            return map[-2], map[-1]
+    return [], 0
 
 
 

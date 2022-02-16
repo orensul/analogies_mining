@@ -110,6 +110,8 @@ def read_coref_file(coref_input_file_path):
             chosen_tokens_range = list_to_tokens_range(chosen_list_of_tokens, cluster, tokens)
 
             for tokens_range in cluster:
+                if tokens_range[1] > tokens_range[0]:
+                    continue
                 if tokens_range == chosen_tokens_range:
                     continue
                 tokens_range_result.append((tokens_range, chosen_tokens_range))
