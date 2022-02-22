@@ -389,10 +389,11 @@ def get_sorted_entities_clusters_scores(text1_clusters_of_entities, text1_cluste
     return clusters_scores
 
 
-def convert_cluster_set_to_string(cluster_set):
+def convert_cluster_set_to_string(cluster_set, side):
     cluster_set = str(cluster_set)
     cluster_set = cluster_set[1:-1]
     cluster_set = cluster_set.split(',')
+    cluster_set[0] += side
     cluster_set = "\n".join(cluster_set)
     return cluster_set
 
@@ -403,19 +404,19 @@ def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
 
     for i, quadruple in enumerate(clusters_scores):
         left, _, similar_questions, score = quadruple
-        left_vertices.append(convert_cluster_set_to_string(left))
+        left_vertices.append(convert_cluster_set_to_string(left, "L"))
 
     right_vertices = []
     for i, quadruple in enumerate(clusters_scores):
         _, right, similar_questions, score = quadruple
-        right_vertices.append(convert_cluster_set_to_string(right))
+        right_vertices.append(convert_cluster_set_to_string(right, "R"))
 
     B.add_nodes_from(left_vertices, bipartite=0)
     B.add_nodes_from(right_vertices, bipartite=1)
 
     for i, quadruple in enumerate(clusters_scores):
         left, right, similar_questions, score = quadruple
-        B.add_edge(convert_cluster_set_to_string(left), convert_cluster_set_to_string(right), weight=round(score, 2))
+        B.add_edge(convert_cluster_set_to_string(left, "L"), convert_cluster_set_to_string(right, "R"), weight=round(score, 2))
 
 
     plt.figure(figsize=(24, 8))

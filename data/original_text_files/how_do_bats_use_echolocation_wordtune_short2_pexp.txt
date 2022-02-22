@@ -1,0 +1,8 @@
+A bat flies over an area.
+They make sounds with their mouths or noses.
+Its sound travels.
+It hits objects.
+These sound waves bounce back to the bat.
+This echoing sound is heard by the bat.
+Because of the echo, the bat knows what objects are nearby.
+It doesn't hurt itself hitting them.

@@ -64,7 +64,10 @@ text_files_dir = '../data/original_text_files'
 
 # pair_of_inputs = [('test_base', 'test_target')]
 
-pair_of_inputs = [('propara_para_id_139', 'propara_para_id_256')]
+pair_of_inputs = [('how_does_igneous_rock_form_propara_pexp', 'how_does_igneous_rock_form_propara_other_pexp')]
+
+propara_paraphrasing_exp_inputs = ['human_lifecycle', 'how_do_bats_use_echolocation', 'how_do_lungs_work', 'how_acid_rain_affect_env', 'process_of_recycling_aluminum_can']
+
 
 
 # 'rattermann_story8_base_v1.txt', 'rattermann_story8_base_v2.txt',
@@ -115,23 +118,25 @@ propara_results_path = "data/propara/propara_results.jsonl"
 qasrl_prefix_path = './qasrl-modeling/data/'
 qasrl_suffix_path = '_span_to_question.jsonl'
 
+paraphrasing_exp_output_file = "paraphrasing_exp.jsonl"
+
+
 run_coref = False
 run_qasrl = False
-run_mappings = True
+run_mappings = False
 generate_mappings_precision_oriented = True
 num_mappings_to_show = 5
 colors = ['r', 'g', 'b', 'y', 'm']
-default_cos_sim_threshold = 0.8
+default_cos_sim_threshold = 0.85
 len_solution_cos_sim_threshold_map = {0: 0.65, 1: 0.75, 2: 0.8, 3: 0.8, 4: 0.85, 5: 0.85}
-min_num_mappings_in_pair_of_texts = 3
+top_k_for_medians_calc = 4
 first_batch_from = 7
-first_batch_till = 500
+first_batch_till = 1000
 
 def calc_solution_total_score(solution):
-    scores = [round(item[-1], 3) for item in solution]
+    scores = [round(item[-1], 3) for item in solution[:top_k_for_medians_calc]]
     percentile_50 = np.percentile(scores, 50)
-    return len(solution) * percentile_50 if len(solution) >= min_num_mappings_in_pair_of_texts else 0
-    return scores
+    return len(solution) * percentile_50
 
 def extract_file_name_from_full_qasrl_path(path):
     path = path.replace(qasrl_prefix_path, "")
@@ -146,6 +151,91 @@ def read_propara_id_title_map(filename):
         return json_object
 
 
+def run_paraphrasing_exp():
+    os.chdir('s2e-coref')
+    text_file_names = [f for f in glob.glob("../data/original_text_files/*_pexp.txt")]
+    text_file_names = [f.replace("../data/original_text_files/", "") for f in text_file_names]
+
+
+    if run_coref:
+        create_coref_text_files(text_file_names)
+
+    os.chdir('../qasrl-modeling')
+    if run_qasrl:
+        write_qasrl_output_files(text_file_names)
+
+    pair_of_inputs = []
+    for i in range(len(text_file_names)):
+        for j in range(i+1, len(text_file_names)):
+            file1 = text_file_names[i].replace(".txt", "")
+            file2 = text_file_names[j].replace(".txt", "")
+            pair_of_inputs.append((file1, file2))
+
+    os.chdir('../')
+    if run_mappings:
+        run_propara_exp(pair_of_inputs)
+
+    exp_pairs_rank = []
+    input_file = open(paraphrasing_exp_output_file, 'r')
+    for json_dict in input_file:
+        json_object = json.loads(json_dict)
+        for l in json_object:
+            input1, input2, score = l[0][0], l[0][1], l[1]
+            input1_prompt = input1.partition("_wordtune_")[0] if "_wordtune_" in input1 else input1.partition("_propara_")[0]
+            input2_prompt = input2.partition("_wordtune_")[0] if "_wordtune_" in input2 else \
+            input2.partition("_propara_")[0]
+            label = 1 if input1_prompt == input2_prompt else 0
+            exp_pairs_rank.append((input1, input2, label, score))
+
+    print(exp_pairs_rank)
+
+    from sklearn.metrics import roc_curve, auc
+
+    scores_list = [quad[-1] for quad in exp_pairs_rank]
+    labels_list = [quad[2] for quad in exp_pairs_rank]
+
+    fpr, tpr, thresholds = metrics.roc_curve(np.array(labels_list), np.array(scores_list))
+    auc = metrics.auc(fpr, tpr)
+    print("AUC: ", auc)
+    # matplotlib
+    import matplotlib.pyplot as plt
+    plt.style.use('seaborn')
+
+    # plot roc curves
+    plt.plot(fpr, tpr, linestyle='--', color='orange')
+    # title
+    plt.title('ROC curve')
+    # x label
+    plt.xlabel('False Positive Rate')
+    # y label
+    plt.ylabel('True Positive rate')
+
+    plt.legend(loc='best')
+    plt.savefig('ROC', dpi=300)
+    plt.show();
+
+
+
+
+def run_propara_exp(pair_of_inputs):
+    pairs = get_pair_of_inputs_qasrl_path(pair_of_inputs)
+    count_pairs = 1
+    results = []
+    for pair in pairs:
+        print(pair[0], pair[1])
+        print("pair " + str(count_pairs) + " out of " + str(len(pairs)))
+        path1, path2 = extract_file_name_from_full_qasrl_path(pair[0]), extract_file_name_from_full_qasrl_path(
+            pair[1])
+        count_pairs += 1
+        solution = generate_mappings(pair, default_cos_sim_threshold)
+        score = 0 if not solution else calc_solution_total_score(solution)
+        print("pair: ", pair)
+        print("score: ", score)
+        results.append([(path1, path2), score])
+
+    results.sort(key=lambda x: x[1], reverse=True)
+    with open(paraphrasing_exp_output_file, 'w') as output_file:
+        json.dump(results, output_file)
 
 
 def run_propara():
@@ -172,6 +262,8 @@ def run_propara():
     os.chdir('../')
     if run_mappings:
         run_propara_mappings(pair_of_inputs)
+
+
 
 
 
@@ -416,8 +508,9 @@ def get_text_file_names():
     return text_files_path
 
 if __name__ == '__main__':
-    # main()
-    run_propara()
+    main()
+    # run_propara()
     # run_stories_paraphrases()
+    # run_paraphrasing_exp()
 
 

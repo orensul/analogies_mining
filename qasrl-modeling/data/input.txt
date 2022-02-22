@@ -1,9 +1,7 @@
-1	Aluminium cans are put into a recycling bin.
-2	Aluminium cans are then collected and taken to a treatment plant.
-3	At the treatment plant the aluminium is sorted and cleaned.
-4	Readied for reprocessing.
-5	The aluminum cans go through a re-melt process.
-6	Turned into molten aluminium.
-7	The molten aluminum is made into large blocks called ingots.
-8	The ingots are sent to mills and are rolled out into thin sheets.
-9	The rolls are ready to be made into new aluminum products.
+1	Aluminum cans and other products are recycled.
+2	Recycling facilities or your town collect and transport aluminum.
+3	At the central facility, the aluminum is sorted and cleaned.
+4	The ink and coatings are removed.
+5	aluminum is then formed into ingots.
+6	During transport, the ingots are rolled out for easier manipulation.
+7	Now ingots can be turned into new aluminum products
