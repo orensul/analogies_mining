@@ -1,0 +1,6 @@
+The engine ignites fuel.
+The fuel combusts.
+Combustion gases push the piston in the engine.
+The piston rotates the crankshaft.
+The crankshaft turns gears in the powertrain.
+The powertrain moves the wheels of the car.

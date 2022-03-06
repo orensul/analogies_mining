@@ -1,0 +1,6 @@
+The bat produces sound waves by screeching.
+The sound hits an object in front of the bat.
+The sound bounces off that object.
+The sound returns to the bat.
+The bat's brain processes the sound.
+The bat determines how far away the object is.

@@ -1,0 +1,9 @@
+The intake valve opens.
+The piston moves down.
+Takes in air and gas.
+The piston moves back up.
+The spark plug emits a spark.
+The gasoline ignites.
+The gasoline charge in the cylinder explodes, driving the piston down.
+The exhaust valve opens.
+The exhaust leaves the cylinder through the tailpipe.

@@ -1,6 +1,16 @@
 import json
 import os, stat
 import spacy
+import nltk
+nltk.download('punkt')
+
+from nltk.corpus import stopwords
+# nltk.download('stopwords')
+import nltk
+nltk.download('averaged_perceptron_tagger')
+
+from nltk.tokenize import word_tokenize
+
 nlp = spacy.load('en_core_web_sm')
 from shutil import copyfile
 qasrl_input_file_path = 'data/input.txt'
@@ -18,10 +28,11 @@ span_to_question_file_path = "./models/span_to_question.tar.gz"
 
 possible_questions = {'what', 'who', 'which'}
 ans_prob_threshold = 0.05
-q_prob_threshold = 0.15
-
+q_prob_threshold = 0.1
+should_take_only_top1_question = False
 verbose = False
 should_run_qasrl = True
+
 
 from coref import pronouns
 
@@ -94,15 +105,27 @@ def entity_contains_verb(sentence_tokens, sentence_verbs_indices, entity):
             return True
     return False
 
+def is_doc_contains_noun(doc):
+    for token in doc:
+        if token.pos_ in ["PROPN", "NOUN"]:
+            return True
+    return False
+
+def preprocess(sent):
+    sent = nltk.word_tokenize(sent)
+    sent = nltk.pos_tag(sent)
+    return sent
+
 def entity_contains_noun(entity):
-    doc = nlp(entity)
-    count = 0
-    for chunk in doc.noun_chunks:
-        if verbose:
-            print("noun:")
-            print(chunk)
-        count += 1
-    return count > 0
+    tuples = preprocess(entity)
+    for tup in tuples:
+        if tup[1] in ["NNP", "NN", "NNS", "NNPS"]:
+            return True
+    return False
+    # text_tokens = word_tokenize(entity.lower())
+    # entity_without_stopwords = " ".join([word for word in text_tokens if not word in stopwords.words()])
+    # return is_doc_contains_noun(nlp(entity)) or is_doc_contains_noun(nlp(entity_without_stopwords))
+
 
 
 
@@ -143,6 +166,7 @@ def shouldIgnoreQA(question, q_slots, verb, ans_prob, entity, sentence_tokens, s
         if verbose:
             print("Filter out QA because of answer probability is: " + str(ans_prob) + " which is less or equal to: " + str(ans_prob_threshold))
         return True
+
     # q_slots['wh'] != '_' and q_slots['aux'] == '_' and q_slots['subj'] == "_" \
     # and q_slots['obj'] == "_" and q_slots['prep'] == "_" and q_slots['obj2'] == "_" \
     # and
@@ -162,6 +186,7 @@ def shouldIgnoreQA(question, q_slots, verb, ans_prob, entity, sentence_tokens, s
         return True
 
     if not entity_contains_noun(entity):
+
         if verbose:
             print("Filter out QA because entity does not contains noun: " + entity)
         return True
@@ -210,6 +235,9 @@ def process_beams(beams, before_after, sentence_tokens, verb, sentence_verbs_ind
             q_list.append(q)
             q_sub_verb_obj_list.append(q_sub_verb_obj)
             entity_list.append(entity)
+
+            if should_take_only_top1_question:
+                continue
 
 
     return q_list, q_sub_verb_obj_list, entity_list

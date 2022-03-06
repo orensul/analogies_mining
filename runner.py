@@ -29,16 +29,15 @@ text_files_dir = '../data/original_text_files'
 # pair_of_inputs = [('how_snow_forms1', 'how_snow_forms2')]
 
 # good with coref take the shortest
-# pair_of_inputs = [('animal_cell', 'factory')]
+pair_of_inputs = [('animal_cell', 'factory')]
 
 # good with coref take the shortest
 # pair_of_inputs = [('electrical_circuit', 'water_pump')]
 
 
-# good with coref take the shortest
 # pair_of_inputs = [('keane_general', 'keane_surgeon')]
+# pair_of_inputs = [('rattermann_story1_base', 'rattermann_story1_target')]
 
-# good with coref take the shortest
 # pair_of_inputs = [('rattermann_story2_base', 'rattermann_story2_target')]
 
 # pair_of_inputs = [('rattermann_story3_base', 'rattermann_story3_target')]
@@ -47,24 +46,56 @@ text_files_dir = '../data/original_text_files'
 # good with coref take the shortest
 # pair_of_inputs = [('rattermann_story4_base', 'rattermann_story4_target')]
 
+
+# pair_of_inputs = [('rattermann_story5_base', 'rattermann_story5_target')]
+
+
+# contains quotes and no analogies found
+# pair_of_inputs = [('rattermann_story6_base', 'rattermann_story6_target')]
+
+
 # good with coref take the shortest
 # pair_of_inputs = [('rattermann_story8_base', 'rattermann_story8_target')]
 
+
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story9_base', 'rattermann_story9_target')]
+
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story10_base', 'rattermann_story10_target')]
+
+
+
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story11_base', 'rattermann_story11_target')]
+
+
 # good with coref take the shortest
 # pair_of_inputs = [('rattermann_story12_base', 'rattermann_story12_target')]
+
+# pair_of_inputs = [('rattermann_story13_base', 'rattermann_story13_target')]
+
 
 # good with coref take the shortest
 # pair_of_inputs = [('rattermann_story14_base', 'rattermann_story14_target')]
 
 # good with coref take the shortest
+# pair_of_inputs = [('rattermann_story15_base', 'rattermann_story15_target')]
+
+
+# good with coref take the shortest
 # pair_of_inputs = [('rattermann_story16_base', 'rattermann_story16_target')]
+
+# good with coref take the shortest
+# pair_of_inputs = [('rattermann_story17_base', 'rattermann_story17_target')]
+
 
 # good with coref take the shortest
 # pair_of_inputs = [('rattermann_story18_base', 'rattermann_story18_target')]
 
 # pair_of_inputs = [('test_base', 'test_target')]
 
-pair_of_inputs = [('how_does_igneous_rock_form_propara_pexp', 'how_does_igneous_rock_form_propara_other_pexp')]
+# pair_of_inputs = [('propara_para_id_876', 'propara_para_id_687')]
 
 propara_paraphrasing_exp_inputs = ['human_lifecycle', 'how_do_bats_use_echolocation', 'how_do_lungs_work', 'how_acid_rain_affect_env', 'process_of_recycling_aluminum_can']
 
@@ -118,17 +149,19 @@ propara_results_path = "data/propara/propara_results.jsonl"
 qasrl_prefix_path = './qasrl-modeling/data/'
 qasrl_suffix_path = '_span_to_question.jsonl'
 
-paraphrasing_exp_output_file = "paraphrasing_exp.jsonl"
+paraphrasing_syntactic_exp_output_file = "syntactic_paraphrasing_exp"
+paraphrasing_propara_versions_exp_output_file = "propara_version_paraphrasing_exp"
 
 
 run_coref = False
 run_qasrl = False
-run_mappings = False
-generate_mappings_precision_oriented = True
-num_mappings_to_show = 5
-colors = ['r', 'g', 'b', 'y', 'm']
+run_mappings = True
+generate_mappings_precision_oriented = False
+num_mappings_to_show = 7
+colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
 default_cos_sim_threshold = 0.85
-len_solution_cos_sim_threshold_map = {0: 0.65, 1: 0.75, 2: 0.8, 3: 0.8, 4: 0.85, 5: 0.85}
+cos_sim_thresholds = [0.75]
+len_solution_cos_sim_threshold_map = {0: 0.7, 1: 0.75, 2: 0.8, 3: 0.8, 4: 0.85, 5: 0.85, 6: 0.85, 7: 0.85}
 top_k_for_medians_calc = 4
 first_batch_from = 7
 first_batch_till = 1000
@@ -136,7 +169,14 @@ first_batch_till = 1000
 def calc_solution_total_score(solution):
     scores = [round(item[-1], 3) for item in solution[:top_k_for_medians_calc]]
     percentile_50 = np.percentile(scores, 50)
-    return len(solution) * percentile_50
+    if len(solution) == 0:
+        return 0
+    if len(solution) == 1:
+        return percentile_50
+
+    if percentile_50 > 1.0:
+        return len(solution) * percentile_50
+    return float(len(solution))
 
 def extract_file_name_from_full_qasrl_path(path):
     path = path.replace(qasrl_prefix_path, "")
@@ -151,11 +191,102 @@ def read_propara_id_title_map(filename):
         return json_object
 
 
-def run_paraphrasing_exp():
+def run_propara_versions_paraphrase_exp():
+
     os.chdir('s2e-coref')
-    text_file_names = [f for f in glob.glob("../data/original_text_files/*_pexp.txt")]
+    text_file_names = [f for f in glob.glob("../data/original_text_files/propara_versions_paraphrase_exp/*")]
     text_file_names = [f.replace("../data/original_text_files/", "") for f in text_file_names]
 
+
+
+    if run_coref:
+        create_coref_text_files(text_file_names)
+
+
+    os.chdir('../qasrl-modeling')
+    if run_qasrl:
+        write_qasrl_output_files(text_file_names)
+
+    pair_of_inputs = []
+    for i in range(len(text_file_names)):
+        for j in range(i + 1, len(text_file_names)):
+            file1 = text_file_names[i].replace(".txt", "")
+            file2 = text_file_names[j].replace(".txt", "")
+            pair_of_inputs.append((file1, file2))
+
+    os.chdir('../')
+    if run_mappings:
+        for cos_sim in cos_sim_thresholds:
+            run_propara_versions_exp(pair_of_inputs, cos_sim)
+
+    for cos_sim in cos_sim_thresholds:
+        exp_name = "propara versions experiment"
+        show_exp_results(paraphrasing_propara_versions_exp_output_file, cos_sim, exp_name)
+
+
+def run_propara_versions_exp(pair_of_inputs, cos_sim):
+    pairs = get_pair_of_inputs_qasrl_path(pair_of_inputs)
+    count_pairs = 1
+    results = []
+    for pair in pairs:
+        print(pair[0], pair[1])
+        print("pair " + str(count_pairs) + " out of " + str(len(pairs)))
+        path1, path2 = extract_file_name_from_full_qasrl_path(pair[0]), extract_file_name_from_full_qasrl_path(
+            pair[1])
+        count_pairs += 1
+        solution, _, _ = generate_mappings(pair, cos_sim)
+        score = 0 if not solution else calc_solution_total_score(solution)
+        print("pair: ", pair)
+        print("score: ", score)
+        results.append([(path1, path2), score])
+
+    results.sort(key=lambda x: x[1], reverse=True)
+    with open(paraphrasing_propara_versions_exp_output_file + "_cos_sim_" + str(cos_sim) + ".jsonl", 'w') as output_file:
+        json.dump(results, output_file)
+
+
+
+def show_exp_results(output_file, cos_sim, exp_name):
+    exp_pairs_rank = []
+    input_file = open(output_file + "_cos_sim_" + str(cos_sim) + ".jsonl", 'r')
+    for json_dict in input_file:
+        json_object = json.loads(json_dict)
+        for l in json_object:
+            input1, input2, score = l[0][0], l[0][1], l[1]
+            input1_prompt = input1.partition("_wordtune")[0] if "_wordtune" in input1 else \
+            input1.partition("_propara")[0]
+            input2_prompt = input2.partition("_wordtune")[0] if "_wordtune" in input2 else \
+                input2.partition("_propara")[0]
+            label = 1 if input1_prompt == input2_prompt else 0
+            exp_pairs_rank.append((input1, input2, label, score))
+
+    scores_list = [quad[-1] for quad in exp_pairs_rank]
+    labels_list = [quad[2] for quad in exp_pairs_rank]
+
+    fpr, tpr, thresholds = metrics.roc_curve(np.array(labels_list), np.array(scores_list))
+    auc = round(metrics.auc(fpr, tpr), 3)
+    print("AUC: ", auc)
+    # matplotlib
+    import matplotlib.pyplot as plt
+    plt.style.use('seaborn')
+
+    # plot roc curves
+    plt.plot(fpr, tpr, linestyle='--', color='orange')
+    # title
+    plt.title('ROC curve - ' + exp_name + "\n" + "cosine similarity threshold: " + str(cos_sim) + "\n" + "AUC: " + str(auc))
+    # x label
+    plt.xlabel('False Positive Rate')
+    # y label
+    plt.ylabel('True Positive rate')
+
+    plt.legend(loc='best')
+    plt.show()
+
+
+def run_syntatic_paraphrasing_exp():
+    os.chdir('s2e-coref')
+    text_file_names = [f for f in glob.glob("../data/original_text_files/syntactic_wordtune_paraphrase_exp/*")]
+    text_file_names = [f.replace("../data/original_text_files/syntactic_wordtune_paraphrase_exp/", "") for f in text_file_names]
 
     if run_coref:
         create_coref_text_files(text_file_names)
@@ -173,78 +304,63 @@ def run_paraphrasing_exp():
 
     os.chdir('../')
     if run_mappings:
-        run_propara_exp(pair_of_inputs)
-
-    exp_pairs_rank = []
-    input_file = open(paraphrasing_exp_output_file, 'r')
-    for json_dict in input_file:
-        json_object = json.loads(json_dict)
-        for l in json_object:
-            input1, input2, score = l[0][0], l[0][1], l[1]
-            input1_prompt = input1.partition("_wordtune_")[0] if "_wordtune_" in input1 else input1.partition("_propara_")[0]
-            input2_prompt = input2.partition("_wordtune_")[0] if "_wordtune_" in input2 else \
-            input2.partition("_propara_")[0]
-            label = 1 if input1_prompt == input2_prompt else 0
-            exp_pairs_rank.append((input1, input2, label, score))
-
-    print(exp_pairs_rank)
-
-    from sklearn.metrics import roc_curve, auc
-
-    scores_list = [quad[-1] for quad in exp_pairs_rank]
-    labels_list = [quad[2] for quad in exp_pairs_rank]
-
-    fpr, tpr, thresholds = metrics.roc_curve(np.array(labels_list), np.array(scores_list))
-    auc = metrics.auc(fpr, tpr)
-    print("AUC: ", auc)
-    # matplotlib
-    import matplotlib.pyplot as plt
-    plt.style.use('seaborn')
-
-    # plot roc curves
-    plt.plot(fpr, tpr, linestyle='--', color='orange')
-    # title
-    plt.title('ROC curve')
-    # x label
-    plt.xlabel('False Positive Rate')
-    # y label
-    plt.ylabel('True Positive rate')
-
-    plt.legend(loc='best')
-    plt.savefig('ROC', dpi=300)
-    plt.show();
+        for cos_sim in cos_sim_thresholds:
+            run_propara_syntactic_exp(pair_of_inputs, cos_sim)
 
 
 
+    for cos_sim in cos_sim_thresholds:
+        exp_name = "syntactic paraphrases experiment"
+        show_exp_results(paraphrasing_syntactic_exp_output_file, cos_sim, exp_name)
 
-def run_propara_exp(pair_of_inputs):
+
+def get_identical_total_verbs_ratio(l):
+    count_identical_verbs = 0
+    for tup in l:
+        v1, v2 = tup
+        if v1 == v2:
+            count_identical_verbs += 1
+    identical_verbs_out_of_total = count_identical_verbs / len(l)
+    return round(identical_verbs_out_of_total, 3)
+
+
+
+def run_propara_syntactic_exp(pair_of_inputs, cos_sim):
     pairs = get_pair_of_inputs_qasrl_path(pair_of_inputs)
     count_pairs = 1
     results = []
+    list_of_verbs_to_compare = []
     for pair in pairs:
         print(pair[0], pair[1])
         print("pair " + str(count_pairs) + " out of " + str(len(pairs)))
         path1, path2 = extract_file_name_from_full_qasrl_path(pair[0]), extract_file_name_from_full_qasrl_path(
             pair[1])
         count_pairs += 1
-        solution = generate_mappings(pair, default_cos_sim_threshold)
+        solution, _, _ = generate_mappings(pair, default_cos_sim_threshold)
+        if solution:
+            for quad in solution:
+                for mapping in quad[-2]:
+                    v1, v2 = mapping[0][2], mapping[1][2]
+                    list_of_verbs_to_compare.append((v1, v2))
         score = 0 if not solution else calc_solution_total_score(solution)
         print("pair: ", pair)
         print("score: ", score)
         results.append([(path1, path2), score])
 
     results.sort(key=lambda x: x[1], reverse=True)
-    with open(paraphrasing_exp_output_file, 'w') as output_file:
+    with open(paraphrasing_syntactic_exp_output_file + "_cos_sim_" + str(cos_sim) + ".jsonl", 'w') as output_file:
         json.dump(results, output_file)
 
+    print(get_identical_total_verbs_ratio(list_of_verbs_to_compare))
 
-def run_propara():
+
+def run_propara_all_pairs_exp():
     os.chdir('s2e-coref')
     text_file_names = [f for f in glob.glob("../data/original_text_files/propara_para_id_*")]
     text_file_names = [f.replace("../data/original_text_files/", "") for f in text_file_names]
 
     split_word = "propara_para_id_"
-    text_file_names = [file_name for file_name in text_file_names if int(file_name.partition(split_word)[2][:-4])  if int(file_name.partition(split_word)[2][:-4]) >= first_batch_from and int(file_name.partition(split_word)[2][:-4]) <= first_batch_till and int(file_name.partition(split_word)[2][:-4])  not in [159]]
+    text_file_names = [file_name for file_name in text_file_names if int(file_name.partition(split_word)[2][:-4]) if int(file_name.partition(split_word)[2][:-4]) >= first_batch_from and int(file_name.partition(split_word)[2][:-4]) <= first_batch_till and int(file_name.partition(split_word)[2][:-4])  not in [159]]
 
     if run_coref:
         create_coref_text_files(text_file_names)
@@ -295,7 +411,7 @@ def run_propara_mappings(pair_of_inputs):
                                  title2 + "(" + path2.partition("para_id_")[2] + ")", saved_pairs_results[(
             title1 + "(" + path1.partition("para_id_")[2] + ")", title2 + "(" + path2.partition("para_id_")[2] + ")")]))
             continue
-        solution = generate_mappings(pair, default_cos_sim_threshold)
+        solution, _, _ = generate_mappings(pair, default_cos_sim_threshold)
         if not solution:
             pair_results.append((title1 + "(" + path1.partition("para_id_")[2] + ")",
                                  title2 + "(" + path2.partition("para_id_")[2] + ")", 0))
@@ -385,7 +501,7 @@ def run_stories_paraphrases():
             else:
                 labels.append(0)
             print(pair)
-            solution = generate_mappings(pair, default_cos_sim_threshold)
+            solution, _, _ = generate_mappings(pair, default_cos_sim_threshold)
             if not solution:
                 results.append((s1_num + "_" + s1_side + "_" + s1_version + "_vs_" + s2_num + "_" + s2_side + "_" + s2_version, []))
                 continue
@@ -480,17 +596,28 @@ def main():
     os.chdir('../')
     if run_mappings:
         for pair in get_pair_of_inputs_qasrl_path(pair_of_inputs):
-            solution = generate_mappings(pair, default_cos_sim_threshold)
-            score = calc_solution_total_score(solution)
-            if generate_mappings_precision_oriented or len(solution) >= num_mappings_to_show - 1:
-                plot_bipartite_graph(solution[:num_mappings_to_show], colors[:num_mappings_to_show], default_cos_sim_threshold)
+            solution1, solution2, solution3 = generate_mappings(pair, default_cos_sim_threshold)
+            if solution1 is None:
                 continue
-            cos_sim_threshold = len_solution_cos_sim_threshold_map[len(solution)]
-            solution = generate_mappings(pair, cos_sim_threshold)
-            plot_bipartite_graph(solution[:num_mappings_to_show], colors[:num_mappings_to_show], cos_sim_threshold)
+            if generate_mappings_precision_oriented or len(solution1) >= num_mappings_to_show - 1:
+                if solution1:
+                    plot_bipartite_graph(solution1[:num_mappings_to_show], colors[:num_mappings_to_show], default_cos_sim_threshold)
+                if solution2:
+                    plot_bipartite_graph(solution2[:num_mappings_to_show], colors[:num_mappings_to_show],
+                                     default_cos_sim_threshold)
+                if solution3:
+                    plot_bipartite_graph(solution3[:num_mappings_to_show], colors[:num_mappings_to_show],
+                                     default_cos_sim_threshold)
 
-
-
+                continue
+            cos_sim_threshold = len_solution_cos_sim_threshold_map[len(solution1)]
+            solution1, solution2, solution3 = generate_mappings(pair, cos_sim_threshold)
+            if solution1:
+                plot_bipartite_graph(solution1[:num_mappings_to_show], colors[:num_mappings_to_show], cos_sim_threshold)
+            if solution2:
+                plot_bipartite_graph(solution2[:num_mappings_to_show], colors[:num_mappings_to_show], cos_sim_threshold)
+            if solution3:
+                plot_bipartite_graph(solution3[:num_mappings_to_show], colors[:num_mappings_to_show], cos_sim_threshold)
 
 
 def get_pair_of_inputs_qasrl_path(pair_of_inputs):
@@ -509,8 +636,9 @@ def get_text_file_names():
 
 if __name__ == '__main__':
     main()
-    # run_propara()
+    # run_propara_all_pairs_exp()
     # run_stories_paraphrases()
-    # run_paraphrasing_exp()
+    # run_syntatic_paraphrasing_exp()
+    # run_propara_versions_paraphrase_exp()
 
 

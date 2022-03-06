@@ -13,7 +13,7 @@ clustering_embedder = questions_similarity_embedder
 # clustering_embedder = SentenceTransformer('msmarco-distilbert-base-v4')
 
 
-max_num_words_in_entity = 5
+max_num_words_in_entity = 7
 score_boosting_same_sentence = 1
 beam = 7
 verbose = False
@@ -26,7 +26,7 @@ def generate_mappings(pair, cos_sim_threshold):
     text2_corpus_entities = list(text2_answer_question_map.keys())
 
     if not text1_corpus_entities or not text2_corpus_entities:
-        return None
+        return None, None, None
     if verbose:
         print_corpus_entities(text1_corpus_entities, text2_corpus_entities)
 
@@ -68,14 +68,29 @@ def generate_mappings(pair, cos_sim_threshold):
         for mapping in mappings_no_duplicates:
             print(mapping)
     if len(mappings_no_duplicates) == 0:
-        return None
+        return None, None, None
+
+    top1_solution, top2_solution, top3_solution = None, None, None
     cache = beam_search(min(len(mappings_no_duplicates), beam), mappings_no_duplicates)
-    solution = [mappings_no_duplicates[mapping_id] for mapping_id in cache[0][0]]
-    solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
-    print()
-    print("solution: ")
-    print(solution)
-    return solution
+    if len(cache) > 0:
+        top1_solution = [mappings_no_duplicates[mapping_id] for mapping_id in cache[0][0]]
+        top1_solution = sorted(top1_solution, key=lambda t: t[::-1], reverse=True)
+        print()
+        print("top 1 solution: ")
+        print(top1_solution)
+    if len(cache) > 1:
+        top2_solution = [mappings_no_duplicates[mapping_id] for mapping_id in cache[1][0]]
+        top2_solution = sorted(top2_solution, key=lambda t: t[::-1], reverse=True)
+        print("top 2 solution: ")
+        print(top2_solution)
+
+    if len(cache) > 2:
+        top3_solution = [mappings_no_duplicates[mapping_id] for mapping_id in cache[2][0]]
+        top3_solution = sorted(top3_solution, key=lambda t: t[::-1], reverse=True)
+        print("top 3 solution: ")
+        print(top3_solution)
+
+    return top1_solution, top2_solution, top3_solution
 
     # mappings_after_coref = get_mappings_solution_after_coref(solution)
     #
@@ -343,7 +358,7 @@ def should_filter_questions(triplet):
     if qq_subject_verb_obj != q2_subject_verb_obj:
         return True
     q1_list, q2_list = q1.split(' '), q2.split(' ')
-    if (q1_list[0] == 'where' and q1_list[1] != 'where') or (q1_list[0] != 'where' and q2_list[0] == 'where'):
+    if (q1_list[0] == 'where' and q1_list[0] != 'where') or (q1_list[0] != 'where' and q2_list[0] == 'where'):
         return True
     return False
 
@@ -450,7 +465,8 @@ def get_clusters_of_entities(answer_question_map, corpus_entities, distance_thre
         if len(entity.split(' ')) <= max_num_words_in_entity:
             filtered_answer_question_map[entity] = answer_question_map[entity]
             filtered_corpus_entities.append(entity)
-
+        else:
+            print(1)
     corpus_entities, answer_question_map = filtered_corpus_entities, filtered_answer_question_map
 
     # for AgglomerativeClustering clustering at least two entities are needed

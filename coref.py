@@ -9,6 +9,7 @@ coref_input_file_path = 'input_files/input.jsonl'
 text_files_dir = '../data/original_text_files'
 coref_text_files_dir = '../data/coref_text_files'
 
+replace_one_word_token_with_cluster_representative = True
 
 pronouns = {"all", "another", "any", "anybody", "anyone", "anything", "as", "aught", "both", "each", "each other",
             "either", "enough", "everybody", "everyone", "everything", "few", "he", "her", "hers", "herself", "him",
@@ -110,7 +111,7 @@ def read_coref_file(coref_input_file_path):
             chosen_tokens_range = list_to_tokens_range(chosen_list_of_tokens, cluster, tokens)
 
             for tokens_range in cluster:
-                if tokens_range[1] > tokens_range[0]:
+                if replace_one_word_token_with_cluster_representative and tokens_range[1] > tokens_range[0]:
                     continue
                 if tokens_range == chosen_tokens_range:
                     continue

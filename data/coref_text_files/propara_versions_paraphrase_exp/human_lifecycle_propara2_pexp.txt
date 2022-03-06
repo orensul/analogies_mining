@@ -1,0 +1,8 @@
+A human is born.
+The human is an infant.
+The infant grows into a toddler.
+The toddler grows into a child.
+The child grows into a teenager.
+The teenager grows into an adult.
+The adult grows old.
+The human dies
