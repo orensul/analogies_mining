@@ -1,0 +1,8 @@
+In one part of the city, there are a lot of bats flying around.
+Using the mouth or the nose of the bat, they emit sounds.
+These sound waves go away from the bat as they fly.
+The sound waves beat objects in the environment.
+After punching the objects, the sound waves bounce back towards the bat.
+The bat hears the sound waves bouncing off the objects back towards the bat.
+The bat is aware of the objects' location because of where the sound echoed from.
+By hitting the objects, the bat does not hurt itself.

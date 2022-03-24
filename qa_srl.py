@@ -152,6 +152,42 @@ def create_answer_question_map(question_answers_map):
     return answer_question_map
 
 
+def create_answer_verb_map(verb_answer_map):
+    answer_verb_map = {}
+    for key, val in verb_answer_map.items():
+        for item in val:
+            if item in answer_verb_map:
+                answer_verb_map[item].append(key)
+            else:
+                answer_verb_map[item] = [key]
+    return answer_verb_map
+
+def shouldIgnoreQAVerbs(ans_prob, entity, sentence_tokens, sentence_verbs_indices):
+
+    if ans_prob <= ans_prob_threshold:
+        if verbose:
+            print("Filter out QA because of answer probability is: " + str(ans_prob) + " which is less or equal to: " + str(ans_prob_threshold))
+        return True
+
+    if entity_contains_verb(sentence_tokens, sentence_verbs_indices, entity):
+        if verbose:
+            print("Filter out QA because entity contains verb: " + entity)
+        return True
+
+    if not entity_contains_noun(entity):
+
+        if verbose:
+            print("Filter out QA because entity does not contains noun: " + entity)
+        return True
+
+    if entity.lower() in pronouns:
+        if verbose:
+            print("Filter out QA because entity is a pronoun: " + entity)
+        return True
+
+    return False
+
+
 def shouldIgnoreQA(question, q_slots, verb, ans_prob, entity, sentence_tokens, sentence_verbs_indices):
     if question['questionProb'] <= q_prob_threshold:
         if verbose:
@@ -207,6 +243,18 @@ def update_question_answers_map(question_answers_map, q, q_sub_verb_obj, origina
         question_answers_map[(q, q_sub_verb_obj, original_verb, side, line_idx + 1, verb_idx + 1)] = [
             entity.lower()]
 
+def process_beams_verbs(beams, sentence_tokens, verb, sentence_verbs_indices):
+    verbs, entities = [], []
+    for beam in beams:
+        ent = " ".join(sentence_tokens[beam['span'][0]:beam['span'][1]])
+        ans_prob = round(beam['spanProb'], 2)
+        if shouldIgnoreQAVerbs(ans_prob, ent, sentence_tokens, sentence_verbs_indices):
+            continue
+        entities.append(ent)
+        verbs.append(sentence_tokens[verb['verbIndex']].lower())
+
+    return verbs, entities
+
 
 def process_beams(beams, before_after, sentence_tokens, verb, sentence_verbs_indices):
     q_list, q_sub_verb_obj_list, entity_list = [], [], []
@@ -241,6 +289,43 @@ def process_beams(beams, before_after, sentence_tokens, verb, sentence_verbs_ind
 
 
     return q_list, q_sub_verb_obj_list, entity_list
+
+
+def update_verb_answer_map(verb_answer_map, verbs, entities):
+    for i in range(len(verbs)):
+        verb, entity = verbs[i], entities[i]
+        if verb not in verb_answer_map:
+            verb_answer_map[verb] = [entity]
+        else:
+            verb_answer_map[verb].append(entity)
+
+
+def read_parsed_qasrl_verbs(filename):
+    f = open(filename, "r")
+    lines = f.readlines()
+    verb_answer_map = {}
+    for line_idx, line in enumerate(lines):
+        json_object = json.loads(line)
+        sentence_id = json_object['sentenceId']
+        sentence_tokens = json_object['sentenceTokens']
+
+        sentence_verbs_indices = [d['verbIndex'] for d in json_object['verbs']]
+        for verb_idx, verb in enumerate(json_object['verbs']):
+            original_verb, stemmed_verb = sentence_tokens[verb['verbIndex']].lower(), verb['verbInflectedForms'][
+                'stem'].lower()
+            if verbose:
+                print("verb " + str(verb_idx + 1) + " (original): " + original_verb)
+                print("verb " + str(verb_idx + 1) + " (stem): " + stemmed_verb)
+
+            beams_before_verb, beams_after_verb = populate_beams_before_after_verb_lists(verb)
+            verbs, entities = process_beams_verbs(beams_before_verb, sentence_tokens, verb, sentence_verbs_indices)
+            update_verb_answer_map(verb_answer_map, verbs, entities)
+
+            verbs, entities = process_beams_verbs(beams_after_verb, sentence_tokens, verb, sentence_verbs_indices)
+            update_verb_answer_map(verb_answer_map, verbs, entities)
+
+    answer_verb_map = create_answer_verb_map(verb_answer_map)
+    return answer_verb_map
 
 
 def read_parsed_qasrl(filename):

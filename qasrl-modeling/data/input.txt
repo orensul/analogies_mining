@@ -1,5 +1,10 @@
-1	A little girl named Jenny loved to play with Jenny dog in Jenny neighbor's yard.
-2	Eventually, the neighbor got fed-up and told Jenny she should always play with Jenny dog in Jenny own yard.
-3	A few days later, Jenny snuck out of the house without doing Jenny chores and hid at the playground.
-4	But after awhile Jenny went home to play with Jenny dog because Jenny thought Jenny neighbor said Jenny should every day.
-5	Right away Jenny mother caught Jenny and the little girl wished Jenny hadn't listened to Jenny neighbor
+1	A human baby develops in the womb of the mother.
+2	After 9 months in the womb the baby is born.
+3	the baby is an infant.
+4	The infant is dependent on the baby parents for everything.
+5	the baby drinks mother's milk for nourishment.
+6	From 3-8 years old the child is in early childhood.
+7	Adolescence is from roughly 9-18 years old.
+8	During adolescence the child is growing rapidly and maturing sexually.
+9	At 18 years, the child becomes an adult.
+10	Adults can reproduce and have babies
