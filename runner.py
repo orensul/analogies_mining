@@ -89,7 +89,7 @@ text_files_dir = '../data/original_text_files'
 
 # pair_of_inputs = [('test_base', 'test_target')]
 
-pair_of_inputs = [('propara_para_id_627', 'propara_para_id_1217')]
+pair_of_inputs = [('propara_para_id_1224', 'propara_para_id_687')]
 
 propara_paraphrasing_exp_inputs = ['human_lifecycle', 'how_do_bats_use_echolocation', 'how_do_lungs_work', 'how_acid_rain_affect_env', 'process_of_recycling_aluminum_can']
 
