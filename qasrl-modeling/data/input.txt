@@ -1,10 +1,5 @@
-1	A human baby develops in the womb of the mother.
-2	After 9 months in the womb the baby is born.
-3	the baby is an infant.
-4	The infant is dependent on the baby parents for everything.
-5	the baby drinks mother's milk for nourishment.
-6	From 3-8 years old the child is in early childhood.
-7	Adolescence is from roughly 9-18 years old.
-8	During adolescence the child is growing rapidly and maturing sexually.
-9	At 18 years, the child becomes an adult.
-10	Adults can reproduce and have babies
+1	Electrical signals in the brain travel through nerves to muscles.
+2	Two types of proteins exist in filaments in the muscles.
+3	The filaments move when the brain instructs The filaments to.
+4	The motion of the filaments cause the muscle to shorten and contract.
+5	Opposing pairs of muscles exist in order to provide the necessary range of motion

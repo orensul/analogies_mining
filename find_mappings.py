@@ -10,6 +10,9 @@ from qa_srl import read_parsed_qasrl
 questions_similarity_embedder = SentenceTransformer('msmarco-distilbert-base-v4')
 clustering_embedder = questions_similarity_embedder
 
+find_mappings_questions_file_name = 'find_mappings_questions_cosine_sim.txt'
+
+
 # clustering_embedder = SentenceTransformer('msmarco-distilbert-base-v4')
 
 
@@ -17,6 +20,7 @@ max_num_words_in_entity = 7
 score_boosting_same_sentence = 1
 beam = 7
 verbose = False
+write_questions_cosine_similarity_file = False
 
 
 def generate_mappings(pair, cos_sim_threshold):
@@ -344,6 +348,12 @@ def get_entities_similarity_score(sentBert_similarity_map, questions1, questions
             if (questions1[i], questions2[j]) in sentBert_similarity_map:
                 curr_score = sentBert_similarity_map[(questions1[i], questions2[j])]
                 if curr_score >= cos_sim_threshold:
+                    if curr_score < 1.0 and write_questions_cosine_similarity_file:
+                        output_file = open(find_mappings_questions_file_name, 'a')
+                        output_file.write(str(curr_score) + ";" + questions1[i][0] + ";" + questions2[j][0])
+                        output_file.write("\n")
+                        print((curr_score, questions1[i][0], questions2[j][0]))
+
                     similar_questions.append((questions1[i], questions2[j]))
                     total_score += curr_score
     return round(total_score, 3), similar_questions

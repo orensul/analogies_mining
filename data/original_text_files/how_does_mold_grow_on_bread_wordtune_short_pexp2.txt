@@ -1,0 +1,6 @@
+The bread is exposed.
+It absorbs water.
+It absorbs warmth.
+Bread absorbs mold spores from dust.
+Mold starts eating the bread.
+Mold colonies appear.

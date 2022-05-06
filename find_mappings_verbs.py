@@ -11,12 +11,15 @@ clustering_embedder = verbs_similarity_embedder
 
 # clustering_embedder = SentenceTransformer('msmarco-distilbert-base-v4')
 
+find_mappings_verbs_file_name = 'find_mappings_verbs_cosine_sim.txt'
+
 
 max_num_words_in_entity = 7
 score_boosting_same_sentence = 1
 beam = 7
 max_mappings_before_beam_search = 20
 verbose = False
+write_verbs_cosine_similarity_file = False
 
 def print_corpus_entities(text1_corpus_entities, text2_corpus_entities):
     print("text1 entities:")
@@ -115,7 +118,6 @@ def get_sent_bert_similarity_map_between_verbs(verbs1, verbs2):
 
 def get_cosine_sim_between_verbs(verbs1, verbs2):
     result = []
-
     embeddings1 = verbs_similarity_embedder.encode(verbs1, convert_to_tensor=True)
     embeddings2 = verbs_similarity_embedder.encode(verbs2, convert_to_tensor=True)
     cosine_scores = util.pytorch_cos_sim(embeddings1, embeddings2)
@@ -136,6 +138,11 @@ def get_entities_similarity_score(sentBert_similarity_map, verbs1, verbs2, cos_s
                 curr_score = sentBert_similarity_map[(verbs1[i], verbs2[j])]
                 if curr_score >= cos_sim_threshold:
                     similar_verbs.append((verbs1[i], verbs2[j]))
+                    if curr_score < 1.0 and write_verbs_cosine_similarity_file:
+                        output_file = open(find_mappings_verbs_file_name, 'a')
+                        output_file.write(str(curr_score) + ";" + verbs1[i] + ";" + verbs2[j])
+                        output_file.write("\n")
+                        print((curr_score, verbs1[i], verbs2[j]))
                     total_score += curr_score
     return round(total_score, 3), similar_verbs
 

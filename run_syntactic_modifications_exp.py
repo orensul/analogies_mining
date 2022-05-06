@@ -20,7 +20,7 @@ propara_syntactic_modifications_exp_output_file = "propara_syntactic_modificatio
 folder_name = "../data/original_text_files/syntactic_wordtune_paraphrase_exp2/"
 mappings_models = ['findMappingsV', 'findMappingsQ']
 
-model_to_cos_sim_thresholds = {'findMappingsV': [0.4, 0.5, 0.6], 'findMappingsQ': [0.65, 0.75, 0.85] , 'sentenceBert': []}
+model_to_cos_sim_thresholds = {'findMappingsV': [0.5], 'findMappingsQ': [0.7] , 'sentenceBert': []}
 text_similarity_models = ["sentenceBert"]
 
 
@@ -104,13 +104,12 @@ def show_exp_results(result):
         auc = round(metrics.auc(fpr, tpr), 3)
         print("AUC: ", auc)
         if cos_sim_threshold:
-            label = "model=" + model_name + ", cos_sim=" + str(cos_sim_threshold) + ", AUC=" + str(auc)
+            label = "Method=" + model_name + ", AUC=" + str(auc)
         else:
-            label = "model=" + model_name + ", AUC=" + str(auc)
+            label = "Method=" + model_name + ", AUC=" + str(auc)
         plt.plot(fpr, tpr, label=label)
 
     plt.style.use('seaborn')
-    plt.title('ROC curve - syntactic modifications experiment')
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive rate')
     plt.legend(loc='best')
