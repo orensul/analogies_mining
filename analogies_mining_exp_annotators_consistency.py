@@ -3,37 +3,43 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 import numpy as np
 
+
+map = {'Not': 0, 'Self': 1, 'Close': 2, 'Far': 3, 'Sub': 4}
 def main():
     # actual values
-    set1_actual = ['Close', 'Not', 'Self', 'Far', 'Sub']
-    set2_actual = ['Far', 'Self', 'Sub', 'Not', 'Close']
+    set1_actual = ['Close', 'Not', 'Self', 'Far', 'Sub'] * 3
+    set2_actual = ['Far', 'Self', 'Sub', 'Not', 'Close'] * 3
     set3_actual = ['Close', 'Self', 'Not', 'Far', 'Sub']
     set4_actual = ['Far', 'Self', 'Not', 'Close', 'Sub']
 
-    actual = set1_actual * 3 + set2_actual * 3 + set3_actual * 1 + set4_actual * 1
+    actual = [map[l] for l in set1_actual] + [map[l] for l in set2_actual] + \
+             [map[l] for l in set3_actual] + [map[l] for l in set4_actual]
+
     # predicted values
-    predicted = ['Sub', 'Not', 'Self', 'Sub', 'Sub',
+    predicted = [map[l] for l in ['Sub', 'Not', 'Self', 'Sub', 'Sub',
                  'Close', 'Not', 'Self', 'Far', 'Far',
                  'Close', 'Far', 'Self', 'Far', 'Sub',
 
                  'Close', 'Self', 'Far', 'Not', 'Sub',
-                 'Close', 'Self', 'Close', 'Far', 'Far',
+                 'Close', 'Self', 'Close', 'Not', 'Self',
                  'Far', 'Self', 'Sub', 'Not', 'Close',
 
                  'Close', 'Self', 'Not', 'Sub', 'Far',
 
                  'Far', 'Self', 'Not', 'Close', 'Sub'
 
-                 ]
+                 ]]
 
-    # confusion matrix
-    matrix = confusion_matrix(actual, predicted, labels=['Not', 'Self', 'Close', 'Far', 'Sub'])
-    print('Confusion matrix : \n', matrix)
-    cm = confusion_matrix(actual, predicted)
+    print(predicted)
+    print(actual)
+
+
+    cm = confusion_matrix(y_true=actual, y_pred=predicted)
+    print(cm)
     plot_confusion_matrix(cm, classes=['Not', 'Self', 'Close', 'Far', 'Sub'])
 
     # classification report for precision, recall f1-score and accuracy
-    matrix = classification_report(actual, predicted, labels=['Not', 'Self', 'Close', 'Far', 'Sub'])
+    matrix = classification_report(actual, predicted)
     print('Classification report : \n', matrix)
 
 
