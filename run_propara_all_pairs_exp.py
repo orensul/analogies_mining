@@ -5,27 +5,41 @@ import runner
 import json
 
 import operator
-
+from random import seed
+from random import choice
 import sentence_bert
 import pandas as pd
 import data.propara.read_propara as rp
 from os.path import exists
 run_coref = False
 run_qasrl = False
-run_mappings = False
+run_mappings = True
+run_random_samples = False
 run_text_similarity = False
 
-mappings_models = ['findMappingsQ', ]
+mappings_models = ['findMappingsV']
 propara_results_path = "data/propara/propara_results"
 propara_results_exp_format = "data/propara/propara_results_exp_format"
 propara_map_path = './data/propara/grids.v1.train.para_id_title.json'
 
 
-model_to_cos_sim_thresholds = {'findMappingsQ': [0.7]}
+model_to_cos_sim_thresholds = {'findMappingsV': [0.5]}
 text_similarity_models = ["sentenceBert"]
 
 first_batch_from = 7
 first_batch_till = 1500
+
+
+
+def get_random_pairs_by_seed(pair_of_inputs, seed_val, random_sample_size):
+    random_samples = []
+    seed(seed_val)
+    for _ in range(random_sample_size):
+        random_samples.append(choice(pair_of_inputs))
+    return random_samples
+
+
+
 
 def run_exp():
     os.chdir('s2e-coref')
@@ -37,6 +51,8 @@ def run_exp():
                        int(file_name.partition(split_word)[2][:-4]) >= first_batch_from and int(
                            file_name.partition(split_word)[2][:-4]) <= first_batch_till and int(
                            file_name.partition(split_word)[2][:-4]) not in [159]]
+
+
 
     if run_coref:
         runner.create_coref_text_files(text_file_names)
@@ -60,6 +76,27 @@ def run_exp():
     if run_text_similarity:
         for model_name in text_similarity_models:
             run_propara_sent_bert_similarity(model_name, pair_of_inputs)
+
+    if run_random_samples:
+        propara_para_id_title_map = read_propara_id_title_map(propara_map_path)
+        random_pairs = get_random_pairs_by_seed(pair_of_inputs, 1234, 100)
+        pairs = runner.get_pair_of_inputs_qasrl_path(random_pairs)
+        pair_results = []
+        for pair in pairs:
+            path1, path2 = runner.extract_file_name_from_full_qasrl_path(
+                pair[0]), runner.extract_file_name_from_full_qasrl_path(
+                pair[1])
+            prompt1, prompt2 = propara_para_id_title_map[path1.partition("para_id_")[2]], propara_para_id_title_map[
+                path2.partition("para_id_")[2]]
+            id1, id2 = path1[path1.rindex('_')+1:], path2[path2.rindex('_')+1:]
+
+            pair_results.append((prompt1 + "(" + id1 + ")", prompt2 + "(" + id2 + ")", 0))
+
+        propara_random_samples_path = "100_random_pairs.jsonl"
+        with open(propara_random_samples_path, 'w') as output_file:
+            json.dump(pair_results, output_file)
+
+        format_propara_all_pairs_results(propara_random_samples_path, 'test', None)
 
 
 def run_propara_sent_bert_similarity(model_name, pair_of_inputs):
@@ -137,6 +174,8 @@ def format_propara_all_pairs_results(propara_results_path, model_name, cos_sim_t
 
     # Close the Pandas Excel writer and output the Excel file.
     writer.save()
+
+    print(1)
 
 def run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold):
     pair_results = []

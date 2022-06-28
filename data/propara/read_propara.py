@@ -15,13 +15,17 @@ original_text_files_path = '../original_text_files/'
 
 def main(args):
     paragraph_titles = get_paragraph_titles(propara_train_tsv_file)
+    d = {}
+    for t in paragraph_titles:
+        d[t] = 1 if t not in d else d[t] + 1
+    # max_freq, min_freq = max(d.values()), min(d.values())
     data = read_propara_paragraphs(dataset_type_file[args.dataset_type])
     para_id_title_map = {}
     for i in range(len(data)):
         para_id_title_map[data[i]["para_id"]] = paragraph_titles[i]
 
-
     write_paragraph_id_title(para_id_title_map, propara_train_para_id_title)
+
     converted_data = [{} for _ in range(len(data))]
     for idx, sample in enumerate(data):
         para_id, texts = sample["para_id"], sample["texts"]

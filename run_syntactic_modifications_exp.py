@@ -20,9 +20,10 @@ propara_syntactic_modifications_exp_output_file = "propara_syntactic_modificatio
 folder_name = "../data/original_text_files/syntactic_wordtune_paraphrase_exp2/"
 mappings_models = ['findMappingsV', 'findMappingsQ']
 
-model_to_cos_sim_thresholds = {'findMappingsV': [0.5], 'findMappingsQ': [0.7] , 'sentenceBert': []}
-text_similarity_models = ["sentenceBert"]
+model_to_cos_sim_thresholds = {'findMappingsV': [0.5], 'findMappingsQ': [0.7], 'sentenceBert': []}
+text_similarity_models = ['sentenceBert']
 
+k = 100
 
 def run_exp():
     os.chdir('s2e-coref')
@@ -98,22 +99,62 @@ def create_scores_labels_from_results(output_file_name):
 
 
 def show_exp_results(result):
+    model_precisions = {}
     for output_file, model_name, cos_sim_threshold in result:
         scores_list, labels_list = create_scores_labels_from_results(output_file)
-        fpr, tpr, thresholds = metrics.roc_curve(np.array(labels_list), np.array(scores_list))
-        auc = round(metrics.auc(fpr, tpr), 3)
-        print("AUC: ", auc)
-        if cos_sim_threshold:
-            label = "Method=" + model_name + ", AUC=" + str(auc)
-        else:
-            label = "Method=" + model_name + ", AUC=" + str(auc)
-        plt.plot(fpr, tpr, label=label)
+        # print("Pos pairs: " + str(len([i for i in labels_list if i == 1])))
+        # print("Neg pairs: " + str(len([i for i in labels_list if i == 0])))
 
-    plt.style.use('seaborn')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive rate')
-    plt.legend(loc='best')
+        tuples = list(zip(scores_list, labels_list))
+        precisions = []
+        for i in range(1, k+1):
+            count_true = 0
+            for j in range(i):
+                label = tuples[j][1]
+                if label == 1:
+                    count_true += 1
+            precision_i = round(count_true / i, 3)
+            precisions.append(precision_i)
+            if i % 25 == 0:
+                print("precision " + str(i) + " " + model_name + " : " + str(precision_i))
+        model_precisions[model_name] = precisions
+
+    for model_name, precisions in model_precisions.items():
+        x = [i for i in range(1, k+1)]
+        y = precisions
+
+        if model_name == "findMappingsQ":
+            label = "FMQ"
+            plt.plot(x, y, label=label)
+        elif model_name == "findMappingsV":
+            label = "FMV"
+            plt.plot(x, y, label=label, linestyle='--')
+        else:
+            label = "SBERT"
+            plt.plot(x, y, label=label, linestyle='-.')
+
+    plt.ylim(0, 1.01)
+    plt.xlim(1, 100)
+    plt.xlabel('K')
+    plt.ylabel('Precision')
+
+    plt.legend()
     plt.show()
+
+        # fpr, tpr, thresholds = metrics.roc_curve(np.array(labels_list), np.array(scores_list))
+        # auc = round(metrics.auc(fpr, tpr), 3)
+        # print("AUC: ", auc)
+        # if cos_sim_threshold:
+        #     label = "Method=" + model_name + ", AUC=" + str(auc)
+        # else:
+        #     label = "Method=" + model_name + ", AUC=" + str(auc)
+        # plt.plot(fpr, tpr, label=label)
+
+    # plt.style.use('seaborn')
+    # plt.xlabel('False Positive Rate')
+    # plt.ylabel('True Positive rate')
+    # plt.legend(loc='best')
+    # plt.show()
 
 
 def run_propara_syntactic_modifications_exp_mappings(model_name, pair_of_inputs, cos_sim_threshold):

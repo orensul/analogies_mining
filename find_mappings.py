@@ -415,13 +415,17 @@ def get_sorted_entities_clusters_scores(text1_clusters_of_entities, text1_cluste
 
 
 def convert_cluster_set_to_string(cluster_set, side):
+    # representative = min(cluster_set[1], key=len)
+    # representative = representative.split(' ')
+    # representative = "\n".join(representative)
+    # cluster_label = str(cluster_set[0]) + side + "\n" + representative
+
     cluster_set = str(cluster_set)
     cluster_set = cluster_set[1:-1]
     cluster_set = cluster_set.split(',')
     cluster_set[0] += side
     cluster_set = "\n".join(cluster_set)
     return cluster_set
-
 
 def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
     B = nx.Graph()
@@ -442,7 +446,6 @@ def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
     for i, quadruple in enumerate(clusters_scores):
         left, right, similar_questions, score = quadruple
         B.add_edge(convert_cluster_set_to_string(left, "L"), convert_cluster_set_to_string(right, "R"), weight=round(score, 2))
-
 
     plt.figure(figsize=(24, 8))
 

@@ -16,6 +16,8 @@ run_qasrl = False
 run_mappings = False
 run_text_similarity = False
 
+k = 100
+
 paraphrasing_propara_versions_exp_output_file = "propara_version_paraphrasing_exp"
 mappings_models = ['findMappingsV', 'findMappingsQ']
 
@@ -84,22 +86,63 @@ def create_scores_labels_from_results(output_file_name):
 
 
 def show_exp_results(result):
+    model_precisions = {}
     for output_file, model_name, cos_sim_threshold in result:
         scores_list, labels_list = create_scores_labels_from_results(output_file)
-        fpr, tpr, thresholds = metrics.roc_curve(np.array(labels_list), np.array(scores_list))
-        auc = round(metrics.auc(fpr, tpr), 3)
-        print("AUC: ", auc)
-        if cos_sim_threshold:
-            label = "model=" + model_name + ", AUC=" + str(auc)
-        else:
-            label = "model=" + model_name + ", AUC=" + str(auc)
-        plt.plot(fpr, tpr, label=label)
+        # print("Pos pairs: " + str(len([i for i in labels_list if i == 1])))
+        # print("Neg pairs: " + str(len([i for i in labels_list if i == 0])))
 
-    plt.style.use('seaborn')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive rate')
-    plt.legend(loc='best')
+        tuples = list(zip(scores_list, labels_list))
+        precisions = []
+        for i in range(1, k + 1):
+            count_true = 0
+            for j in range(i):
+                label = tuples[j][1]
+                if label == 1:
+                    count_true += 1
+
+            precision_i = round(count_true / i, 3)
+            precisions.append(precision_i)
+            if i % 25 == 0:
+                print("precision " + str(i) + " " + model_name + " : " + str(precision_i))
+        model_precisions[model_name] = precisions
+
+    for model_name, precisions in model_precisions.items():
+        x = [i for i in range(1, k + 1)]
+        y = precisions
+
+        if model_name == "findMappingsQ":
+            label = "FMQ"
+            plt.plot(x, y, label=label)
+        elif model_name == "findMappingsV":
+            label = "FMV"
+            plt.plot(x, y, label=label, linestyle='--')
+        else:
+            label = "SBERT"
+            plt.plot(x, y, label=label, linestyle='-.')
+
+    plt.ylim(0, 1.01)
+    plt.xlim(1, 100)
+    plt.xlabel('K')
+    plt.ylabel('Precision')
+
+    plt.legend()
     plt.show()
+
+        # fpr, tpr, thresholds = metrics.roc_curve(np.array(labels_list), np.array(scores_list))
+        # auc = round(metrics.auc(fpr, tpr), 3)
+        # print("AUC: ", auc)
+        # if cos_sim_threshold:
+        #     label = "model=" + model_name + ", AUC=" + str(auc)
+        # else:
+        #     label = "model=" + model_name + ", AUC=" + str(auc)
+        # plt.plot(fpr, tpr, label=label)
+
+    # plt.style.use('seaborn')
+    # plt.xlabel('False Positive Rate')
+    # plt.ylabel('True Positive rate')
+    # plt.legend(loc='best')
+    # plt.show()
 
 
 def run_propara_versions_exp_sent_bert(model_name, pair_of_inputs):

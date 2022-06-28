@@ -1,0 +1,5 @@
+Air and fuel are used in the internal combustion engine.
+In an enclosed chamber, a mixture of air and fuel is injected.
+The mixture ignites and turns a piston that pumps up and down.
+This piston is connected to a crankshaft which rotates to provide the power.
+The burned gas is pushed out of the chamber.

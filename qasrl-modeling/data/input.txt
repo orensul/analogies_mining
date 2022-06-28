@@ -1,5 +1,7 @@
-1	Electrical signals in the brain travel through nerves to muscles.
-2	Two types of proteins exist in filaments in the muscles.
-3	The filaments move when the brain instructs The filaments to.
-4	The motion of the filaments cause the muscle to shorten and contract.
-5	Opposing pairs of muscles exist in order to provide the necessary range of motion
+1	Security guards monitor the doors of the factory.
+2	Security guards control the movement of people into and out of the factory.
+3	Factory activities may be coordinated by a control center.
+4	These activities require energy.
+5	The electrical generators in the factory provide energy.
+6	The factory synthesizes products from raw materials using machines.
+7	The factory has hallways to move products through the factory
