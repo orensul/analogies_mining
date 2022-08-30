@@ -10,10 +10,11 @@ from random import choice
 import sentence_bert
 import pandas as pd
 import data.propara.read_propara as rp
+from qa_srl import read_parsed_qasrl
 from os.path import exists
 run_coref = False
 run_qasrl = False
-run_mappings = True
+run_mappings = False
 run_random_samples = False
 run_text_similarity = False
 
@@ -39,7 +40,38 @@ def get_random_pairs_by_seed(pair_of_inputs, seed_val, random_sample_size):
     return random_samples
 
 
+def update_histogram_len_q_freq(text_answer_question_map, histogram):
+    for key, questions in text_answer_question_map.items():
+        for question_tup in questions:
+            question = question_tup[0]
+            q_len = len(question.split(' '))
+            if q_len not in histogram:
+                histogram[q_len] = 0
+            histogram[q_len] += 1
 
+def get_percent_histogram(histogram):
+    hist_percents = {}
+    sum_freqs = sum(histogram.values())
+    for len, freq in histogram.items():
+        hist_percents[len] = round(freq / sum_freqs, 2)
+    return hist_percents
+
+def get_qasrl_questions_stats(pair_of_inputs):
+    pairs = runner.get_pair_of_inputs_qasrl_path(pair_of_inputs)
+    histogram = {}
+    count_pairs = 0
+    for pair in pairs:
+        text1_answer_question_map = read_parsed_qasrl(pair[0])
+        text2_answer_question_map = read_parsed_qasrl(pair[1])
+        update_histogram_len_q_freq(text1_answer_question_map, histogram)
+        update_histogram_len_q_freq(text2_answer_question_map, histogram)
+        count_pairs += 1
+        if count_pairs % 50 == 0:
+            print("pair #" + str(count_pairs))
+            percent_hist = get_percent_histogram(histogram)
+            print(percent_hist)
+    percent_hist = get_percent_histogram(histogram)
+    print(percent_hist)
 
 def run_exp():
     os.chdir('s2e-coref')
@@ -68,6 +100,7 @@ def run_exp():
             pair_of_inputs.append((file1, file2))
 
     os.chdir('../')
+    # get_qasrl_questions_stats(pair_of_inputs)
     if run_mappings:
         for model_name in mappings_models:
             for cos_sim_threshold in model_to_cos_sim_thresholds[model_name]:

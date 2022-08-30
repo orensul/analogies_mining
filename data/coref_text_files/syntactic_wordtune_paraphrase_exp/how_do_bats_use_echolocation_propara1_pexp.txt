@@ -1,0 +1,6 @@
+Bats emit high sounds.
+The sounds strike objects.
+The sound is returned.
+Bats feel the sound by ear.
+Bats locate the object.
+Bats find Bats favorite meals

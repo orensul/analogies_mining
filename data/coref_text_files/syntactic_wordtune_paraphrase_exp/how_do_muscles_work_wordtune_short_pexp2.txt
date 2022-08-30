@@ -1,0 +1,5 @@
+Nerves send electrical signals to muscles.
+Muscle filaments contain two types of proteins.
+As instructed by the brain, filaments move.
+The filaments shorten and contract the muscle.
+The range of motion is provided by opposing muscle pairs

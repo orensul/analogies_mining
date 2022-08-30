@@ -10,6 +10,10 @@ from sklearn.metrics import classification_report
 from sklearn import metrics
 
 import sentence_bert
+import nltk
+from nltk.stem import WordNetLemmatizer
+wn_lemma = WordNetLemmatizer()
+
 
 run_coref = False
 run_qasrl = False
@@ -24,6 +28,53 @@ model_to_cos_sim_thresholds = {'findMappingsV': [0.5], 'findMappingsQ': [0.7], '
 text_similarity_models = ['sentenceBert']
 
 k = 100
+
+def read_lines_in_file(filename):
+    with open(filename) as f:
+        return f.readlines()
+
+def preprocess(sent):
+    sent = nltk.word_tokenize(sent)
+    sent = nltk.pos_tag(sent)
+    return sent
+
+
+
+def get_verbs_from_sentence(sentence):
+    tuples = preprocess(sentence)
+    verbs = [tup[0] for tup in tuples if tup[1][0:2] == "VB"]
+    lemma_verbs = [wn_lemma.lemmatize(v, 'v') for v in verbs]
+    return [v for v in lemma_verbs if v != 'be']
+
+
+
+def get_verbs_stats(pair_of_inputs):
+    count_identical_verbs, count_total_comparisons = 0, 0
+    os.chdir('./data/coref_text_files/syntactic_wordtune_paraphrase_exp')
+    for pair in pair_of_inputs:
+        s1, s2 = pair[0], pair[1]
+        s1_pos = s1.find("_wordtune") if s1.find("_wordtune") != -1 else s1.find("_propara")
+        s2_pos = s2.find("_wordtune") if s2.find("_wordtune") != -1 else s2.find("_propara")
+
+        paragraph1, paragraph2 = s1[:s1_pos], s2[:s2_pos]
+        if paragraph1 != paragraph2:
+            continue
+
+        f1_lines, f2_lines = read_lines_in_file(s1 + ".txt"), read_lines_in_file(s2 + ".txt")
+        for i in range(len(f1_lines)):
+            verbs_line_f1 = get_verbs_from_sentence(f1_lines[i])
+            verbs_line_f2 = get_verbs_from_sentence(f2_lines[i])
+            for v1 in verbs_line_f1:
+                for v2 in verbs_line_f2:
+                    if v1 == v2:
+                        count_identical_verbs += 1
+                    count_total_comparisons += 1
+
+    percent_identical_verbs = round(count_identical_verbs / count_total_comparisons, 2)
+    print("ratio identical verbs / total comparisons: " + str(percent_identical_verbs))
+    print(1)
+
+
 
 def run_exp():
     os.chdir('s2e-coref')
@@ -45,6 +96,7 @@ def run_exp():
             pair_of_inputs.append((file1, file2))
 
     os.chdir('../')
+    # get_verbs_stats(pair_of_inputs)
     if run_mappings:
         for model_name in mappings_models:
             for cos_sim_threshold in model_to_cos_sim_thresholds[model_name]:
@@ -100,6 +152,7 @@ def create_scores_labels_from_results(output_file_name):
 
 def show_exp_results(result):
     model_precisions = {}
+    total_num_of_paraphrase_pairs = 100
     for output_file, model_name, cos_sim_threshold in result:
         scores_list, labels_list = create_scores_labels_from_results(output_file)
         # print("Pos pairs: " + str(len([i for i in labels_list if i == 1])))
@@ -107,6 +160,7 @@ def show_exp_results(result):
 
         tuples = list(zip(scores_list, labels_list))
         precisions = []
+        recalls = []
         for i in range(1, k+1):
             count_true = 0
             for j in range(i):
@@ -114,9 +168,12 @@ def show_exp_results(result):
                 if label == 1:
                     count_true += 1
             precision_i = round(count_true / i, 3)
+            recall_i = round(count_true / total_num_of_paraphrase_pairs, 3)
             precisions.append(precision_i)
+            recalls.append(recall_i)
             if i % 25 == 0:
                 print("precision " + str(i) + " " + model_name + " : " + str(precision_i))
+                print("recall " + str(i) + " " + model_name + " : " + str(recall_i))
         model_precisions[model_name] = precisions
 
     for model_name, precisions in model_precisions.items():

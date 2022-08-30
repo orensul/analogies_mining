@@ -1,0 +1,9 @@
+The piston moves down.
+Gasoline and air go into the engine.
+The piston moves back up.
+The gasoline and air are compressed.
+The spark plug emits a spark.
+The gasoline explodes.
+The explosion forces the piston down.
+The exhaust valve opens.
+Exhaust goes to the tailpipe

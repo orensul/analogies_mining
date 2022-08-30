@@ -1,0 +1,8 @@
+Plants create pollen.	
+Pollen covers the flour.	
+A bee lands on the flour.	
+A bee collects nectar.	
+Some pollen sticks to the bee's legs.	
+A bee flies to another flour with the pollen.	
+Some of the pollen is transferred to the new flour.	
+The plant becomes pollinated.
