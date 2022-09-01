@@ -14,17 +14,17 @@ from qa_srl import read_parsed_qasrl
 from os.path import exists
 run_coref = False
 run_qasrl = False
-run_mappings = False
+run_mappings = True
 run_random_samples = False
 run_text_similarity = False
 
-mappings_models = ['findMappingsV']
+mappings_models = ['findMappingsQ']
 propara_results_path = "data/propara/propara_results"
 propara_results_exp_format = "data/propara/propara_results_exp_format"
 propara_map_path = './data/propara/grids.v1.train.para_id_title.json'
 
 
-model_to_cos_sim_thresholds = {'findMappingsV': [0.5]}
+model_to_cos_sim_thresholds = {'findMappingsQ': [0.7]}
 text_similarity_models = ["sentenceBert"]
 
 first_batch_from = 7
@@ -177,12 +177,13 @@ def read_propara_id_title_map(filename):
         json_object = json.loads(json_dict)
         return json_object
 
-def format_propara_all_pairs_results(propara_results_path, model_name, cos_sim_threshold):
+def format_propara_all_pairs_results(propara_results_path, model_name, cos_sim_threshold, paragraph_id_suffix):
     input_file = open(propara_results_path, 'r')
+
     if cos_sim_threshold is None:
-        propara_results_exp_curr_run_format = propara_results_exp_format + "_model_" + model_name + ".xlsx"
+        propara_results_exp_curr_run_format = propara_results_exp_format + "_model_" + model_name + paragraph_id_suffix + ".xlsx"
     else:
-        propara_results_exp_curr_run_format = propara_results_exp_format + "_model_" + model_name + "_cos_sim_" + str(cos_sim_threshold) + ".xlsx"
+        propara_results_exp_curr_run_format = propara_results_exp_format + "_model_" + model_name + "_cos_sim_" + str(cos_sim_threshold) + paragraph_id_suffix + ".xlsx"
 
     writer = pd.ExcelWriter(propara_results_exp_curr_run_format, engine='xlsxwriter')
     writer.save()
@@ -210,7 +211,7 @@ def format_propara_all_pairs_results(propara_results_path, model_name, cos_sim_t
 
     print(1)
 
-def run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold):
+def run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold, paragraph_id = None):
     pair_results = []
     propara_para_id_title_map = read_propara_id_title_map(propara_map_path)
     saved_pairs_results = {}
@@ -250,10 +251,13 @@ def run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold):
                              title2 + "(" + path2.partition("para_id_")[2] + ")", score))
 
     pair_results = sorted(pair_results, key=operator.itemgetter(2), reverse=True)
+    paragraph_id_suffix = "" if paragraph_id is None else "_para_id_" + paragraph_id
+    propara_results_path_curr_run = propara_results_path_curr_run[:-6]
+    propara_results_path_curr_run += paragraph_id_suffix + '.jsonl'
     with open(propara_results_path_curr_run, 'w') as output_file:
         json.dump(pair_results, output_file)
 
-    format_propara_all_pairs_results(propara_results_path_curr_run, model_name, cos_sim_threshold)
+    format_propara_all_pairs_results(propara_results_path_curr_run, model_name, cos_sim_threshold, paragraph_id_suffix)
 
 
 def get_num_words_from_paragraph_dict(d):
@@ -315,8 +319,39 @@ def write_paragraphs_num_words_results(result):
     writer.save()
 
 
+def run_examples(paragraph_id):
+    os.chdir('s2e-coref')
+    text_file_names = [f for f in glob.glob("../data/original_text_files/propara_para_id_*")]
+    text_file_names = [f.replace("../data/original_text_files/", "") for f in text_file_names]
+
+    split_word = "propara_para_id_"
+    text_file_names = [file_name for file_name in text_file_names if int(file_name.partition(split_word)[2][:-4]) if
+                       int(file_name.partition(split_word)[2][:-4]) >= first_batch_from and int(
+                           file_name.partition(split_word)[2][:-4]) <= first_batch_till and int(
+                           file_name.partition(split_word)[2][:-4]) not in [159]]
+
+    if run_coref:
+        runner.create_coref_text_files(text_file_names)
+    os.chdir('../qasrl-modeling')
+    if run_qasrl:
+        runner.write_qasrl_output_files(text_file_names)
+
+    pair_of_inputs = []
+    for i in range(len(text_file_names)):
+        for j in range(i + 1, len(text_file_names)):
+            file1 = text_file_names[i].replace(".txt", "")
+            file2 = text_file_names[j].replace(".txt", "")
+            if file1.endswith(paragraph_id) or file2.endswith(paragraph_id):
+                pair_of_inputs.append((file1, file2))
+
+    os.chdir('../')
+    if run_mappings:
+        for model_name in mappings_models:
+            for cos_sim_threshold in model_to_cos_sim_thresholds[model_name]:
+                run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold, paragraph_id)
 
 
 if __name__ == '__main__':
     run_exp()
-    read_results(propara_results_path + '.jsonl')
+    # read_results(propara_results_path + '.jsonl')
+    # run_examples('392')
