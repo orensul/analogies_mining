@@ -14,9 +14,9 @@ from qa_srl import read_parsed_qasrl
 from os.path import exists
 run_coref = False
 run_qasrl = False
-run_mappings = True
+run_mappings = False
 run_random_samples = False
-run_text_similarity = False
+run_text_similarity = True
 
 mappings_models = ['findMappingsQ', 'findMappingsV']
 propara_results_path = "data/propara/propara_results"
@@ -132,7 +132,7 @@ def run_exp():
         format_propara_all_pairs_results(propara_random_samples_path, 'test', None)
 
 
-def run_propara_sent_bert_similarity(model_name, pair_of_inputs):
+def run_propara_sent_bert_similarity(model_name, pair_of_inputs, paragraph_id = None):
     pair_results = []
     propara_para_id_title_map = read_propara_id_title_map(propara_map_path)
     saved_pairs_results = {}
@@ -166,10 +166,14 @@ def run_propara_sent_bert_similarity(model_name, pair_of_inputs):
                              title2 + "(" + pair2.partition("para_id_")[2] + ")", score))
 
     pair_results = sorted(pair_results, key=operator.itemgetter(2), reverse=True)
+    paragraph_id_suffix = "" if paragraph_id is None else "_para_id_" + paragraph_id
+    propara_results_path_curr_run = propara_results_path_curr_run[:-6]
+    propara_results_path_curr_run += paragraph_id_suffix + '.jsonl'
+
     with open(propara_results_path_curr_run, 'w') as output_file:
         json.dump(pair_results, output_file)
 
-    format_propara_all_pairs_results(propara_results_path_curr_run, model_name, None)
+    format_propara_all_pairs_results(propara_results_path_curr_run, model_name, None, paragraph_id_suffix)
 
 def read_propara_id_title_map(filename):
     input_file = open(filename, 'r')
@@ -350,8 +354,12 @@ def run_examples(paragraph_id):
             for cos_sim_threshold in model_to_cos_sim_thresholds[model_name]:
                 run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold, paragraph_id)
 
+    if run_text_similarity:
+        for model_name in text_similarity_models:
+            run_propara_sent_bert_similarity(model_name, pair_of_inputs, paragraph_id)
+
 
 if __name__ == '__main__':
     run_exp()
     # read_results(propara_results_path + '.jsonl')
-    # run_examples('392')
+    # run_examples('687')
