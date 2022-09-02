@@ -18,13 +18,13 @@ run_mappings = True
 run_random_samples = False
 run_text_similarity = False
 
-mappings_models = ['findMappingsQ']
+mappings_models = ['findMappingsQ', 'findMappingsV']
 propara_results_path = "data/propara/propara_results"
 propara_results_exp_format = "data/propara/propara_results_exp_format"
 propara_map_path = './data/propara/grids.v1.train.para_id_title.json'
 
 
-model_to_cos_sim_thresholds = {'findMappingsQ': [0.7]}
+model_to_cos_sim_thresholds = {'findMappingsQ': [0.7], 'findMappingsV': [0.5]}
 text_similarity_models = ["sentenceBert"]
 
 first_batch_from = 7
