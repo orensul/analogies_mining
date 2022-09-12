@@ -1,7 +1,5 @@
-1	Security guards monitor the doors of the factory.
-2	Security guards control the movement of people into and out of the factory.
-3	Factory activities may be coordinated by a control center.
-4	These activities require energy.
-5	The electrical generators in the factory provide energy.
-6	The factory synthesizes products from raw materials using machines.
-7	The factory has hallways to move products through the factory
+1	nucleus keeps electron.
+2	electron move around nucleus.
+3	atom consists of nucleus.
+4	nucleus is the center of atom.
+5	electron create electricity

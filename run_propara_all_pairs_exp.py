@@ -14,7 +14,7 @@ from qa_srl import read_parsed_qasrl
 from os.path import exists
 run_coref = False
 run_qasrl = False
-run_mappings = False
+run_mappings = True
 run_random_samples = False
 run_text_similarity = True
 
@@ -360,6 +360,6 @@ def run_examples(paragraph_id):
 
 
 if __name__ == '__main__':
-    run_exp()
+    # run_exp()
     # read_results(propara_results_path + '.jsonl')
-    # run_examples('687')
+    run_examples('157')
