@@ -25,7 +25,7 @@ text_files_dir = '../data/original_text_files'
 # pair_of_inputs = [('how_snow_forms1', 'how_snow_forms2')]
 
 # good with coref take the shortest
-pair_of_inputs = [('test_base', 'test_target')]
+pair_of_inputs = [('animal_cell', 'factory')]
 
 # good with coref take the shortest
 # pair_of_inputs = [('electrical_circuit', 'water_pump')]
@@ -105,9 +105,9 @@ qasrl_suffix_path = '_span_to_question.jsonl'
 
 
 
-run_coref = False
+run_coref = True
 run_qasrl = False
-run_mappings = True
+run_mappings = False
 
 generate_mappings_precision_oriented = True
 num_mappings_to_show = 7
