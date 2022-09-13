@@ -1,0 +1,32 @@
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+Annotator,Set number,samples,,,,,,grade,,,,,
+Expert,1,1-5,Close Analogy,Not Analogy,Self Analogy,Far Analogy,Sub Analogy,,,,,,
+Moran Mizrahi,1,1-5,Sub Analogy,Not Analogy,Self Analogy,Sub Analogy,Sub Analogy,60,,,,,
+Leah Orlin,1,1-5,Close Analogy,Not Analogy,Self Analogy,Far Analogy,Far Analogy,80,,,,,
+Dor Molcho,1,1-5,Close Analogy,Not Analogy,Self Analogy,Far Analogy,Sub Analogy,100,,,#correct answers,#people,#percent
+,,,,,,,,,,,5,4,0.2666666667
+,,,,,,,,,,,4,5,0.3333333333
+Expert,2,6-10,Far Analogy,Self Analogy,Sub Analogy,Not Analogy,Close Analogy,,,,3,3,0.2
+Shahar Jacob,2,6-10,Close Analogy,Self Analogy,Far Analogy,Not Analogy,Sub Analogy,40,,,2,3,0.2
+Assaf Yehdai,2,6-10,Close Analogy,Self Analogy,Close Analogy,Not Analogy,Self Analogy,40,,,,,
+Aviad Baron,2,6-10,Far Analogy,Self Analogy,Sub Analogy,Not Analogy,Close Analogy,100,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+Expert,3,11-15,Close Analogy,Self Analogy,Not Analogy,Far Analogy,Far Analogy,,,,,,
+Hanit Hakim,3,11-15,Close Analogy,Self Analogy,Not Analogy,Sub Analogy,Far Analogy,80,,,,,
+Jonna Harris,3,11-15,Sub Analogy,Self Analogy,Not Analogy,Far Analogy,Not Analogy,60,,,,,
+Yonathan Bitton,3,11-15,Far Analogy,Self Analogy,Far Analogy,Not Analogy,Far Analogy,40,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+Expert,4,16-20,Far Analogy,Self Analogy,Not Analogy,Close Analogy,Sub Analogy,,,,,,
+Ron Yosef,4,16-20,Far Analogy,Self Analogy,Not Analogy,Close Analogy,Sub Analogy,100,,,,,
+Inbal Magar,4,16-20,Far Analogy,Self Analogy,Not Analogy,Close Analogy,Sub Analogy,100,,,,,
+Hen Emuna,4,16-20,Close Analogy,Self Analogy,Not Analogy,Close Analogy,Sub Analogy,80,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+Expert,5,21-25,Self Analogy,Close Analogy,Not Analogy,Sub Analogy,Sub Analogy,,,,,,
+Tomer Yaari,5,21-25,Self Analogy,Sub Analogy,Not Analogy,Sub Analogy,Sub Analogy,80,,,,,
+Ronen Tamari,5,21-25,Self Analogy,Self Analogy,Not Analogy,Sub Analogy,Sub Analogy,80,,,,,
+Tom Eliasy,5,21-25,Self Analogy,Self Analogy,Not Analogy,Far Analogy,Sub Analogy,60,,,,,
