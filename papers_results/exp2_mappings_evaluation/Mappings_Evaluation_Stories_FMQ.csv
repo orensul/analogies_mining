@@ -1,0 +1,22 @@
+base,target,#model(top 1) mappings from GT entities,#model(top 1) correct mappings,#model(top 3) mappings from GT entities,#model (top3) correct mappings,#GT mappings,,,P@1,R@1,P@3,R@3
+the general,the surgeon,3,3,3,3,5,,,1,0.6,1,0.6
+story1 base,story1 target,2,2,2,2,3,,,1,0.6666666667,1,0.6666666667
+story2 base,story2 target,6,5,6,6,6,,,0.8333333333,0.8333333333,1,1
+story3 base,story3 target,2,2,3,2,3,,,1,0.6666666667,0.6666666667,0.6666666667
+story4 base,story4 target,4,3,4,3,4,,,0.75,0.75,0.75,0.75
+story5 base,story5 target,3,3,3,3,5,,,1,0.6,1,0.6
+story8 base,story8 target,3,3,3,3,4,,,1,0.75,1,0.75
+story11 base,story11 target,5,2,5,4,5,,,0.4,0.4,0.8,0.8
+story12 base,story12 target,3,3,4,4,5,,,1,0.6,1,0.8
+story13 base,story13 target,4,4,4,4,5,,,1,0.8,1,0.8
+story14 base,story14 target,5,5,5,5,6,,,1,0.8333333333,1,0.8333333333
+story16 base,story16 target,4,4,4,4,4,,,1,1,1,1
+story17 base,story17 target,3,2,3,3,5,,,0.6666666667,0.4,1,0.6
+story18 base,story18 target,2,2,2,2,3,,,1,0.6666666667,1,0.6666666667
+,,,,,,,,,,,,
+,,49,43,51,48,63,,,,,,
+,,,,,,,,each example diff. weight according to #mappings,Total P@1,Total R@1,Total P@3,Total R@3
+,,,,,,,,,0.8775510204,0.6825396825,0.9411764706,0.7619047619
+,,,,,,,,,,,,
+,,,,,,,,,Total F@1,,Total F@3,
+,,,,,,,,,0.7678571429,,0.8421052632,
