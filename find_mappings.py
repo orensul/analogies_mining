@@ -9,8 +9,6 @@ from qa_srl import read_parsed_qasrl
 questions_similarity_embedder = SentenceTransformer('msmarco-distilbert-base-v4')
 clustering_embedder = questions_similarity_embedder
 
-
-
 max_num_words_in_entity = 7
 score_boosting_same_sentence = 1
 beam = 7
@@ -19,6 +17,11 @@ verbose = False
 
 
 def generate_mappings(pair, cos_sim_threshold):
+    """
+    Returns top1, top2 and top3 solutions (if exists) for the pair of texts. This function implements it
+    by using QA-SRL parsing (Section 3.2 in the paper)  and clustering (Section 3.3 in the paper) and then run the
+    find mappings algorithm (Section 3.4 in the paper)
+    """
     text1_answer_question_map, text2_answer_question_map = read_parsed_qasrl(pair[0]), read_parsed_qasrl(pair[1])
     text1_corpus_entities, text2_corpus_entities = list(text1_answer_question_map.keys()), list(text2_answer_question_map.keys())
 
@@ -65,12 +68,13 @@ def generate_mappings(pair, cos_sim_threshold):
 
     top1_solution, top2_solution, top3_solution = None, None, None
     cache = beam_search(min(len(mappings_no_duplicates), beam), mappings_no_duplicates)
+
     if len(cache) > 0:
         top1_solution = [mappings_no_duplicates[mapping_id] for mapping_id in cache[0][0]]
         top1_solution = sorted(top1_solution, key=lambda t: t[::-1], reverse=True)
-        print()
-        print("top 1 solution: ")
+        print("\n" + "top 1 solution: ")
         print(top1_solution)
+
     if len(cache) > 1:
         top2_solution = [mappings_no_duplicates[mapping_id] for mapping_id in cache[1][0]]
         top2_solution = sorted(top2_solution, key=lambda t: t[::-1], reverse=True)
@@ -216,6 +220,10 @@ def get_cosine_sim_between_questions(questions1, questions2):
 def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_of_questions,
                                                text2_clusters_of_questions, text1_clusters_of_entities,
                                                text2_clusters_of_entities):
+    """
+    Returns extended mappings from the sorted clusters scores. In extended mappings we try to find a complete relation,
+    and add a constant alpha boosting score for the mappings. (details in Section 3.4 in the paper)
+    """
     extended_mappings = []
     for map in clusters_scores:
         cluster_base, cluster_target, similar_questions, score = map[0], map[1], map[2], map[3]
@@ -223,9 +231,8 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
         target_connected_clusters = get_connected_clusters(text2_clusters_of_questions, cluster_target[0])
 
         if verbose:
-            print("enitites mapping: ", cluster_base, cluster_target, similar_questions, score)
-            print()
-            print("more connections between base and target:")
+            print("entities mapping: ", cluster_base, cluster_target, similar_questions, score)
+            print("\n" + "more connections between base and target:")
 
         curr_new_mappings = []
         for tup_connected_base in base_connected_clusters:
@@ -244,12 +251,16 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
                     continue
 
                 if are_verbs_in_similar_questions(verb_connected_base, verb_connected_target, similar_questions):
-                    new_map_similar_questions, new_map_score = get_mapping_score(clusters_scores, cluster_connected_base, cluster_connected_target)
+                    new_map_similar_questions, new_map_score = get_mapping_score(clusters_scores, cluster_connected_base,
+                                                                                 cluster_connected_target)
                     if new_map_similar_questions:
-                        extended_mappings.append((cluster_base, cluster_target, similar_questions, score + score_boosting_same_sentence))
-                        extended_mappings.append((cluster_connected_base, cluster_connected_target, new_map_similar_questions, new_map_score + score_boosting_same_sentence))
+                        extended_mappings.append((cluster_base, cluster_target,
+                                                  similar_questions, score + score_boosting_same_sentence))
+                        extended_mappings.append((cluster_connected_base, cluster_connected_target,
+                                                  new_map_similar_questions, new_map_score + score_boosting_same_sentence))
 
-                        curr_new_mappings.append((cluster_connected_base, cluster_connected_target, new_map_similar_questions, new_map_score + score_boosting_same_sentence))
+                        curr_new_mappings.append((cluster_connected_base, cluster_connected_target,
+                                                  new_map_similar_questions, new_map_score + score_boosting_same_sentence))
 
                     if verbose:
                         if side_connected_base == 'R':
@@ -271,6 +282,11 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
 
 
 def get_connected_clusters(text_clusters_of_questions, text_cluster_entities_idx):
+    """
+    Returns connected clusters in the same text -- if there exists a sentence with two questions on the same verb,
+    one from the left to the verb and the other to the right, we say that these (clusters of) entities are connected.
+    We call it a complete relation.
+    """
     i = text_cluster_entities_idx
     curr_cluster = text_clusters_of_questions[i - 1][1:]
     connected_clusters_ids = set()
@@ -286,6 +302,10 @@ def get_connected_clusters(text_clusters_of_questions, text_cluster_entities_idx
 
 
 def has_found_connections(extended_mappings, cluster_base, cluster_target, similar_questions):
+    """
+    Returns boolean: True if a complete relation has already added to extended_mappings (which means we found
+    a complete relation). We use it to know if to add the regular score for the mappings or with adding boosting alpha.
+    """
     found = False
     for item in extended_mappings:
         if item[0] == cluster_base and item[1] == cluster_target and item[2] == similar_questions:
@@ -294,6 +314,10 @@ def has_found_connections(extended_mappings, cluster_base, cluster_target, simil
 
 
 def are_verbs_in_similar_questions(verb_connected_base, verb_connected_target, similar_questions):
+    """
+    Let b_i, b_j two entities in a sentence from base and t_k, t_l two entities in a sentence from target.
+    This function check if those sentences were used both for mapping b_i to t_k and b_j to t_l using the same verb.
+    """
     for tup in similar_questions:
         v1, v2 = tup[0][2], tup[1][2]
         if verb_connected_base == v1 and verb_connected_target == v2:
@@ -385,9 +409,6 @@ def get_entities_similarity_score(sentBert_similarity_map, questions1, questions
 
 def get_questions_list_from_cluster(cluster_of_questions):
     return [q for tup in cluster_of_questions for q in tup[1]]
-
-
-
 
 
 def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
