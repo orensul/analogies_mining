@@ -1,4 +1,3 @@
-
 from sklearn.cluster import AgglomerativeClustering
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
@@ -148,8 +147,8 @@ def get_clusters_of_entities(answer_question_map, corpus_entities, distance_thre
 
 def get_sorted_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions, text2_clusters_of_entities,
                                  text2_clusters_of_questions, cos_sim_threshold):
-    questions1 = get_questions_list_from_cluster(text1_clusters_of_questions)
-    questions2 = get_questions_list_from_cluster(text2_clusters_of_questions)
+    questions1 = [q for tup in text1_clusters_of_questions for q in tup[1]]
+    questions2 = [q for tup in text2_clusters_of_questions for q in tup[1]]
     sent_bert_similarity_map = get_sent_bert_similarity_map_between_questions(questions1, questions2)
 
     clusters_scores = []
@@ -375,14 +374,14 @@ def get_consistent_mapping_indices(mapping_indices, mappings_no_dups):
     return res_of_mapping_indices, total_score
 
 
-def get_mappings_without_duplicates(extended_mappings):
+def get_mappings_without_duplicates(mappings):
     """
-    Returns a list of mappings without duplicates from extended_mappings list which is sorted in descending order
+    Returns a list of mappings without duplicates from mappings list which is sorted in descending order
     by mapping score (hence taking the first to solve duplicates resulting in taking the one with the highest score).
     """
     seen_tuples = {}
     mappings_no_duplicates = []
-    for mapping in extended_mappings:
+    for mapping in mappings:
         if (mapping[0][0], mapping[1][0]) in seen_tuples:
             continue
         mappings_no_duplicates.append(mapping)
@@ -405,10 +404,6 @@ def get_entities_similarity_score(sentBert_similarity_map, questions1, questions
                     similar_questions.append((questions1[i], questions2[j]))
                     total_score += curr_score
     return round(total_score, 3), similar_questions
-
-
-def get_questions_list_from_cluster(cluster_of_questions):
-    return [q for tup in cluster_of_questions for q in tup[1]]
 
 
 def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):

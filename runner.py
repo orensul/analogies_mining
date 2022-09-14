@@ -112,7 +112,7 @@ run_mappings = True
 generate_mappings_precision_oriented = True
 num_mappings_to_show = 7
 colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
-default_cos_sim_threshold = 0.7
+default_cos_sim_threshold = 0.5
 cos_sim_thresholds = [0.7]
 len_solution_cos_sim_threshold_map = {0: 0.7, 1: 0.75, 2: 0.8, 3: 0.8, 4: 0.85, 5: 0.85, 6: 0.85, 7: 0.85}
 top_k_for_medians_calc = 4
@@ -354,8 +354,7 @@ def format_propara_all_pairs_results(propara_results_path):
 
 if __name__ == '__main__':
     # format_propara_all_pairs_results(propara_results_path)
-    # model_name = "find_mappings"
-    model_name = "findMappingsQ"
+    model_name = "findMappingsV"
     main(model_name)
 
 
