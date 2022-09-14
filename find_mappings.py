@@ -9,7 +9,6 @@ from qa_srl import read_parsed_qasrl
 questions_similarity_embedder = SentenceTransformer('msmarco-distilbert-base-v4')
 clustering_embedder = questions_similarity_embedder
 
-find_mappings_questions_file_name = 'find_mappings_questions_cosine_sim.txt'
 
 
 max_num_words_in_entity = 7
@@ -17,7 +16,6 @@ score_boosting_same_sentence = 1
 beam = 7
 
 verbose = False
-write_questions_cosine_similarity_file = False
 
 
 def generate_mappings(pair, cos_sim_threshold):
@@ -42,12 +40,9 @@ def generate_mappings(pair, cos_sim_threshold):
     clusters_scores = get_sorted_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions,
                                                    text2_clusters_of_entities, text2_clusters_of_questions, cos_sim_threshold)
     if verbose:
-        print()
-        print("sorted clusters scores:")
+        print("\n" + "sorted clusters scores:")
         print(clusters_scores)
-        print()
-        print("entities mappings before coreference:")
-        print()
+        print("\n" + "entities mappings before coreference:")
 
     extended_mappings = get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_of_questions,
                                                text2_clusters_of_questions, text1_clusters_of_entities,
@@ -64,6 +59,7 @@ def generate_mappings(pair, cos_sim_threshold):
         print("all mappings without duplicates:")
         for mapping in mappings_no_duplicates:
             print(mapping)
+
     if len(mappings_no_duplicates) == 0:
         return None, None, None
 
@@ -88,6 +84,22 @@ def generate_mappings(pair, cos_sim_threshold):
         print(top3_solution)
 
     return top1_solution, top2_solution, top3_solution
+
+
+def get_clusters_of_questions(clusters_of_entities, answer_question_map):
+    """
+    Returns the corresponding clusters of questions to the clusters of entities.
+    """
+    clusters_of_questions = []
+    for tup in clusters_of_entities:
+        idx, entities = tup[0], tup[1]
+        questions = []
+        for entity in entities:
+            list_of_questions = answer_question_map[entity]
+            for q in list_of_questions:
+                questions.append(q)
+        clusters_of_questions.append((idx, set(questions)))
+    return clusters_of_questions
 
 
 def get_clusters_of_entities(answer_question_map, corpus_entities, distance_threshold):
@@ -128,8 +140,6 @@ def get_clusters_of_entities(answer_question_map, corpus_entities, distance_thre
 
     clusters_result.sort(key=lambda x: x[0])
     return clusters_result
-
-
 
 
 def get_sorted_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions, text2_clusters_of_entities,
@@ -203,65 +213,6 @@ def get_cosine_sim_between_questions(questions1, questions2):
     return result
 
 
-
-def get_solution_from_beam_search_cache(cache, mappings_no_duplicates):
-    if not cache:
-        return None
-    best_solution, best_score = cache[0][0], cache[0][1]
-    solution = [mappings_no_duplicates[mapping_id] for mapping_id in best_solution]
-    solution = sorted(solution, key=lambda t: t[::-1], reverse=True)
-    print()
-    print("solution: ")
-    print(solution)
-    return solution
-
-
-
-
-
-def get_mappings_solution_after_coref(solution):
-    mappings_after_coref = []
-    for mapping in solution:
-        text1_cluster, text2_cluster, similar_questions, score = mapping
-        t1_cluster_entities, t2_cluster_entities = text1_cluster[1], text2_cluster[1]
-        coref_t1_cluster_entities, coref_t2_cluster_entities = set(), set()
-
-        for entity in t1_cluster_entities:
-            found = False
-            for key, val in text1_coref_clusters.items():
-                if val == entity:
-                    coref_t1_cluster_entities.add(key)
-                    found = True
-                    continue
-            if not found:
-                coref_t1_cluster_entities.add(entity)
-
-        for entity in t2_cluster_entities:
-            found = False
-            for key, val in text2_coref_clusters.items():
-                if val == entity:
-                    coref_t2_cluster_entities.add(key)
-                    found = True
-                    continue
-            if not found:
-                coref_t2_cluster_entities.add(entity)
-
-        mappings_after_coref.append((coref_t1_cluster_entities, coref_t2_cluster_entities, similar_questions, score))
-    return mappings_after_coref
-
-
-def get_mappings_without_duplicates(extended_mappings):
-    seen_tuples = {}
-    mappings_no_duplicates = []
-    for mapping in extended_mappings:
-        if (mapping[0][0], mapping[1][0]) in seen_tuples:
-            continue
-        mappings_no_duplicates.append(mapping)
-        seen_tuples[(mapping[0][0], mapping[1][0])] = True
-    return mappings_no_duplicates
-
-
-
 def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_of_questions,
                                                text2_clusters_of_questions, text1_clusters_of_entities,
                                                text2_clusters_of_entities):
@@ -319,79 +270,6 @@ def get_extended_mappings_from_clusters_scores(clusters_scores, text1_clusters_o
     return extended_mappings
 
 
-def has_found_connections(extended_mappings, cluster_base, cluster_target, similar_questions):
-    found = False
-    for item in extended_mappings:
-        if item[0] == cluster_base and item[1] == cluster_target and item[2] == similar_questions:
-            found = True
-    return found
-
-
-def print_corpus_entities(text1_corpus_entities, text2_corpus_entities):
-    print("text1 entities:")
-    for entity in text1_corpus_entities:
-        print(entity)
-    print()
-    print("text2 entities:")
-    for entity in text2_corpus_entities:
-        print(entity)
-    print()
-
-def print_clusters_of_questions(text1_clusters_of_questions, text2_clusters_of_questions):
-    print("text1 clusters of questions: ")
-    for question in text1_clusters_of_questions:
-        print(question)
-    print()
-    print("text2 clusters of questions: ")
-    for question in text2_clusters_of_questions:
-        print(question)
-    print()
-
-
-def print_clusters_of_entities(text1_clusters_of_entities, text2_clusters_of_entities):
-    print("text1 clusters of entities: ")
-    for entity in text1_clusters_of_entities:
-        print(entity)
-    print()
-    print("text2 clusters of entities: ")
-    for entity in text2_clusters_of_entities:
-        print(entity)
-    print()
-
-
-def get_consistent_mapping_indices(mapping_indices, mappings_no_dups):
-    total_score = 0
-    seen_base, seen_target = {}, {}
-    res_of_mapping_indices = set()
-    for mapping_idx in mapping_indices:
-        mapping = mappings_no_dups[mapping_idx]
-        if mapping[0][0] in seen_base or mapping[1][0] in seen_target:
-            continue
-        seen_base[mapping[0][0]] = True
-        seen_target[mapping[1][0]] = True
-        total_score += mapping[-1]
-        res_of_mapping_indices.add(mapping_idx)
-    return res_of_mapping_indices, total_score
-
-
-def beam_search(B, mappings_no_dups):
-    cache = [({i}, mappings_no_dups[i][-1]) for i in range(B)]
-    while True:
-        start_cache = cache.copy()
-        for tup in cache:
-            mapping_indices = tup[0]
-            for j in range(len(mappings_no_dups)):
-                if j in mapping_indices:
-                    continue
-                new_mapping_indices, curr_score = get_consistent_mapping_indices(mapping_indices.union({j}), mappings_no_dups)
-                if (new_mapping_indices, curr_score) not in cache:
-                    cache.append((new_mapping_indices, curr_score))
-        cache = sorted(cache, key=lambda t: t[1], reverse=True)
-        cache = cache[:B]
-        if cache == start_cache:
-            break
-    return cache
-
 def get_connected_clusters(text_clusters_of_questions, text_cluster_entities_idx):
     i = text_cluster_entities_idx
     curr_cluster = text_clusters_of_questions[i - 1][1:]
@@ -405,6 +283,14 @@ def get_connected_clusters(text_clusters_of_questions, text_cluster_entities_idx
                     if other_verb == verb and other_timestep == timestep and other_side != side:
                         connected_clusters_ids.add((j, other_verb, other_side))
     return connected_clusters_ids
+
+
+def has_found_connections(extended_mappings, cluster_base, cluster_target, similar_questions):
+    found = False
+    for item in extended_mappings:
+        if item[0] == cluster_base and item[1] == cluster_target and item[2] == similar_questions:
+            found = True
+    return found
 
 
 def are_verbs_in_similar_questions(verb_connected_base, verb_connected_target, similar_questions):
@@ -422,15 +308,68 @@ def get_mapping_score(clusters_scores, cluster1, cluster2):
     return [], 0
 
 
+def beam_search(B, mappings_no_dups):
+    """
+    Returns B solutions ordered in descending order by their score. Every solution is a tuple, the first item
+    is a set of the mapping Ids of the solution, and the second item is the score of this solution.
+    """
+    cache = [({i}, mappings_no_dups[i][-1]) for i in range(B)]
+    while True:
+        start_cache = cache.copy()
+        for tup in cache:
+            mapping_indices = tup[0]
+            for j in range(len(mappings_no_dups)):
+                if j in mapping_indices:
+                    continue
+                new_mapping_indices, curr_score = get_consistent_mapping_indices(mapping_indices.union({j}), mappings_no_dups)
+                if (new_mapping_indices, curr_score) not in cache:
+                    cache.append((new_mapping_indices, curr_score))
+
+        cache = sorted(cache, key=lambda t: t[1], reverse=True)
+        cache = cache[:B]
+        if cache == start_cache:
+            break
+    return cache
 
 
+def get_consistent_mapping_indices(mapping_indices, mappings_no_dups):
+    """
+    Returns a set of the consistent mappings (a subset of the mappings) with their total similarity score,
+    so beam search iteration will take place only on the possible consistent mappings.
+    """
+    total_score = 0
+    seen_base, seen_target = {}, {}
+    res_of_mapping_indices = set()
+    for mapping_idx in mapping_indices:
+        mapping = mappings_no_dups[mapping_idx]
+        if mapping[0][0] in seen_base or mapping[1][0] in seen_target:
+            continue
 
+        seen_base[mapping[0][0]], seen_target[mapping[1][0]] = True, True
+        total_score += mapping[-1]
+        res_of_mapping_indices.add(mapping_idx)
+    return res_of_mapping_indices, total_score
+
+
+def get_mappings_without_duplicates(extended_mappings):
+    """
+    Returns a list of mappings without duplicates from extended_mappings list which is sorted in descending order
+    by mapping score (hence taking the first to solve duplicates resulting in taking the one with the highest score).
+    """
+    seen_tuples = {}
+    mappings_no_duplicates = []
+    for mapping in extended_mappings:
+        if (mapping[0][0], mapping[1][0]) in seen_tuples:
+            continue
+        mappings_no_duplicates.append(mapping)
+        seen_tuples[(mapping[0][0], mapping[1][0])] = True
+    return mappings_no_duplicates
 
 
 def get_entities_similarity_score(sentBert_similarity_map, questions1, questions2, cos_sim_threshold):
     """
-    Returns the score of similarity between entities, by summing the cosine distance(similarity) of the pair of questions
-    in the texts which pass the cosine similarity threshold.
+    Returns the score of similarity between entities, by sum the cosine distance(similarity) of the pair of questions
+    in the texts correspond to these entities, which pass the cosine similarity threshold.
     """
     total_score = 0
     similar_questions = []
@@ -439,12 +378,6 @@ def get_entities_similarity_score(sentBert_similarity_map, questions1, questions
             if (questions1[i], questions2[j]) in sentBert_similarity_map:
                 curr_score = sentBert_similarity_map[(questions1[i], questions2[j])]
                 if curr_score >= cos_sim_threshold:
-                    if curr_score < 1.0 and write_questions_cosine_similarity_file:
-                        output_file = open(find_mappings_questions_file_name, 'a')
-                        output_file.write(str(curr_score) + ";" + questions1[i][0] + ";" + questions2[j][0])
-                        output_file.write("\n")
-                        print((curr_score, questions1[i][0], questions2[j][0]))
-
                     similar_questions.append((questions1[i], questions2[j]))
                     total_score += curr_score
     return round(total_score, 3), similar_questions
@@ -457,26 +390,12 @@ def get_questions_list_from_cluster(cluster_of_questions):
 
 
 
-
-
-
-
-
-
-def convert_cluster_set_to_string(cluster_set, side):
-    # representative = min(cluster_set[1], key=len)
-    # representative = representative.split(' ')
-    # representative = "\n".join(representative)
-    # cluster_label = str(cluster_set[0]) + side + "\n" + representative
-
-    cluster_set = str(cluster_set)
-    cluster_set = cluster_set[1:-1]
-    cluster_set = cluster_set.split(',')
-    cluster_set[0] += side
-    cluster_set = "\n".join(cluster_set)
-    return cluster_set
-
 def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
+    """
+    Plot bipartite graph visualization for the solution. Nodes are entities (clusters of text spans).
+    Edge width represents similarity between entities in terms of the roles they play in text (by their similar questions),
+    every edge (mapping) in different color with the score (weight) of the strength of the mapping.
+    """
     B = nx.Graph()
     left_vertices = []
 
@@ -511,32 +430,51 @@ def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
     plt.title("Analogies found(chosen cosine similarity threshold=" + str(cos_similarity_threshold) + "):")
     plt.show()
 
-    # matching = nx.max_weight_matching(B, maxcardinality=True)
-    # print("Maximum Weight Matches: ")
-    # for match in matching:
-    #     left, right = match[0], match[1]
-    #     if left in left_vertices:
-    #         print(left, right)
-    #     else:
-    #         print(right, left)
+
+def convert_cluster_set_to_string(cluster_set, side):
+    """
+    Converts the cluster set to string for sake of visulaization -- this string contains the entities in the cluster,
+    and will be presented on a node in the bipartite graph.
+    """
+    cluster_set = str(cluster_set)
+    cluster_set = cluster_set[1:-1]
+    cluster_set = cluster_set.split(',')
+    cluster_set[0] += side
+    cluster_set = "\n".join(cluster_set)
+    return cluster_set
 
 
+# print functions for debug mode (verbose=True)
 
 
-def get_clusters_of_questions(clusters_of_entities, answer_question_map):
-    clusters_of_questions = []
-    for tup in clusters_of_entities:
-        idx = tup[0]
-        entities = tup[1]
-        questions = []
-        for entity in entities:
-            list_of_questions = answer_question_map[entity]
-            for q in list_of_questions:
-                questions.append(q)
-        clusters_of_questions.append((idx, set(questions)))
-    return clusters_of_questions
+def print_clusters_of_questions(text1_clusters_of_questions, text2_clusters_of_questions):
+    print("text1 clusters of questions: ")
+    for question in text1_clusters_of_questions:
+        print(question)
+    print()
+    print("text2 clusters of questions: ")
+    for question in text2_clusters_of_questions:
+        print(question)
+    print()
 
 
+def print_clusters_of_entities(text1_clusters_of_entities, text2_clusters_of_entities):
+    print("text1 clusters of entities: ")
+    for entity in text1_clusters_of_entities:
+        print(entity)
+    print()
+    print("text2 clusters of entities: ")
+    for entity in text2_clusters_of_entities:
+        print(entity)
+    print()
 
 
-
+def print_corpus_entities(text1_corpus_entities, text2_corpus_entities):
+    print("text1 entities:")
+    for entity in text1_corpus_entities:
+        print(entity)
+    print()
+    print("text2 entities:")
+    for entity in text2_corpus_entities:
+        print(entity)
+    print()
