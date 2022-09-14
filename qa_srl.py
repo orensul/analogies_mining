@@ -68,9 +68,7 @@ def prepare_file_to_qasrl(src, dst):
     """
     Prepare the input for QA-SRL (adding line number, tab and the sentence for every sentence in the text)
     """
-    input = open(src, 'r')
-    output = open(dst, 'w')
-
+    input, output = open(src, 'r'), open(dst, 'w')
     for i, line in enumerate(input):
         new_line = str(i + 1) + '\t' + line
         output.write(new_line)
@@ -132,8 +130,9 @@ def populate_beams_before_after_verb_lists(verb):
 
 def process_beams(beams, before_after, sentence_tokens, verb, sentence_verbs_indices):
     """
-    Returns list of questions(q_list), list of the structure of the questions(q_sub_obj_list) and list of entities(entity_list)
-    by parsing the QA-SRL json, reading the questions and answers, and applying some filter rules to ignore some QA.
+    Returns list of questions(q_list), list of the structure of the questions(q_sub_obj_list) and list of entities(entity_list),
+    which are the answers to the questions, by parsing the QA-SRL json, reading the questions and answers, and applying
+    some filter rules to ignore some QA.
     """
     q_list, q_sub_verb_obj_list, entity_list = [], [], []
     for beam in beams:

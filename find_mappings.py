@@ -4,7 +4,6 @@ import numpy as np
 from sentence_transformers import SentenceTransformer, util
 import networkx as nx
 import matplotlib.pyplot as plt
-
 from qa_srl import read_parsed_qasrl
 
 questions_similarity_embedder = SentenceTransformer('msmarco-distilbert-base-v4')
@@ -13,33 +12,27 @@ clustering_embedder = questions_similarity_embedder
 find_mappings_questions_file_name = 'find_mappings_questions_cosine_sim.txt'
 
 
-# clustering_embedder = SentenceTransformer('msmarco-distilbert-base-v4')
-
-
 max_num_words_in_entity = 7
 score_boosting_same_sentence = 1
 beam = 7
+
 verbose = False
 write_questions_cosine_similarity_file = False
 
 
 def generate_mappings(pair, cos_sim_threshold):
-    text1_answer_question_map = read_parsed_qasrl(pair[0])
-    text2_answer_question_map = read_parsed_qasrl(pair[1])
-    text1_corpus_entities = list(text1_answer_question_map.keys())
-    text2_corpus_entities = list(text2_answer_question_map.keys())
+    text1_answer_question_map, text2_answer_question_map = read_parsed_qasrl(pair[0]), read_parsed_qasrl(pair[1])
+    text1_corpus_entities, text2_corpus_entities = list(text1_answer_question_map.keys()), list(text2_answer_question_map.keys())
 
     if not text1_corpus_entities or not text2_corpus_entities:
         return None, None, None
+
     if verbose:
         print_corpus_entities(text1_corpus_entities, text2_corpus_entities)
 
     text1_clusters_of_entities = get_clusters_of_entities(text1_answer_question_map, text1_corpus_entities, distance_threshold=1)
-
     text1_clusters_of_questions = get_clusters_of_questions(text1_clusters_of_entities, text1_answer_question_map)
-
     text2_clusters_of_entities = get_clusters_of_entities(text2_answer_question_map, text2_corpus_entities, distance_threshold=1)
-
     text2_clusters_of_questions = get_clusters_of_questions(text2_clusters_of_entities, text2_answer_question_map)
 
     if verbose:
@@ -96,15 +89,120 @@ def generate_mappings(pair, cos_sim_threshold):
 
     return top1_solution, top2_solution, top3_solution
 
-    # mappings_after_coref = get_mappings_solution_after_coref(solution)
-    #
-    # if verbose:
-    #     print()
-    #     print("mappings after coreference: ")
-    #     for mapping in mappings_after_coref:
-    #         print(mapping)
-    #
-    # plot_bipartite_graph(mappings_after_coref)
+
+def get_clusters_of_entities(answer_question_map, corpus_entities, distance_threshold):
+    """
+    Returns clusters of entities by applying agglomerative clustering (Section 3.3 in the paper)
+    """
+    filtered_corpus_entities = []
+    filtered_answer_question_map = {}
+
+    # filter long entities
+    for entity in corpus_entities:
+        if len(entity.split(' ')) <= max_num_words_in_entity:
+            filtered_answer_question_map[entity] = answer_question_map[entity]
+            filtered_corpus_entities.append(entity)
+    corpus_entities, answer_question_map = filtered_corpus_entities, filtered_answer_question_map
+
+    # for AgglomerativeClustering clustering at least two entities are needed
+    if len(corpus_entities) == 1:
+        corpus_entities.append(corpus_entities[0])
+
+    corpus_embeddings = clustering_embedder.encode(corpus_entities)
+
+    corpus_embeddings = corpus_embeddings / np.linalg.norm(corpus_embeddings, axis=1, keepdims=True)
+    clustering_model = AgglomerativeClustering(n_clusters=None,
+                                               distance_threshold=distance_threshold)
+    clustering_model.fit(corpus_embeddings)
+    cluster_assignment = clustering_model.labels_
+
+    clustered_sentences = {}
+    for sentence_id, cluster_id in enumerate(cluster_assignment):
+        if cluster_id not in clustered_sentences:
+            clustered_sentences[cluster_id] = []
+        clustered_sentences[cluster_id].append(corpus_entities[sentence_id])
+
+    clusters_result = []
+    for i, cluster in clustered_sentences.items():
+        clusters_result.append((i + 1, set(cluster)))
+
+    clusters_result.sort(key=lambda x: x[0])
+    return clusters_result
+
+
+
+
+def get_sorted_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions, text2_clusters_of_entities,
+                                 text2_clusters_of_questions, cos_sim_threshold):
+    questions1 = get_questions_list_from_cluster(text1_clusters_of_questions)
+    questions2 = get_questions_list_from_cluster(text2_clusters_of_questions)
+    sent_bert_similarity_map = get_sent_bert_similarity_map_between_questions(questions1, questions2)
+
+    clusters_scores = []
+    total_count, pass_threshold_count = 0, 0
+
+    for i in range(len(text1_clusters_of_questions)):
+        for j in range(len(text2_clusters_of_questions)):
+            questions1 = list(text1_clusters_of_questions[i][1])
+            questions2 = list(text2_clusters_of_questions[j][1])
+            curr_score, similar_questions = get_entities_similarity_score(sent_bert_similarity_map, questions1,
+                                                                          questions2, cos_sim_threshold)
+            total_count += 1
+            if curr_score > 0:
+                pass_threshold_count += 1
+                clusters_scores.append(((i + 1, text1_clusters_of_entities[i][1]),
+                                        (j + 1, text2_clusters_of_entities[j][1]), similar_questions, curr_score))
+    if verbose:
+        print("number of clusters in text1: " + str(len(text1_clusters_of_questions)))
+        print("number of clusters in text2: " + str(len(text2_clusters_of_questions)))
+        print("number of pairs of clusters above cosine similarity threshold: " + str(pass_threshold_count))
+        print("out of total count of pairs: " + str(total_count))
+
+    clusters_scores = sorted(clusters_scores, key=lambda t: t[::-1], reverse=True)
+    return clusters_scores
+
+
+def get_sent_bert_similarity_map_between_questions(questions1, questions2):
+    """
+    Returns a dictionary with key as tuple of pair of questions and value as their cosine similarity.
+    """
+    sent_bert_similarity_map = {}
+    cos_sim_all_questions_result = get_cosine_sim_between_questions(questions1, questions2)
+    for triplet in cos_sim_all_questions_result:
+        if should_filter_questions(triplet):
+            continue
+        cos_sim = round(triplet[0].tolist(), 3)
+        sent_bert_similarity_map[(triplet[1], triplet[2])] = cos_sim
+    return sent_bert_similarity_map
+
+
+def should_filter_questions(triplet):
+    """
+    Ignore the questions (do not need to calculate similarity) when the basic structure of the questions is different.
+    This function can be extended to ignore wh questions (e.g 'where' with wh which is not 'where).
+    Right now it is not needed as our support is limited to the most informative wh questions ('what', 'who', 'which').
+    """
+    q1, qq_subject_verb_obj, q2, q2_subject_verb_obj = triplet[1][0], triplet[1][1], triplet[2][0], triplet[2][1]
+    return qq_subject_verb_obj != q2_subject_verb_obj
+
+
+def get_cosine_sim_between_questions(questions1, questions2):
+    """
+    Returns list of triplets of the question (from base text) the other question (from target text) and the
+    similarity score, calculated by applying cosine similarity on the SBERT embeddings of the questions.
+    """
+    result = []
+    embeddings1 = questions_similarity_embedder.encode([tup[0] for tup in questions1], convert_to_tensor=True)
+    embeddings2 = questions_similarity_embedder.encode([tup[0] for tup in questions2], convert_to_tensor=True)
+    cosine_scores = util.pytorch_cos_sim(embeddings1, embeddings2)
+
+    for i in range(len(questions1)):
+        for j in range(len(questions2)):
+            result.append((cosine_scores[i][j], questions1[i], questions2[j]))
+    result.sort(key=lambda x: x[0], reverse=True)
+    return result
+
+
 
 def get_solution_from_beam_search_cache(cache, mappings_no_duplicates):
     if not cache:
@@ -326,21 +424,14 @@ def get_mapping_score(clusters_scores, cluster1, cluster2):
 
 
 
-def get_cosine_sim_between_sentences(sentences1, sentences2):
-    result = []
 
-    embeddings1 = questions_similarity_embedder.encode([tup[0] for tup in sentences1], convert_to_tensor=True)
-    embeddings2 = questions_similarity_embedder.encode([tup[0] for tup in sentences2], convert_to_tensor=True)
-    cosine_scores = util.pytorch_cos_sim(embeddings1, embeddings2)
-    # Output the pairs with their score
-    for i in range(len(sentences1)):
-        for j in range(len(sentences2)):
-            result.append((cosine_scores[i][j], sentences1[i], sentences2[j]))
-    result.sort(key=lambda x: x[0], reverse=True)
-    return result
 
 
 def get_entities_similarity_score(sentBert_similarity_map, questions1, questions2, cos_sim_threshold):
+    """
+    Returns the score of similarity between entities, by summing the cosine distance(similarity) of the pair of questions
+    in the texts which pass the cosine similarity threshold.
+    """
     total_score = 0
     similar_questions = []
     for i in range(len(questions1)):
@@ -363,55 +454,13 @@ def get_questions_list_from_cluster(cluster_of_questions):
     return [q for tup in cluster_of_questions for q in tup[1]]
 
 
-def should_filter_questions(triplet):
-    q1, qq_subject_verb_obj, q2, q2_subject_verb_obj = triplet[1][0], triplet[1][1], triplet[2][0], triplet[2][1]
-    if qq_subject_verb_obj != q2_subject_verb_obj:
-        return True
-    q1_list, q2_list = q1.split(' '), q2.split(' ')
-    if (q1_list[0] == 'where' and q1_list[0] != 'where') or (q1_list[0] != 'where' and q2_list[0] == 'where'):
-        return True
-    return False
 
 
-def get_sent_bert_similarity_map_between_questions(questions1, questions2):
-    sent_bert_similarity_map = {}
-    cos_sim_all_questions_result = get_cosine_sim_between_sentences(questions1, questions2)
-    for triplet in cos_sim_all_questions_result:
-        if should_filter_questions(triplet):
-            continue
-        cos_sim = round(triplet[0].tolist(), 3)
-        sent_bert_similarity_map[(triplet[1], triplet[2])] = cos_sim
-    return sent_bert_similarity_map
 
 
-def get_sorted_entities_clusters_scores(text1_clusters_of_entities, text1_clusters_of_questions, text2_clusters_of_entities,
-                                 text2_clusters_of_questions, cos_sim_threshold):
-    questions1 = get_questions_list_from_cluster(text1_clusters_of_questions)
-    questions2 = get_questions_list_from_cluster(text2_clusters_of_questions)
-    sent_bert_similarity_map = get_sent_bert_similarity_map_between_questions(questions1, questions2)
 
-    clusters_scores = []
-    total_count, pass_threshold_count = 0, 0
 
-    for i in range(len(text1_clusters_of_questions)):
-        for j in range(len(text2_clusters_of_questions)):
-            questions1 = list(text1_clusters_of_questions[i][1])
-            questions2 = list(text2_clusters_of_questions[j][1])
-            curr_score, similar_questions = get_entities_similarity_score(sent_bert_similarity_map, questions1,
-                                                                          questions2, cos_sim_threshold)
-            total_count += 1
-            if curr_score > 0:
-                pass_threshold_count += 1
-                clusters_scores.append(((i + 1, text1_clusters_of_entities[i][1]),
-                                        (j + 1, text2_clusters_of_entities[j][1]), similar_questions, curr_score))
-    if verbose:
-        print("number of clusters in text1: " + str(len(text1_clusters_of_questions)))
-        print("number of clusters in text2: " + str(len(text2_clusters_of_questions)))
-        print("number of pairs of clusters above cosine similarity threshold: " + str(pass_threshold_count))
-        print("out of total count of pairs: " + str(total_count))
 
-    clusters_scores = sorted(clusters_scores, key=lambda t: t[::-1], reverse=True)
-    return clusters_scores
 
 
 def convert_cluster_set_to_string(cluster_set, side):
@@ -471,46 +520,7 @@ def plot_bipartite_graph(clusters_scores, colors, cos_similarity_threshold):
     #     else:
     #         print(right, left)
 
-def get_clusters_of_entities(answer_question_map, corpus_entities, distance_threshold):
-    filtered_corpus_entities = []
-    filtered_answer_question_map = {}
-    for entity in corpus_entities:
-        if len(entity.split(' ')) <= max_num_words_in_entity:
-            filtered_answer_question_map[entity] = answer_question_map[entity]
-            filtered_corpus_entities.append(entity)
-        else:
-            print(1)
-    corpus_entities, answer_question_map = filtered_corpus_entities, filtered_answer_question_map
 
-    # for AgglomerativeClustering clustering at least two entities are needed
-    if len(corpus_entities) == 1:
-        corpus_entities.append(corpus_entities[0])
-
-    corpus_embeddings = clustering_embedder.encode(corpus_entities)
-
-    # Normalize the embeddings to unit length
-    corpus_embeddings = corpus_embeddings / np.linalg.norm(corpus_embeddings, axis=1, keepdims=True)
-
-    # Perform kmean clustering
-    clustering_model = AgglomerativeClustering(n_clusters=None,
-                                               distance_threshold=distance_threshold)  # , affinity='cosine', linkage='average', distance_threshold=0.4)
-
-    clustering_model.fit(corpus_embeddings)
-    cluster_assignment = clustering_model.labels_
-
-    clustered_sentences = {}
-    for sentence_id, cluster_id in enumerate(cluster_assignment):
-        if cluster_id not in clustered_sentences:
-            clustered_sentences[cluster_id] = []
-
-        clustered_sentences[cluster_id].append(corpus_entities[sentence_id])
-
-    clusters_result = []
-    for i, cluster in clustered_sentences.items():
-        clusters_result.append((i + 1, set(cluster)))
-
-    clusters_result.sort(key=lambda x: x[0])
-    return clusters_result
 
 
 def get_clusters_of_questions(clusters_of_entities, answer_question_map):
