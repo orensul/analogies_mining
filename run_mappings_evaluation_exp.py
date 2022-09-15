@@ -1,4 +1,6 @@
 
+import runner
+
 
 propara_mappings_eval = [('propara_para_id_490', 'propara_para_id_1158'),
                          ('propara_para_id_552', 'propara_para_id_626'),
@@ -33,4 +35,17 @@ stories_mapping_eval = [('keane_general', 'keane_surgeon'),
 
 
 if __name__ == '__main__':
-    main()
+    model_name = runner.FMQ
+    sim_threshold = runner.MODELS_SIM_THRESHOLD[model_name]
+    run_coref, run_qasrl, run_mappings = False, False, True
+
+    # FMQ on stories and proPara
+    runner.run_pipeline(model_name, sim_threshold, stories_mapping_eval, run_coref, run_qasrl, run_mappings)
+    runner.run_pipeline(model_name, sim_threshold, propara_mappings_eval, run_coref, run_qasrl, run_mappings)
+
+    model_name = runner.FMV
+    sim_threshold = runner.MODELS_SIM_THRESHOLD[model_name]
+
+    # FMV on stories and proPara
+    runner.run_pipeline(model_name, sim_threshold, stories_mapping_eval, run_coref, run_qasrl, run_mappings)
+    runner.run_pipeline(model_name, sim_threshold, propara_mappings_eval, run_coref, run_qasrl, run_mappings)

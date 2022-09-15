@@ -14,17 +14,17 @@ text_files_dir = '../data/original_text_files'
 qasrl_prefix_path = './qasrl-modeling/data/'
 qasrl_suffix_path = '_span_to_question.jsonl'
 
-
 num_mappings_to_show = 7
-default_cos_sim_threshold = 0.85
-cos_sim_thresholds = [0.85]
 top_k_for_medians_calc = 4
 
-pipeline_config = {}
+FMQ = "findMappingsQ"
+FMV = "findMappingsV"
+MODELS_SIM_THRESHOLD = {FMQ: 0.7, FMV: 0.5}
 
-def run_pipeline(model_name, pair_of_inputs, run_coref, run_qasrl, run_mappings):
+
+def run_pipeline(model_name, cos_sim_threshold, pair_of_inputs, run_coref, run_qasrl, run_mappings):
     os.chdir('s2e-coref')
-    text_file_names = get_text_file_names()
+    text_file_names = get_text_file_names(pair_of_inputs)
 
     if run_coref:
         create_coref_text_files(text_file_names)
@@ -37,19 +37,16 @@ def run_pipeline(model_name, pair_of_inputs, run_coref, run_qasrl, run_mappings)
     if run_mappings:
         colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
         for pair in get_pair_of_inputs_qasrl_path(pair_of_inputs):
-            solution1, solution2, solution3 = run_model(model_name, pair, default_cos_sim_threshold)
+            solution1, solution2, solution3 = run_model(model_name, pair, cos_sim_threshold)
             if solution1 is None:
                 continue
 
-            plot_bipartite_graph(solution1[:num_mappings_to_show], colors[:num_mappings_to_show], default_cos_sim_threshold)
+            plot_bipartite_graph(solution1[:num_mappings_to_show], colors[:num_mappings_to_show], cos_sim_threshold)
 
             if solution2:
-                plot_bipartite_graph(solution2[:num_mappings_to_show], colors[:num_mappings_to_show],
-                                 default_cos_sim_threshold)
+                plot_bipartite_graph(solution2[:num_mappings_to_show], colors[:num_mappings_to_show], cos_sim_threshold)
             if solution3:
-                plot_bipartite_graph(solution3[:num_mappings_to_show], colors[:num_mappings_to_show],
-                                 default_cos_sim_threshold)
-
+                plot_bipartite_graph(solution3[:num_mappings_to_show], colors[:num_mappings_to_show], cos_sim_threshold)
 
 
 def run_model(model_name, pair, cos_sim_threshold):
@@ -67,7 +64,7 @@ def get_pair_of_inputs_qasrl_path(pair_of_inputs):
     return pairs_qasrl_path
 
 
-def get_text_file_names():
+def get_text_file_names(pair_of_inputs):
     text_files_path = []
     for pair in pair_of_inputs:
         text_files_path.append(pair[0] + ".txt")
@@ -103,7 +100,7 @@ def extract_file_name_from_full_qasrl_path(path):
 
 
 if __name__ == '__main__':
-    model_name = "findMappingsQ"
+    model_name = FMQ
     pair_of_inputs = [('animal_cell', 'factory')]
     run_pipeline(model_name, pair_of_inputs, run_coref=False, run_qasrl=False, run_mappings=True)
 
