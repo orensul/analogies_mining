@@ -13,6 +13,11 @@ verbose = False
 
 
 def generate_mappings(pair, cos_sim_threshold):
+    """
+    Returns top1, top2 and top3 solutions (if exists) for the pair of texts.
+    This function implements the FMV baseline method, which is very similar to our method (FMQ),
+    See Section 4.1 in the paper for description of this baseline.
+    """
     text1_answer_verb_map = read_parsed_qasrl_verbs(pair[0])
     text2_answer_verb_map = read_parsed_qasrl_verbs(pair[1])
 

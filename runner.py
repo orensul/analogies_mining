@@ -98,7 +98,6 @@ pair_of_inputs = [('rattermann_story2_base', 'rattermann_story2_target')]
 propara_map_path = './data/propara/grids.v1.train.para_id_title.json'
 
 propara_results_path = "data/propara/propara_results.jsonl"
-propara_results_exp_format = "data/propara/propara_results_exp_format.xlsx"
 
 qasrl_prefix_path = './qasrl-modeling/data/'
 qasrl_suffix_path = '_span_to_question.jsonl'
@@ -119,6 +118,7 @@ top_k_for_medians_calc = 4
 first_batch_from = 7
 first_batch_till = 1350
 
+
 def calc_solution_total_score(solution):
     scores = [round(item[-1], 3) for item in solution[:top_k_for_medians_calc]]
     percentile_50 = np.percentile(scores, 50)
@@ -131,131 +131,11 @@ def calc_solution_total_score(solution):
         return len(solution) * percentile_50
     return float(len(solution))
 
+
 def extract_file_name_from_full_qasrl_path(path):
     path = path.replace(qasrl_prefix_path, "")
     path = path.replace("_span_to_question.jsonl", "")
     return path
-
-
-def read_propara_id_title_map(filename):
-    input_file = open(filename, 'r')
-    for json_dict in input_file:
-        json_object = json.loads(json_dict)
-        return json_object
-
-
-
-
-
-
-
-
-
-
-
-
-def get_identical_total_verbs_ratio(l):
-    count_stemmed_identical_verbs = 0
-    count_identical_verbs = 0
-    for quad in l:
-        v1, v2, v1_stem, v2_stem = quad
-        if v1_stem == v2_stem:
-            count_stemmed_identical_verbs += 1
-        if v1 == v2:
-            count_identical_verbs += 1
-    identical_stemmed_verbs_out_of_total = count_stemmed_identical_verbs / len(l)
-    identical_verbs_out_of_total = count_identical_verbs / len(l)
-
-    return round(identical_verbs_out_of_total, 3), round(identical_stemmed_verbs_out_of_total, 3)
-
-
-def run_propara_mappings(pair_of_inputs):
-    pair_results = []
-    propara_para_id_title_map = read_propara_id_title_map(propara_map_path)
-    saved_pairs_results = {}
-
-    input_file = open(propara_results_path, 'r')
-    for json_dict in input_file:
-        json_object = json.loads(json_dict)
-        for l in json_object:
-            saved_pairs_results[(l[0], l[1])] = l[2]
-
-    pairs = get_pair_of_inputs_qasrl_path(pair_of_inputs)
-    count_pairs = 1
-    for pair in pairs:
-        print(pair[0], pair[1])
-        print("pair " + str(count_pairs) + " out of " + str(len(pairs)))
-        count_pairs += 1
-        path1, path2 = extract_file_name_from_full_qasrl_path(pair[0]), extract_file_name_from_full_qasrl_path(
-            pair[1])
-        title1, title2 = propara_para_id_title_map[path1.partition("para_id_")[2]], propara_para_id_title_map[
-            path2.partition("para_id_")[2]]
-
-        if (title1 + "(" + path1.partition("para_id_")[2] + ")",
-            title2 + "(" + path2.partition("para_id_")[2] + ")") in saved_pairs_results:
-            pair_results.append((title1 + "(" + path1.partition("para_id_")[2] + ")",
-                                 title2 + "(" + path2.partition("para_id_")[2] + ")", saved_pairs_results[(
-            title1 + "(" + path1.partition("para_id_")[2] + ")", title2 + "(" + path2.partition("para_id_")[2] + ")")]))
-            continue
-        solution, _, _ = generate_mappings(pair, default_cos_sim_threshold)
-        if not solution:
-            pair_results.append((title1 + "(" + path1.partition("para_id_")[2] + ")",
-                                 title2 + "(" + path2.partition("para_id_")[2] + ")", 0))
-            continue
-        if generate_mappings_precision_oriented or len(solution) >= num_mappings_to_show - 1:
-            score = calc_solution_total_score(solution)
-            pair_results.append((title1 + "(" + path1.partition("para_id_")[2] + ")",
-                                 title2 + "(" + path2.partition("para_id_")[2] + ")", score))
-
-    pair_results = sorted(pair_results, key=operator.itemgetter(2), reverse=True)
-    with open(propara_results_path, 'w') as output_file:
-        json.dump(pair_results, output_file)
-
-
-
-def get_story_attributes_from_file_path(path):
-    side = "base" if "_base_" in path else "target"
-    start = path.find("story") + len("story")
-    end = path.find("_base") if side == "base" else path.find("_target")
-    num = path[start:end]
-    start = path.find("base_") + len("base_") if side == "base" else path.find("target_") + len("target_")
-    end = path.find("_span")
-    version = path[start:end]
-    return num, side, version
-
-
-def plot_confusion_matrix(cm, classes,
-                          normalize=False,
-                          title='Confusion matrix',
-                          cmap=plt.cm.Blues):
-
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
-    plt.colorbar()
-    tick_marks = np.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
-    plt.yticks(tick_marks, classes)
-
-    if normalize:
-        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
-    else:
-        print('Confusion matrix, without normalization')
-
-    thresh = cm.max() / 2.
-    import itertools
-    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, cm[i, j],
-                 horizontalalignment="center",
-                 color="white" if cm[i, j] > thresh else "black")
-
-    plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-    plt.show()
-
-
-
 
 
 def run_model(model_name, pair, cos_sim_threshold):
@@ -318,42 +198,7 @@ def get_text_file_names():
     return text_files_path
 
 
-def format_propara_all_pairs_results(propara_results_path):
-    input_file = open(propara_results_path, 'r')
-
-    import pandas as pd
-    writer = pd.ExcelWriter(propara_results_exp_format, engine='xlsxwriter')
-    writer.save()
-    import pandas as pd
-
-    hash_table_result = {'BaseParagraphTopic': [], 'TargetParagraphTopic': [], 'Score': []}
-
-    for json_dict in input_file:
-        json_object = json.loads(json_dict)
-        for row in json_object:
-            hash_table_result['BaseParagraphTopic'].append(row[0])
-            hash_table_result['TargetParagraphTopic'].append(row[1])
-            hash_table_result['Score'].append(row[2])
-
-    # dataframe Name and Age columns
-    df = pd.DataFrame(hash_table_result)
-
-    # Create a Pandas Excel writer using XlsxWriter as the engine.
-    writer = pd.ExcelWriter(propara_results_exp_format, engine='xlsxwriter')
-
-    # Convert the dataframe to an XlsxWriter Excel object.
-    df.to_excel(writer, sheet_name='Sheet1', index=False)
-
-    # Close the Pandas Excel writer and output the Excel file.
-    writer.save()
-
-
-
-
-
-
 if __name__ == '__main__':
-    # format_propara_all_pairs_results(propara_results_path)
     model_name = "findMappingsV"
     main(model_name)
 
