@@ -22,7 +22,10 @@ FMV = "findMappingsV"
 MODELS_SIM_THRESHOLD = {FMQ: 0.7, FMV: 0.5}
 
 
-def run_pipeline(model_name, cos_sim_threshold, pair_of_inputs, run_coref, run_qasrl, run_mappings):
+def run_analogous_matching_algorithm(model_name, cos_sim_threshold, pair_of_inputs, run_coref=False, run_qasrl=False, run_mappings=True):
+    """
+    Run the pipeline (see Section 3 in the paper)
+    """
     os.chdir('s2e-coref')
     text_file_names = get_text_file_names(pair_of_inputs)
 
@@ -102,6 +105,6 @@ def extract_file_name_from_full_qasrl_path(path):
 if __name__ == '__main__':
     model_name = FMQ
     pair_of_inputs = [('animal_cell', 'factory')]
-    run_pipeline(model_name, pair_of_inputs, run_coref=False, run_qasrl=False, run_mappings=True)
+    run_analogous_matching_algorithm(model_name, pair_of_inputs)
 
 
