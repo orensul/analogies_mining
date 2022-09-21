@@ -1,0 +1,9 @@
+Fish start as eggs.
+The eggs hatch.
+A larvae emerges.
+The larvae matures and grows.
+The larvae becomes an "adolescent" fish (or fry).
+The adolescent fish grows.
+The fish might go through several sub-stages, depend on The fish species or type.
+The fish is now a mature adult.
+The adult fish can lay more eggs.

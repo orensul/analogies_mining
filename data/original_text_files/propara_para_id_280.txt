@@ -1,0 +1,6 @@
+Wire is wrapped around a piece of metal.
+Current is sent through the wire.
+A magnetic field is produced by the current.
+This magnetic field in the wire interacts with certain particles in the central metal part.
+The piece of metal becomes magnetized.
+The magnetism remains until the current is shut off.

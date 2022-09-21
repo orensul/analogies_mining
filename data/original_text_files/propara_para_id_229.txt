@@ -1,0 +1,8 @@
+A dam is built in an area prone to flooding.
+A large amount of rain occurs.
+The water builds up behind the dam.
+The dam opens its floodgates when it starts to get full.
+The water flows into a river below the dam.
+The dam closes its gates.
+The dam will occasionally open its gates again to gradually release more water.
+Eventually all of the floodwater will be slowly released into the river without causing any flood damage.

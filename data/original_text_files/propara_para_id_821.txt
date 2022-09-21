@@ -1,0 +1,5 @@
+Coal is burned at a furnace.
+The resulting heat energy is used to heat water.
+The heated water is turned into steam.
+The steam drives a generator.
+Electricity is produced.

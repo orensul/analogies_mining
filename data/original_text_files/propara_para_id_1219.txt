@@ -1,0 +1,6 @@
+Grass and small plants grow in an area.
+These plants die.
+The soil gains organic material.
+The soil becomes more fertile.
+Larger plants are able to be supported.
+Trees eventually grow.

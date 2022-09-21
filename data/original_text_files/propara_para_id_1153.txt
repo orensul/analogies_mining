@@ -1,0 +1,7 @@
+An isotope has too many protons.
+The isotope is unstable.
+The isotope emits radiation.
+The isotope decays.
+The isotope loses some atomic particles.
+The isotope turns into a different element.
+The isotope is finished decaying and emitting radiation.

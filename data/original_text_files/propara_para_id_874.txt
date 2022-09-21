@@ -1,0 +1,5 @@
+The oil needs to be pumped from the ground.
+After it is pumped it then is transported to a factory.
+In the factory the oil is processed and turned into fuel.
+Once the fuel is refined it is then sent to a truck.
+By truck the fuel is sent to the gas station.

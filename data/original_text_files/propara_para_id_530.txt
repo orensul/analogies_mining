@@ -1,0 +1,9 @@
+Plants start off as a seed.
+The seed germinates.
+The plant gets nutrition from the environment.
+The plant grows from the nutrients.
+The plant produces flowers.
+The flowers produce fruit.
+The fruit releases seeds.
+The seeds become new plants.
+The original plant dies at some point.

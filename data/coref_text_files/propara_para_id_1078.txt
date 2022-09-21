@@ -1,0 +1,6 @@
+DNA replication is initiated by proteins.
+The hydrogen bonds that hold together a strand of DNA are broken.
+A polymerase reads each side of the strand.
+Adds complimentary nucleotides.
+Once all the bases are matched, the new DNA strand is formed.
+DNA ligase seals the new pieces into two new strands.

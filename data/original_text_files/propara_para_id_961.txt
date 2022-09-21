@@ -1,0 +1,6 @@
+A type of coal must be chosen before the heating can start.
+The coal is broken down to a smaller material.
+The coal particles mix with hot air and move in to a boiler.
+Water in the boiler is pumped and produces steam with the coal.
+Steam powers turbine blades, which magnetically charge wire coals.
+The water returns back in to its chamber and the process is repeated.

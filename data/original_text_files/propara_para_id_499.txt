@@ -1,0 +1,10 @@
+Batteries are put in a flashlight.
+The flashlight is turned on.
+Two contact strips touch one another.
+A circuit is completed between the batteries and the lamp.
+The lamp in the flashlight begins to glow.
+The reflector in the flashlight directs the lamp's beam.
+A straight beam of light is generated.
+The flashlight is turned off.
+The circuit is broken.
+The beam is no longer visible.

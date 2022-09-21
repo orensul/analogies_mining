@@ -1,0 +1,6 @@
+A fuel source must produce heat.
+Heat is used to create steam.
+steam will be used to power turbines.
+Turbines will work together with magnets to generate electricity.
+Electricity or moving electrons will then flow through wires.
+The wires will carry electrons to homes and businesses remotely.

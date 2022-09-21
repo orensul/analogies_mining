@@ -1,0 +1,9 @@
+An area is at a higher elevation than the surrounding area.
+Rain falls.
+Water is in the area of high elevation.
+The water creates a stream.
+The stream moves towards lower elevation.
+The stream continues along the same path for a long time.
+The soil and rocks erode where the stream touches The soil and rocks.
+The stream moves deeper into the soil.
+The stream is smaller than the eroded area.

@@ -1,0 +1,8 @@
+Sediment settles in a place due to gravity.
+The sediment breaks down into small particles.
+Wind or water picks up the sediment.
+The sediment travels along the same route as the wind or water.
+The sediment is deposited at new locations by the wind or water.
+The sediment is picked up again by new wind or water.
+The sediment travels further.
+The sediment is deposited again in a new place.

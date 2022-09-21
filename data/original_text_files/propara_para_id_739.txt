@@ -1,0 +1,5 @@
+An animal walk s by a plant.
+The animal gets seeds stuck in their fur.
+The animal eats some fruit of the tree containing seeds.
+The animal loses seeds from the fur in other locations.
+Then eaten seeds are defecated out in other locations.

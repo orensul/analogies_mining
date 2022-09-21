@@ -1,0 +1,7 @@
+A person eats food.
+The person's blood sugar level rises.
+The pancreas receives a signal to release insulin.
+Insulin is released into the bloodstream.
+Insulin signals cells to absorb sugar.
+The cells absorb sugar from the bloodstream.
+The cells use the sugar as energy.

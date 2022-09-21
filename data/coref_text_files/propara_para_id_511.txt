@@ -1,0 +1,5 @@
+The moon orbits the earth.
+The earth orbits the sun.
+The moon comes between the sun and the earth.
+The sun is totally blocked.
+A solar eclipse is occurring.

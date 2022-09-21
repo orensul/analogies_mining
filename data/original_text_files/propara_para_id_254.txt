@@ -1,0 +1,6 @@
+Plants produce seedlings.
+The animal passes by the plant.
+Eats from the plant or brushes the plant with the animal's fur.
+The seeds are eaten by the animal or become attached to the fur.
+The seed is digested by the animal and excreted into a new area.
+The seeds attached to the animal's fur fall off into a new area.

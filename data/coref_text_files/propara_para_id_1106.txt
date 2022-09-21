@@ -1,0 +1,7 @@
+A plant produces a seed.
+The seed falls to the ground.
+The seed is buried.
+The seed germinates.
+A plant grows.
+The plant produces flowers.
+The flowers produce more seeds.

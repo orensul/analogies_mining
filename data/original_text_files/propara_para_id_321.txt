@@ -1,0 +1,7 @@
+The planter must select a crop.
+The soil is prepared properly for that specific crop.
+Fertilizer is added to the soil.
+Seeds are planted in the field.
+Irrigation is set up to keep the crops properly watered.
+The crops grow.
+The crops are harvested.

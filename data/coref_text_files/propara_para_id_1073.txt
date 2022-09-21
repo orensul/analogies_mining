@@ -1,0 +1,6 @@
+There is a rain cloud in the sky.
+Small bits of ice within the cloud bump each other.
+The collisions create electrical charge.
+Lighter, positively charged particles sink to the bottom of the cloud.
+Heavier, negatively charges particles rise to the top.
+When the positive and negative charges grow large enough, a giant spark, called lightning occurs.

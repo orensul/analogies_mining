@@ -1,0 +1,6 @@
+Your thermostat senses that the room temperature has fallen below your thermostat setting.
+Your thermostat sends a signal to your heating system to provide heat for your home.
+When your oil burner is engaged, heating oil travels from the tank to the burner by way of a pump.
+Here the oil becomes a fine mist mixed with air.
+The fuel/air mixture is then injected into the burner where The fuel/air mixture is ignited in the combustion chamber.
+The warm air is disbursed through vents, hot water through baseboards, or by steam radiators.

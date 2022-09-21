@@ -1,0 +1,5 @@
+Sound enters the ears of a person.
+The sound hits a drum that is inside the ear.
+The drum inside the ear converts the sound to electrical impulses.
+The electrical impulses are sent to the brain.
+The brain can decode the impulses into sound.

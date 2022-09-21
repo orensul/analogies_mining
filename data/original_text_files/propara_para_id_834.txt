@@ -1,0 +1,7 @@
+A virus enters a host body.
+The virus has receptors that lock onto a target cell.
+The virus enters the cell.
+The virus uses the cell like a factory to make new copies of the virus.
+The new copies of the virus leave the cell.
+Infect other cells.
+The host gets sick as its cells are damaged.

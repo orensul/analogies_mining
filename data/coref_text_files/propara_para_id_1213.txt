@@ -1,0 +1,5 @@
+You start with a glacier.
+Through warming or other methods a chunk is taken off the glacier.
+The chunk drifts into the sea.
+And a chunk settles where a chunk can remain in a chunk state.
+a chunk is considered an iceberg.

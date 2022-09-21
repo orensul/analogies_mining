@@ -1,0 +1,4 @@
+The battery generates electrical voltage.
+The electrical voltage causes electrons to move through the copper wire.
+The electrons pass through the resistor.
+The resistor decrease the voltage in the circuit

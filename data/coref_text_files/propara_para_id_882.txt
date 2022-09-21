@@ -1,0 +1,7 @@
+Items that can be reused are placed into recycling containers.
+Recycling trucks pick up the items that are able to be reused.
+The recyclable items travel to a recycling plant.
+The items are sorted by what The items are made of.
+The items are broken down into small parts.
+The small parts are melted to make new raw parts.
+The raw parts are sold to manufactures to make new items.

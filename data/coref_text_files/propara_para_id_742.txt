@@ -1,0 +1,6 @@
+The bat sends out sound waves from The bat mouth or nose.
+The sound waves hit an object.
+Echoes are produced.
+The echo returns to the bat's ears.
+The bat hears the echo.
+The bat can figure out where the object is located.

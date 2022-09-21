@@ -1,0 +1,7 @@
+Fuel mixes with air.
+Mix gets inducted into cylinder.
+Piston compresses the mix.
+Spark plug emits a spark that ignites it causing combustion.
+Combustion gases expand.
+Pushes piston during power stroke.
+Exhaust valve opens to vent exhaust out tail pipe.

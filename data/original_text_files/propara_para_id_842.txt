@@ -1,0 +1,7 @@
+Electromagnet creates magnetic field with electricity.
+Conductive copper wire is wrapped around a piece of metal.
+An electric current gets introduced from power source.
+Flows through the wire.
+Magnetic field gets created in the wire.
+And the metal gets magnetized.
+When turned off it is no longer magnetic.

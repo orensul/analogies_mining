@@ -1,0 +1,8 @@
+MRNA is made during the first step of protein synthesis, which is transcription.
+The DNA's genetic information, or secret code, gets written onto a strand of mRNA.
+Transcription takes place in the nucleus.
+The next step in making a protein is called translation.
+The mRNA attaches The mRNA to the ribosome Read more at: http://www.ducksters.com/science/biology/proteins_and_amino_acids.php This text is Copyright Ducksters Do not use without permission.
+The ribosome figures out where to start on the mRNA by finding a special three letter "begin" sequence called a codon.
+The ribosome then moves down the strand of mRNA.
+When the ribosome sees the "stop" code, the ribosome ends the translation and the protein is complete.

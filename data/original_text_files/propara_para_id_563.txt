@@ -1,0 +1,6 @@
+Coal is heated in the boiler.
+The water tank over the boiler is heated.
+Creates steam.
+The steam is funneled to the piston.
+Piston uses the steam as energy.
+The piston causes the crankshaft to move.

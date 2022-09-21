@@ -1,0 +1,7 @@
+Coal is crushed.
+The coal is burned at high temperatures inside a boiler.
+The heat generated converts water to steam.
+The steam spins propeller blades in the turbine.
+The spinning turbine rotates coils in the generator.
+The rotating coils produce electricity.
+The electricity can be sent through the power grid.

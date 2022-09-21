@@ -1,0 +1,5 @@
+Build a satellite.
+Attach a rocket.
+Add rocket fuel.
+Launch rocket.
+Satellite goes into orbit.

@@ -1,0 +1,8 @@
+Get the ice tray.
+Remove any ice cubes currently in the tray.
+Fill the tray with cold water.
+Ensure the tray is evenly filled to an appropriate level.
+Open the freezer.
+Place the tray in the freezer.
+Close the freezer door.
+Wait.

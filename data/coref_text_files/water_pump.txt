@@ -1,0 +1,4 @@
+The pump creates pressure.
+The pressure causes the water to flow through the pipe.
+The water flows through clams which are inside the pipe.
+The clams decrease the flow rate

@@ -1,0 +1,10 @@
+An airline reservation is made.
+The passenger arrives early at the airport.
+The luggage is checked.
+The passenger waits in line.
+The passenger shows The passenger identification and gets a boarding pass.
+The passenger goes to The passenger gate.
+The passenger gets in line when it's time to board.
+The person boards the plane.
+The plane arrives at the destination.
+The passenger gets off the plane at The passenger destination.

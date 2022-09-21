@@ -1,0 +1,10 @@
+Nuclear plants use uranium-235, which is unstable.
+Uranium-235 splits, releasing energy and neutrons.
+The neutrons hit other atoms, splitting them.
+This continues until the reaction is self-sustaining.
+Rods containing uranium are used in the power plant.
+Control rods slow or accelerate the reaction.
+Heat from the fission turns water into steam.
+The steam drives a turbine.
+The turbine drives a generator.
+The generator creates electricity.

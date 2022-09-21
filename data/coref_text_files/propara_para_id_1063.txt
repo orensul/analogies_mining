@@ -1,0 +1,7 @@
+A satellite's need is determined.
+A group of people work to design a satellite capable of accomplishing the need.
+A team designs the physical structure of the satellite.
+A crew builds the physical satellite.
+The satellite is packed into a capsule.
+The satellite capsule is loaded onto a rocket.
+The rocket is launched into space.

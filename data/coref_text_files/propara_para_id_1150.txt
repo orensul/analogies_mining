@@ -1,0 +1,9 @@
+A photovoltaic cell is created with two layers of semiconductor material.
+The top layer are "doped" with impurities to allow a negative charge.
+The bottom layer are "doped" to allow for a positive charge.
+This produces an electric field that allows electrons to flow from negative to positve.
+Sunlight enters the cell.
+Energy from Sunlight knocks electrons loose in both fields.
+knocks prevents the flow of electrons from negative to positive.
+Adding an external circuit allows the exchange to continue.
+Give the cells owner a flow of electricity.

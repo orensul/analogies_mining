@@ -1,0 +1,5 @@
+sun keeps planet.
+planet move around sun.
+solar system consists of sun.
+sun is the center of solar system.
+planet create gravity

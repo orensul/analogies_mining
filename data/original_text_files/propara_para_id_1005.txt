@@ -1,0 +1,6 @@
+You take a tray.
+Add water into the tray.
+You insert the tray into a freezer.
+The water molecules begin to slow down.
+The water becomes ice.
+The ice cubes are ready.

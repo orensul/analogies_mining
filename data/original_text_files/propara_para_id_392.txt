@@ -1,0 +1,6 @@
+The coal is pulverized to a very fine powder.
+The coal powder is mixed with hot air and blown into the firebox of the boiler.
+Water pumped through pipes inside the boiler is turned into steam by the heat.
+The pressure of the steam pushing against a series of giant blades turns the turbine shaft.
+Turbine shaft is connected to the shaft of the generator.
+The magnets inside the generator spin within wire coils to produce electricity.

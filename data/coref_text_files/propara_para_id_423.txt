@@ -1,0 +1,7 @@
+A mine is excavated in the side of a mountain.
+Miners enter the mine.
+Miners remove the coal from the mine.
+The coal is placed into carts or on a conveyor belt.
+The coal is moved up to the surface.
+The coal is loaded onto a truck.
+The truck takes the coal to a power station.

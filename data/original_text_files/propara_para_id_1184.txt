@@ -1,0 +1,5 @@
+Chemical reactions in the battery causes a build up of electrons at the anode.
+This results in an electrical difference between the anode and the cathode.
+The electrons wants to rearrange themselves to get rid of this difference.
+The electrons go to the cathode.
+Electricty is created.

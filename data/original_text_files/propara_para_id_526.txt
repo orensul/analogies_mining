@@ -1,0 +1,10 @@
+Humans are born as babies.
+Babies become infants.
+Infants become children.
+Children learn skills.
+Children become teenagers.
+Teenagers undergo puberty.
+Teenagers become adults.
+Adults have children.
+Adults become elderly.
+Elderly humans die.

@@ -1,0 +1,10 @@
+Coal is mined out of the ground.
+Coal is pulverized into fine powder.
+The coal is mixed with hot air.
+The coal and hot air are blown into a boiler.
+The coal and hot air burn over a fire.
+Highly purified water is pumped through pipes in the boiler.
+The water turns into steam.
+The steam presses against turbines.
+The turbines spin.
+Electricity is produced.

@@ -1,0 +1,8 @@
+Coal is put in a coal-fired steam station.
+Water is put in pipes in the coal-fired steam station.
+The coal is crushed.
+The coal is moved into a boiler along with hot air.
+The water is moving through pipes in the boiler.
+The steam from the water is blown against a turning mechanism.
+The force of the steam makes the mechanism turn.
+The mechanism generates electricity.

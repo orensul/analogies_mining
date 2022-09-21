@@ -1,0 +1,5 @@
+The farmer chooses a crop that will grow well in his region.
+The farmer tills the soil to loosen it.
+The farmer spreads seeds.
+The farmer tills again to plant the seeds.
+Crops grow.

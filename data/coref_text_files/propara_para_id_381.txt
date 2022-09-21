@@ -1,0 +1,8 @@
+The virus finds an animal cell.
+The virus attaches to the cell's surface.
+The cell swallows the virus.
+The virus' RNA is released into the cell.
+The cell mistakenly reads the virus' RNA instead of the cell's own.
+The cell creates new viruses.
+The animal cell releases the new viruses.
+The new viruses can infect more cells.

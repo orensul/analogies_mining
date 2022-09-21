@@ -1,0 +1,10 @@
+A fuel is heated in an oven.
+Above the oven is a tank of water that is sealed.
+The tank of water begins to boil above the oven.
+A the water boils steam is created.
+The steam is denser than air so steam needs a place to go.
+The steam is forced out of the tank and into a piston.
+The piston moves up.
+The valve of the piston closes.
+The valve on the next piston opens.
+The steam fills the next piston, driving the next piston up, and the other one down.

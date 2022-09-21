@@ -1,0 +1,10 @@
+A rig drills into the earth where oil is present.
+A pipe is placed in the hole.
+A pump is added to the pipe.
+Oil is pumped out.
+Oil is placed in barrels.
+barrels are loaded on trucks.
+trucks go to a refinery.
+Crude oil is refined to motor oil.
+Motor oil is bottle.
+Shipped to gas stations.

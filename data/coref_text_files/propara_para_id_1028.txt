@@ -1,0 +1,9 @@
+The thermostat senses that the temperature has dropped.
+A signal is sent to the heating system.
+Heating oil travels from the tank to the burner.
+The oil becomes a fine mist mixed with air.
+The oil/air combination is injected into the burner.
+The burner is ignited in the combustion chamber.
+The furnace heats the air.
+The blower sends the heated air through the ducts.
+The heated air comes out the vents and into the room.

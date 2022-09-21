@@ -1,0 +1,7 @@
+The coal is placed in a heater.
+The coal is super heated.
+The heat is connected to a boiler.
+The boiler is full of water.
+The heat turns the water into steam.
+The steam turns a generator.
+The generator produces the electricity.

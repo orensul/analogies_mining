@@ -1,0 +1,6 @@
+Bread is exposed to the elements.
+Bread absorbs water from the air.
+Bread absorbs warmth from the air.
+Dust particles with mold spores fall on Bread.
+Mold spores start to consume the bread for energy.
+Mold colonies grow until Mold colonies are visible.

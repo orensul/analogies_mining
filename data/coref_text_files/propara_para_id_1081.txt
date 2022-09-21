@@ -1,0 +1,5 @@
+Coal is burned in a boiler.
+Steam is produced under pressure.
+Flows into a turbine.
+The turbine spins.
+Creates electricity.

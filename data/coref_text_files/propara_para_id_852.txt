@@ -1,0 +1,8 @@
+A machine called a pulverizer grinds the coal into a fine powder.
+The coal powder mixes with hot air, which helps the coal burn more efficiently, and the mixture moves to the furnace.
+The burning coal heats water in a boiler, creating steam.
+Steam released from the boiler powers an engine called a turbine, transforming heat energy from burning coal into mechanical energy that spins the turbine engine.
+The spinning turbine is used to power a generator, a machine that turns mechanical energy into electric energy.
+power happens when magnets inside a copper coil in the generator spin.
+A condenser cools the steam moving through the turbine As the steam is condensed, the steam turns back into water.
+The water returns to the boiler, and the cycle begins again.

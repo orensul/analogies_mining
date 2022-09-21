@@ -1,0 +1,5 @@
+You eat food.
+Your stomach digests the food.
+Sugars from food enter your bloodstream.
+Insulin helps turn sugars into energy.
+Insulin helps your body store the energy in fat, muscle and liver cells.

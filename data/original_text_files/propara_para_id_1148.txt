@@ -1,0 +1,10 @@
+Solar panels actually comprise many, smaller units called photovoltaic cells.
+Photovoltaic simply means they convert sunlight into electricity.).
+Many cells linked together make up a solar panel.
+Each photovoltaic cell is basically a sandwich made up of two slices of semi-conducting material, usually silicon : .
+Manufacturers "dope" silicon with other materials, giving each slice of the sandwich a positive or negative electrical charge.
+This adds extra electrons, with a negative charge, to that layer.
+Meanwhile, the bottom layer gets a dose of boron, which results in fewer electrons, or a positive charge.
+This all adds up to an electric field at the junction between the silicon layers.
+When a photon of sunlight knocks an electron free, the electric field will push that electron out of the silicon junction.
+A couple of other components of the cell turn these electrons into usable power.

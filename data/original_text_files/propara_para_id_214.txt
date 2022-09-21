@@ -1,0 +1,7 @@
+Animals pull a fruit off a plant or pick a fruit up from the ground.
+Animals eat the fruit.
+Animals drop some seeds onto the ground.
+Animals eat some seeds.
+The seeds are in the animal's waste.
+The waste goes onto the ground.
+There are seeds on the ground in different areas away from the plant.

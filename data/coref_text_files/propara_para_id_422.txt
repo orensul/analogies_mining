@@ -1,0 +1,8 @@
+Coal is harvested from a coal mine.
+The coal is transported either by train or truck to power station.
+The coal is burned in a furnace.
+Water is turned into steam in the boiler.
+The steam is cooled in cooling towers.
+The steam turns the turbines.
+The generator makes electricity.
+The electricity is sent through transformers.

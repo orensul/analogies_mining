@@ -1,0 +1,7 @@
+Items are collected.
+The items are sorted.
+Trash is removed from everything else.
+Goes to a landfill.
+The items go into a baler machine for each kind of material.
+Items come out as bales.
+The bales are shipped to manufacturers to use to make products.

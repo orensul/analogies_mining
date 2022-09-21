@@ -1,0 +1,6 @@
+Information encoded in DNA is copied to a RNA molecule.
+The mRNA molecule is sent to the cytoplasm.
+The mRNA bonds with ribosomes.
+TMRNA molecules bind with the ribosome in a sequence defined by the mRNA code.
+The ribosome slides down the mRNA.
+The process continues until one of the stop codons enters the A site.

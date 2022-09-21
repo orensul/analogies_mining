@@ -1,0 +1,10 @@
+A butterfly starts as an egg.
+The egg hatches.
+A larva emerges.
+The larva eats and grows.
+The larva sheds its skin.
+The larva enters a chrysalis.
+The pupa grows inside the chrysalis.
+The adult butterfly exits the chrysalis.
+The adult butterfly is now fully grown.
+The adult butterfly lays more eggs.

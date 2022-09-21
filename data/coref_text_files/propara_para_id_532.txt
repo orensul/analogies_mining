@@ -1,0 +1,6 @@
+The seed germinates.
+The plant grows.
+The plant flowers.
+Produces fruit.
+The fruit releases seeds.
+The plant dies.

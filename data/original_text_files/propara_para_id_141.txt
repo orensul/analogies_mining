@@ -1,0 +1,8 @@
+You inhale.
+Your diaphragm moves down.
+Your lungs have more room.
+Your lungs fill with air.
+You exhale.
+Your diaphragm moves back up.
+Carbon dioxide is exhaled.
+You start the process over again.

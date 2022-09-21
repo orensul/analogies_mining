@@ -1,0 +1,9 @@
+Minerals fill spaces between bits of sediment.
+The sediments become glued together.
+The glued together parts become hard like cement.
+The sediment becomes a big rock.
+The rocks erode slowly.
+The rocks come apart.
+The rocks become smaller rocks.
+The rocks continue to erode into smaller rocks.
+The process starts again.

@@ -1,0 +1,6 @@
+Wind passes the turbines and moves the blades.
+The shaft of the turbine spins.
+Shaft is connected to a generator.
+The generator uses the spins of the shaft to rotate a rotor.
+The rotor spins inside the core, which has magnets inside surrounded by wire loops inside.
+The spinning of the rotor in the core generates electricity.

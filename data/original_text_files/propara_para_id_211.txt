@@ -1,0 +1,8 @@
+Water droplets in clouds collide.
+Become bigger drops.
+Ice particles also grow in clouds.
+Drops and ice particles get heavier.
+Drops fall to the ground.
+Ice particles fall from the clouds.
+Ice particles fall through warmer air and melt.
+Ice reaches the ground as rain drops.

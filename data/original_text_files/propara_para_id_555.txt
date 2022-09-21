@@ -1,0 +1,8 @@
+Food enters the body.
+The food is broken down.
+Sugars from the food enter the bloodstream.
+Blood sugar must be within a particular range to avoid damaging many organs.
+Sometimes the brain tells the pancreas the blood sugar (glucose) is too low.
+The pancreas releases glucagon to change the blood sugar to a better level.
+Sometimes the brain tells the pancreas the blood sugar (glucose) is too high.
+The pancreas releases insulin to change the blood sugar to a better level.

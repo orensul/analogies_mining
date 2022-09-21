@@ -1,0 +1,6 @@
+A plant produces a fruit with seeds in it.
+An animal eats the fruit.
+The animal wanders to another area.
+The animal defecates.
+The seeds are included in the waste.
+The seeds produce a new plant.

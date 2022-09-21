@@ -1,0 +1,7 @@
+Plants produce fruit which contain seeds of the plant.
+An animal eats the fruit from a plant.
+The animal digests the fruit.
+The seeds are not digested.
+The seeds pass through the animal's digestive system.
+The seeds are in the animal's droppings.
+The seeds are now in another location and can grow.

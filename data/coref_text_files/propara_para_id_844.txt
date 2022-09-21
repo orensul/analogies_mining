@@ -1,0 +1,5 @@
+A conducting metal, like copper, is wrapped around a piece of metal.
+An electrical source, like a battery, produces an electrical current.
+The electrical current flows through the wire.
+The electrical current creates a magnetic field around the wire, magnetizing the metal.
+The magnetic field can be turned on and off by starting or stopping the electricity source.

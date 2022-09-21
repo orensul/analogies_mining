@@ -1,0 +1,6 @@
+Energy is stored in a battery.
+The energy is released from the battery as electrical current.
+The electrical current goes to a motor.
+The motor makes the needle of the sewing machine go up and down.
+The needle is pressed through the piece of clothing at a constant rate.
+Thread is attached and used to stitch the clothing.

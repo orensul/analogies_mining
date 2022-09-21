@@ -1,0 +1,6 @@
+The environment in which rocks are located interacts with particles in the environment.
+Particles in the environment take off small pieces of rock each time the particles come into contact with the rock.
+If the particles keep striking, brushing, or growing against the rocks, small pieces will be detached.
+It is at this point that the rock is pull apart by the impact.
+As a result, there are now pieces of smaller rocks.
+It has been found that the rock pieces are eroded into smaller and smaller pieces by the same forces.
