@@ -40,11 +40,11 @@ if __name__ == '__main__':
 
     # FMQ on stories and proPara
     runner.run_analogous_matching_algorithm(model_name, sim_threshold, stories_mapping_eval)
-    runner.run_pipeline(model_name, sim_threshold, propara_mappings_eval)
+    runner.run_analogous_matching_algorithm(model_name, sim_threshold, propara_mappings_eval)
 
     model_name = runner.FMV
     sim_threshold = runner.MODELS_SIM_THRESHOLD[model_name]
 
     # FMV on stories and proPara
-    runner.run_pipeline(model_name, sim_threshold, stories_mapping_eval)
-    runner.run_pipeline(model_name, sim_threshold, propara_mappings_eval)
+    runner.run_analogous_matching_algorithm(model_name, sim_threshold, stories_mapping_eval)
+    runner.run_analogous_matching_algorithm(model_name, sim_threshold, propara_mappings_eval)
