@@ -43,6 +43,7 @@ if __name__ == '__main__':
     labels = [1, 2, 3, 4, 5, 6, 7, 8]
     read_questions_cosine_sim(find_mappings_questions_first_sample_file_name, bins, labels)
 
+    # values derived from ../paper_experiments_results/cosine_similarity_threshold_figure4/samples_for_questions_cosine_threshold.csv
     thresholds_x_axis = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9]
     acc_y_axis = [0.333, 0.467, 0.533, 0.667, 0.8, 0.8, 0.8, 0.8, 0.867]
     plot_graph(np.array(thresholds_x_axis), np.array(acc_y_axis))

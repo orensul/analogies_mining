@@ -19,7 +19,10 @@ top_k_for_medians_calc = 4
 
 FMQ = "findMappingsQ"
 FMV = "findMappingsV"
-MODELS_SIM_THRESHOLD = {FMQ: 0.7, FMV: 0.5}
+SBERT = "sentenceBert"
+FMQ_SIM_THRESHOLD = 0.7
+FMV_SIM_THRESHOLD = 0.5
+MODELS_SIM_THRESHOLD = {FMQ: FMQ_SIM_THRESHOLD, FMV: FMV_SIM_THRESHOLD}
 
 
 def run_analogous_matching_algorithm(model_name, cos_sim_threshold, pair_of_inputs, run_coref=False, run_qasrl=False, run_mappings=True):
