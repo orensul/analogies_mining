@@ -169,3 +169,4 @@ def print_clusters_of_verbs(text1_clusters_of_verbs, text2_clusters_of_verbs):
     for question in text2_clusters_of_verbs:
         print(question)
     print()
+

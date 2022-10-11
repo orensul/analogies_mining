@@ -1,0 +1,21 @@
+FMQ,,,,,FMV,,,
+BaseParagraphTopic,TargetParagraphTopic,Score,label,,BaseParagraphTopic,TargetParagraphTopic,Score,label
+Describe the process of recycling an aluminum can(157),How does recycling work?(882),28.161,close,,Describe the process of recycling an aluminum can(157),Describe the process of recycling an aluminum can(699),7.5,self
+Describe the process of recycling an aluminum can(157),How does coal contribute to acid rain?(978),21.483,not,,Describe the process of recycling an aluminum can(157),How do bees make a hive?(1132),6,
+Describe the process of recycling an aluminum can(157),Describe the process of recycling an aluminum can(699),20.325,self,,Describe the process of recycling an aluminum can(157),How does recycling work?(882),6,close
+Describe the process of recycling an aluminum can(157),What happens during photosynthesis?(940),19.281,far,,Describe the process of recycling an aluminum can(157),How does the human auditory system work?(413),5.545,
+Describe the process of recycling an aluminum can(157),Describe the lifecycle of a butterfly(658),17.852,,,Describe the process of recycling an aluminum can(157),Describe the lifecycle of a butterfly(658),5.09,
+Describe the process of recycling an aluminum can(157),How does the human auditory system work?(413),13.638,,,Describe the process of recycling an aluminum can(157),How does coal get from the ground to a power station?(422),5,
+Describe the process of recycling an aluminum can(157),Describe how the liver works(548),13.604,,,Describe the process of recycling an aluminum can(157),Describe the steps in mitosis.(1169),5,
+Describe the process of recycling an aluminum can(157),Describe the process of recycling an aluminum can(158),12.116,,,Describe the process of recycling an aluminum can(157),How does recycling work?(264),5,
+Describe the process of recycling an aluminum can(157),How does rain form?(876),12,,,Describe the process of recycling an aluminum can(157),Describe how the liver works(548),5,
+,,,,,Describe the process of recycling an aluminum can(157),What happens during the water cycle?(947),5,
+,,,,,Describe the process of recycling an aluminum can(157),What happens during photosynthesis?(940),5,
+SBERT,,,,,,,,
+BaseParagraphTopic,TargetParagraphTopic,Score,label,,,,,
+Describe the process of recycling an aluminum can(157),Describe the process of recycling an aluminum can(699),0.856,self,,,,,
+Describe the process of recycling an aluminum can(157),Describe the process of recycling an aluminum can(158),0.711,self,,FMQ top 100 minimum score 18,,,
+Describe the process of recycling an aluminum can(157),Describe the process of recycling an aluminum can(698),0.664,self,,FMV top 100 minimum score 6,,,
+Describe the process of recycling an aluminum can(157),How does recycling work?(882),0.645,close,,SBERT top 100 minimum score 0.8,,,
+Describe the process of recycling an aluminum can(157),How does recycling work?(264),0.619,close,,,,,
+Describe the process of recycling an aluminum can(157),How does recycling work?(263),0.579,close,,,,,

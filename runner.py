@@ -103,8 +103,9 @@ def extract_file_name_from_full_qasrl_path(path):
 
 
 if __name__ == '__main__':
-    model_name = FMQ
-    pair_of_inputs = [('animal_cell', 'factory')]
-    run_analogous_matching_algorithm(model_name, pair_of_inputs)
+    model_name = FMV
+    cos_sim_threshold = MODELS_SIM_THRESHOLD[model_name]
+    pair_of_inputs = [('propara_para_id_686', 'propara_para_id_687')]
+    run_analogous_matching_algorithm(model_name, cos_sim_threshold, pair_of_inputs)
 
 

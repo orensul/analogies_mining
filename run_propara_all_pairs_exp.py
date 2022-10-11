@@ -197,9 +197,17 @@ def format_propara_all_pairs_results(propara_results_path, model_name, cos_sim_t
     for json_dict in input_file:
         json_object = json.loads(json_dict)
         for row in json_object:
-            hash_table_result['BaseParagraphTopic'].append(row[0])
-            hash_table_result['TargetParagraphTopic'].append(row[1])
-            hash_table_result['Score'].append(row[2])
+            # check if to create the results for specific example, so the chosen paragraph_id should be the base
+            if paragraph_id_suffix:
+                paragraph_id = paragraph_id_suffix.partition("_para_id_")[2]
+                base_paragraph_id = row[0].partition("(")[2][:-1]
+                if base_paragraph_id == paragraph_id:
+                    hash_table_result['BaseParagraphTopic'].append(row[0])
+                    hash_table_result['TargetParagraphTopic'].append(row[1])
+                else:
+                    hash_table_result['BaseParagraphTopic'].append(row[1])
+                    hash_table_result['TargetParagraphTopic'].append(row[0])
+                hash_table_result['Score'].append(row[2])
 
     # dataframe Name and Age columns
     df = pd.DataFrame(hash_table_result)
@@ -323,7 +331,7 @@ def write_paragraphs_num_words_results(result):
     writer.save()
 
 
-def run_examples(paragraph_id):
+def run_specific_paragraph_id_example(paragraph_id):
     os.chdir('s2e-coref')
     text_file_names = [f for f in glob.glob("../data/original_text_files/propara_para_id_*")]
     text_file_names = [f.replace("../data/original_text_files/", "") for f in text_file_names]
@@ -362,4 +370,6 @@ def run_examples(paragraph_id):
 if __name__ == '__main__':
     # run_exp()
     # read_results(propara_results_path + '.jsonl')
-    run_examples('157')
+    specific_paragraph_id_examples = ['687', '779', '157']
+    for paragraph_id_example in specific_paragraph_id_examples:
+        run_specific_paragraph_id_example(paragraph_id_example)

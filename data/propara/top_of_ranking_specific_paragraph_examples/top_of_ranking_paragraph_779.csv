@@ -1,0 +1,31 @@
+FMQ,,,,,FMV,,,
+BaseParagraphTopic,TargetParagraphTopic,Score,label,,BaseParagraphTopic,TargetParagraphTopic,Score,label
+How do plants obtain and use water?(779),What happens during photosynthesis?(938),39.7845,close,,How do plants obtain and use water?(779),What happens during photosynthesis?(938),7.035,close
+How do plants obtain and use water?(779),Describe the process of photosynthesis(687),26.385,close,,How do plants obtain and use water?(779),Describe how the liver works(548),6.6925,sub
+How do plants obtain and use water?(779),Describe how the liver works(548),25.104,sub,,How do plants obtain and use water?(779),Describe the process of photosynthesis(686),6.675,close
+How do plants obtain and use water?(779),How does a virus cause disease?(830),22.7425,not,,How do plants obtain and use water?(779),How do plants obtain and use water?(367),6.605,self
+How do plants obtain and use water?(779),What happens during photosynthesis?(940),20.976,close,,How do plants obtain and use water?(779),How does a nuclear power plant work?(1224),6,sub
+How do plants obtain and use water?(779),How do green plants get the energy they need?(330),19.1525,close,,How do plants obtain and use water?(779),Describe the process of photosynthesis(687),6,close
+How do plants obtain and use water?(779),Describe the process of photosynthesis(686),17.59,,,How do plants obtain and use water?(779),How does a virus cause disease?(830),5.47,
+How do plants obtain and use water?(779),How does rain form?(876),15.183,,,How do plants obtain and use water?(779),How do bees make a hive?(1131),5,
+How do plants obtain and use water?(779),How does a nuclear power plant work?(1224),14.655,,,How do plants obtain and use water?(779),How does a virus infect an animal?(381),5,
+How do plants obtain and use water?(779),How does insulin help the body?(1214),14.577,,,How do plants obtain and use water?(779),Describe how the pancreas works(626),5,
+How do plants obtain and use water?(779),How does a nuclear power plant work?(1223),13.758,,,How do plants obtain and use water?(779),How do green plants get the energy they need?(330),5,
+How do plants obtain and use water?(779),What happens during photosynthesis?(112),11.942,,,How do plants obtain and use water?(779),How does a nuclear power plant work?(1223),5,
+How do plants obtain and use water?(779),How does recycling work?(264),11.204,,,How do plants obtain and use water?(779),How does insulin help the body?(1214),5,
+How do plants obtain and use water?(779),Describe how kidneys work(616),10.614,,,How do plants obtain and use water?(779),How does the body control its blood sugar level?(893),5,
+How do plants obtain and use water?(779),How does a coal-powered power station generate electricity?(392),10.27,,,How do plants obtain and use water?(779),How does recycling work?(263),5,
+,,,,,,,,
+SBERT,,,,,,,,
+BaseParagraphTopic,TargetParagraphTopic,Score,label,,,,,
+How do plants obtain and use water?(779),Describe the process of photosynthesis(687),0.732,close,,FMQ top 100 minimum score 18,,,
+How do plants obtain and use water?(779),How do green plants get the energy they need?(330),0.708,close,,FMV top 100 minimum score 6,,,
+How do plants obtain and use water?(779),Describe the process of photosynthesis(482),0.707,close,,SBERT top 100 minimum score 0.8,,,
+How do plants obtain and use water?(779),How do plants obtain and use water?(367),0.703,close,,,,,
+How do plants obtain and use water?(779),Describe the process of photosynthesis(686),0.696,close,,,,,
+How do plants obtain and use water?(779),Describe the process of photosynthesis(480),0.687,close,,,,,
+How do plants obtain and use water?(779),What happens during photosynthesis?(938),0.641,close,,,,,
+How do plants obtain and use water?(779),What happens during photosynthesis?(112),0.61,close,,,,,
+How do plants obtain and use water?(779),What happens during photosynthesis?(940),0.597,close,,,,,
+How do plants obtain and use water?(779),What happens during photosynthesis?(113),0.584,close,,,,,
+How do plants obtain and use water?(779),What happens during photosynthesis?(939),0.548,close,,,,,

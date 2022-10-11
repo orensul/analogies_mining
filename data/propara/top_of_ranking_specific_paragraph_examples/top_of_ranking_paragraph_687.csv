@@ -1,0 +1,35 @@
+FMQ,,,,,FMV,,,
+paragraph_base,paragraph_target,score,label,,paragraph_base,paragraph_target,score,label
+Describe the process of photosynthesis(687),What happens during photosynthesis?(940),41.868,self,,Describe the process of photosynthesis(687),Describe the process of photosynthesis(686),9.9505,self
+Describe the process of photosynthesis(687),Describe the process of photosynthesis(686),40.276,self,,Describe the process of photosynthesis(687),What happens during photosynthesis?(939),7.5,self
+Describe the process of photosynthesis(687),What happens during photosynthesis?(939),31.5,self,,Describe the process of photosynthesis(687),How do plants obtain and use water?(367),7,close
+Describe the process of photosynthesis(687),How do plants obtain and use water?(779),26.385,close,,Describe the process of photosynthesis(687),Describe the process of desalination(667),6.115,
+Describe the process of photosynthesis(687),How does a nuclear power plant work?(1224),23.926,far,,Describe the process of photosynthesis(687),How do plants obtain and use water?(779),6,close
+Describe the process of photosynthesis(687),How do green plants get the energy they need?(330),23.716,far,,Describe the process of photosynthesis(687),How do green plants get the energy they need?(330),6,close
+Describe the process of photosynthesis(687),What happens during the water cycle?(13),21.513,not,,Describe the process of photosynthesis(687),What happens during photosynthesis?(938),6,self
+Describe the process of photosynthesis(687),How do the lungs work?(794),18.065,not,,Describe the process of photosynthesis(687),How does rain form?(876),6,
+Describe the process of photosynthesis(687),How does a virus cause disease?(830),17.418,not,,Describe the process of photosynthesis(687),Describe how the liver works(548),6,
+Describe the process of photosynthesis(687),How does rain form?(876),17.3075,,,Describe the process of photosynthesis(687),How do the lungs work?(794),5,not
+Describe the process of photosynthesis(687),What happens during photosynthesis?(112),17.169,self,,Describe the process of photosynthesis(687),How do bees make a hive?(1132),5,not
+Describe the process of photosynthesis(687),How do lungs work?(770),16.422,not,,Describe the process of photosynthesis(687),What happens during the water cycle?(13),5,not
+Describe the process of photosynthesis(687),How does a battery-operated sewing machine work?(817),16.38,,,Describe the process of photosynthesis(687),Describe how radioactive atoms decay(1151),5,
+Describe the process of photosynthesis(687),Describe how the liver works(548),16.305,,,Describe the process of photosynthesis(687),How does a nuclear power plant work?(1224),5,
+Describe the process of photosynthesis(687),How does coal contribute to acid rain?(978),16.065,,,Describe the process of photosynthesis(687),Describe the process of pollution causing bad effects on the enviroinment.(693),5,
+,,,,,,,,
+SBERT,,,,,,,,
+paragraph_base,paragraph_target,score,label,,,,,
+Describe the process of photosynthesis(687),Describe the process of photosynthesis(686),0.847,self,,FMQ top 100 minimum score 18,,,
+Describe the process of photosynthesis(687),What happens during photosynthesis?(939),0.776,self,,FMV top 100 minimum score 6,,,
+Describe the process of photosynthesis(687),How do plants obtain and use water?(779),0.732,close,,SBERT top 100 minimum score 0.8,,,
+Describe the process of photosynthesis(687),What happens during photosynthesis?(112),0.717,self,,,,,
+Describe the process of photosynthesis(687),How do green plants get the energy they need?(330),0.704,close,,,,,
+Describe the process of photosynthesis(687),What happens during photosynthesis?(940),0.679,self,,,,,
+Describe the process of photosynthesis(687),What happens during photosynthesis?(938),0.666,self,,,,,
+Describe the process of photosynthesis(687),What happens during photosynthesis?(113),0.666,self,,,,,
+Describe the process of photosynthesis(687),Describe the process of photosynthesis(480),0.629,self,,,,,
+Describe the process of photosynthesis(687),How do plants obtain and use water?(367),0.601,close,,,,,
+Describe the process of photosynthesis(687),Describe the process of photosynthesis(482),0.587,self,,,,,
+Describe the process of photosynthesis(687),What happens during respiration?(293),0.447,,,,,,
+Describe the process of photosynthesis(687),How do lungs work?(771),0.441,not,,,,,
+Describe the process of photosynthesis(687),What happens during the water cycle?(13),0.428,not,,,,,
+Describe the process of photosynthesis(687),How do the lungs work?(795),0.413,not,,,,,
