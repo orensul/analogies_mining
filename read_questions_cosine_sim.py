@@ -1,10 +1,9 @@
 import pandas as pd
-import numpy as np    # to create dummy data
+import numpy as np
 import matplotlib.pyplot as plt
 
-
 find_mappings_questions_first_sample_file_name = 'find_mappings_questions_cosine_sim.txt'
-find_mappings_questions_second_sample_file_name = 'find_mappings_questions_second_sample_cosine_sim.txt'
+
 
 def read_questions_cosine_sim(filename, bins, labels):
     triplets = set()
@@ -28,21 +27,22 @@ def read_questions_cosine_sim(filename, bins, labels):
         results.append(df1[(df1['binned'] == i)])
     print(results)
 
+
 def plot_graph(x, y):
-    fig = plt.figure()
     plt.plot(x, y)
     for a, b in zip(x, y):
         plt.text(a, b, str(b))
 
     plt.xlabel('cosine similarity threshold')
     plt.ylabel('questions similarity accuracy')
-
     plt.show()
+
 
 if __name__ == '__main__':
     bins = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9]
     labels = [1, 2, 3, 4, 5, 6, 7, 8]
     read_questions_cosine_sim(find_mappings_questions_first_sample_file_name, bins, labels)
+
     thresholds_x_axis = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9]
     acc_y_axis = [0.333, 0.467, 0.533, 0.667, 0.8, 0.8, 0.8, 0.8, 0.867]
     plot_graph(np.array(thresholds_x_axis), np.array(acc_y_axis))

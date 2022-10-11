@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
-import numpy as np
-
 from statsmodels.stats import inter_rater as irr
 from sklearn.metrics import cohen_kappa_score
 
@@ -11,19 +10,7 @@ conversion_map = {'Self': 'Analogy', 'Close': 'Analogy', 'Far': 'Analogy', 'Not'
 two_labels_map = {'Not': 0, 'Analogy': 1}
 
 
-def draw_confusion_matrix(actual, predicted, classes):
-    cm = confusion_matrix(y_true=actual, y_pred=predicted)
-    print(cm)
-
-    plot_confusion_matrix(cm, classes)
-
-    matrix = classification_report(actual, predicted)
-    print('Classification report : \n', matrix)
-
-
 def expert_annotators_check_1():
-
-
     expert1 = ['Self', 'Self', 'Close', 'Close', 'Far', 'Far', 'Not', 'Not', 'Sub', 'Sub']
     expert2 = ['Self', 'Self', 'Close', 'Close', 'Far', 'Far', 'Not', 'Not', 'Not', 'Sub']
 
@@ -37,7 +24,7 @@ def expert_annotators_check_1():
     expert2_five_labels = [five_labels_map[l] for l in expert2]
 
     cohen_kappa_two_labels = round(cohen_kappa_score(expert1_two_labels, expert2_two_labels), 2)
-    cohen_kappa_five_labels = round (cohen_kappa_score(expert1_five_labels, expert2_five_labels), 2)
+    cohen_kappa_five_labels = round(cohen_kappa_score(expert1_five_labels, expert2_five_labels), 2)
 
     print("cohen kappa check 1 two labels: " + str(cohen_kappa_two_labels))
     print("cohen kappa check 1 five labels: " + str(cohen_kappa_five_labels))
@@ -49,7 +36,6 @@ def volunteer_annotators_check_2():
     set3_actual = ['Close', 'Self', 'Not', 'Far', 'Far']
     set4_actual = ['Far', 'Self', 'Not', 'Close', 'Sub']
     set5_actual = ['Self', 'Close', 'Not', 'Sub', 'Sub']
-
 
     actual_five_labels = set1_actual * 3 + set2_actual * 3 + set3_actual * 3 + set4_actual * 3 + set5_actual * 3
     actual_two_labels = [conversion_map[l] for l in actual_five_labels]
@@ -86,23 +72,22 @@ def volunteer_annotators_check_2():
     draw_confusion_matrix(actual_classes_five_labels, predicted_classes_five_labels, ['Not', 'Self', 'Close', 'Far', 'Sub'])
     draw_confusion_matrix(actual_classes_two_labels, predicted_classes_two_labels, ['No', 'Yes'])
 
-
     # fleiss kappa check 2 two labels
     actual_two_labels = [conversion_map[l] for l in set1_actual + set2_actual + set3_actual + set4_actual + set5_actual]
     actual_classes_two_labels = [two_labels_map[l] for l in actual_two_labels]
-    annotator_pairs_annotations = convert_data_for_inter_annotator_clac(actual_classes_two_labels, predicted_classes_two_labels)
+    annotator_pairs_annotations = convert_data_for_inter_annotator_calc(actual_classes_two_labels, predicted_classes_two_labels)
     fleiss_kappa_two_labels = calc_inter_annotator_agreement(annotator_pairs_annotations)
     print("fleiss kappa check 2 two labels: " + str(fleiss_kappa_two_labels))
 
     # fleiss kappa check 2 five labels
     actual_five_labels = set1_actual + set2_actual + set3_actual + set4_actual + set5_actual
     actual_classes_five_labels = [five_labels_map[l] for l in actual_five_labels]
-    annotator_pairs_annotations = convert_data_for_inter_annotator_clac(actual_classes_five_labels, predicted_classes_five_labels)
+    annotator_pairs_annotations = convert_data_for_inter_annotator_calc(actual_classes_five_labels, predicted_classes_five_labels)
     fleiss_kappa_five_labels = calc_inter_annotator_agreement(annotator_pairs_annotations)
     print("fleiss kappa check 2 five labels: " + str(fleiss_kappa_five_labels))
 
 
-def convert_data_for_inter_annotator_clac(actual, predicted):
+def convert_data_for_inter_annotator_calc(actual, predicted):
     annotator_pairs_annotations = {'expert': [], 'A1': [], 'A2': [], 'A3': []}
     annotator_pairs_annotations['expert'] = actual
 
@@ -131,7 +116,7 @@ def calc_inter_annotator_agreement(annotator_pairs_annotations):
     return fleiss_kappa_result
 
 
-def plot_confusion_matrix(cm, classes,
+def draw_confusion_matrix_helper(cm, classes,
                           normalize=False,
                           title='Confusion matrix',
                           cmap=plt.cm.Blues):
@@ -161,8 +146,16 @@ def plot_confusion_matrix(cm, classes,
     plt.show()
 
 
+def draw_confusion_matrix(actual, predicted, classes):
+    cm = confusion_matrix(y_true=actual, y_pred=predicted)
+    print(cm)
+    draw_confusion_matrix_helper(cm, classes)
+    matrix = classification_report(actual, predicted)
+    print('Classification report : \n', matrix)
+
+
 if __name__ == '__main__':
-    # expert_annotators_check_1()
+    expert_annotators_check_1()
     volunteer_annotators_check_2()
 
 
