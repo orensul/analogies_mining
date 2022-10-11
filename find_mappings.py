@@ -10,6 +10,7 @@ clustering_embedder = questions_similarity_embedder
 
 max_num_words_in_entity = 7
 score_boosting_same_sentence = 1
+agglomerative_clustering_distance_threshold = 1
 beam = 7
 
 verbose = False
@@ -30,9 +31,11 @@ def generate_mappings(pair, cos_sim_threshold):
     if verbose:
         print_corpus_entities(text1_corpus_entities, text2_corpus_entities)
 
-    text1_clusters_of_entities = get_clusters_of_entities(text1_answer_question_map, text1_corpus_entities, distance_threshold=1)
+    text1_clusters_of_entities = get_clusters_of_entities(text1_answer_question_map, text1_corpus_entities,
+                                                          distance_threshold=agglomerative_clustering_distance_threshold)
     text1_clusters_of_questions = get_clusters_of_questions(text1_clusters_of_entities, text1_answer_question_map)
-    text2_clusters_of_entities = get_clusters_of_entities(text2_answer_question_map, text2_corpus_entities, distance_threshold=1)
+    text2_clusters_of_entities = get_clusters_of_entities(text2_answer_question_map, text2_corpus_entities,
+                                                          distance_threshold=agglomerative_clustering_distance_threshold)
     text2_clusters_of_questions = get_clusters_of_questions(text2_clusters_of_entities, text2_answer_question_map)
 
     if verbose:

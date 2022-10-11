@@ -3,7 +3,6 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 import numpy as np
 
-import seaborn as sns
 from statsmodels.stats import inter_rater as irr
 from sklearn.metrics import cohen_kappa_score
 
@@ -11,16 +10,16 @@ five_labels_map = {'Not': 0, 'Self': 1, 'Close': 2, 'Far': 3, 'Sub': 4}
 conversion_map = {'Self': 'Analogy', 'Close': 'Analogy', 'Far': 'Analogy', 'Not': 'Not', 'Sub': 'Analogy'}
 two_labels_map = {'Not': 0, 'Analogy': 1}
 
+
 def draw_confusion_matrix(actual, predicted, classes):
     cm = confusion_matrix(y_true=actual, y_pred=predicted)
     print(cm)
-
-
 
     plot_confusion_matrix(cm, classes)
 
     matrix = classification_report(actual, predicted)
     print('Classification report : \n', matrix)
+
 
 def expert_annotators_check_1():
 
@@ -42,7 +41,6 @@ def expert_annotators_check_1():
 
     print("cohen kappa check 1 two labels: " + str(cohen_kappa_two_labels))
     print("cohen kappa check 1 five labels: " + str(cohen_kappa_five_labels))
-
 
 
 def volunteer_annotators_check_2():
@@ -104,10 +102,6 @@ def volunteer_annotators_check_2():
     print("fleiss kappa check 2 five labels: " + str(fleiss_kappa_five_labels))
 
 
-
-
-
-
 def convert_data_for_inter_annotator_clac(actual, predicted):
     annotator_pairs_annotations = {'expert': [], 'A1': [], 'A2': [], 'A3': []}
     annotator_pairs_annotations['expert'] = actual
@@ -121,11 +115,6 @@ def convert_data_for_inter_annotator_clac(actual, predicted):
             annotator_pairs_annotations['A3'].append(label)
 
     return annotator_pairs_annotations
-
-
-
-
-
 
 
 def calc_inter_annotator_agreement(annotator_pairs_annotations):
@@ -170,11 +159,6 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
     plt.show()
-
-
-
-
-
 
 
 if __name__ == '__main__':
