@@ -1,8 +1,0 @@
-Bats fly through an area.
-The bat makes sounds with The bat mouth or nose.
-The sound waves travel away from the bat.
-The sound waves hit objects.
-The sound waves bounce off the objects back towards the bat.
-The bat hears the sound waves echoing off the objects.
-The bat knows where the objects are because of where the sound echoed from.
-The bat doesn't hurt The bat by hitting the objects

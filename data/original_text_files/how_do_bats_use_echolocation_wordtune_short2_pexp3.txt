@@ -1,8 +1,0 @@
-A bat flies over an area.
-They do sounds with their mouths or noses.
-Its sound travels.
-It collide objects.
-These sound waves bounce back to the bat.
-This echoing sound is heard by the bat.
-Because of the reverberation, the bat knows what objects are nearby.
-It doesn't hurt itself hitting them.

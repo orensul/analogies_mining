@@ -1,0 +1,5 @@
+Rocks can be subjected to rain, water, and other forces.
+The rocks can be damaged by these forces.
+The rocks surface can be worn away.
+The damage to the rock leads to the rock breaking.
+These smaller rock pieces are considered sediment once small enough

@@ -10,6 +10,7 @@ from os.path import exists
 
 paraphrasing_propara_versions_exp_output_file = "propara_version_paraphrasing_exp"
 output_csv_file = "precision_k_responses_to_the_same_prompt.csv"
+folder_name = "../data/original_text_files/propara_versions_paraphrase_exp/"
 mappings_models = [runner.FMV, runner.FMQ]
 text_similarity_models = [runner.SBERT]
 models_short_names = {runner.FMV: 'FMV', runner.FMQ: 'FMQ', runner.SBERT: 'SBERT'}
@@ -22,8 +23,8 @@ def run_exp(run_coref=False, run_qasrl=False, run_mappings=True, run_text_simila
     Run the experiment -- exp3 (robustness -- responses to the same prompt)
     """
     os.chdir('s2e-coref')
-    text_file_names = [f for f in glob.glob("../data/original_text_files/propara_versions_paraphrase_exp/*")]
-    text_file_names = [f.replace("../data/original_text_files/", "") for f in text_file_names]
+    text_file_names = [f for f in glob.glob(folder_name + "*")]
+    text_file_names = [f.replace(folder_name, "") for f in text_file_names]
 
     if run_coref:
         runner.create_coref_text_files(text_file_names)

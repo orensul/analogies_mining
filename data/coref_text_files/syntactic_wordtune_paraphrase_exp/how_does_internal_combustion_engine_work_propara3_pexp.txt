@@ -1,8 +1,0 @@
-Fuel enters a combustion chamber.
-Air is injected into the combustion chamber.
-The fuel and air mixture is ignited.
-A small explosion occurs.
-The explosion moves a piston.
-Motion from the piston is transferred to the drive train.
-Waste gases from the explosion are ejected as exhaust.
-The piston returns to a piston original position.

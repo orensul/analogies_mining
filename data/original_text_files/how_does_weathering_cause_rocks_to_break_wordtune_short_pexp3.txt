@@ -1,6 +1,0 @@
-Rocks and particles interchange.
-As they move across the rocks, they delete pieces.
-When they strike or broom against them, they become bigger.
-This eventually breaks them apart.
-Small rocks are generated.
-The same forces wear the rock into smaller pieces.

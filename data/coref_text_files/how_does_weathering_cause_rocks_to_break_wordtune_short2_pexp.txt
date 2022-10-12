@@ -1,6 +1,0 @@
-The environment interacts with rocks.
-As The environment touch rocks they remove small fragments.
-The environment continue to hit, brush against, or grow against rocks.
-Eventually, the rock is broken apart.
-Little rocks are formed.
-Same forces wear away the rock pieces

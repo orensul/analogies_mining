@@ -1,6 +1,0 @@
-Particles in the environment interact with rocks.
-The particles remove small pieces of the rock each time they touch the rocks.
-The particles continue to hit, brush against, or grow against the rocks.
-The rock eventually is broken apart by this contact.
-The pieces of the rock are now small rocks.
-The rock pieces are worn away into smaller and smaller pieces by the same forces.

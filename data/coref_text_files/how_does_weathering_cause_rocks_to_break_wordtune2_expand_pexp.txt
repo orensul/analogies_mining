@@ -1,6 +1,0 @@
-Environmental particles interact with rocks in a number of ways.
-Each time a particle touches the rock, little bits of rock are removed from the rock.
-When a particle brush against, hit, or grow against the rocks, the particles remove small pieces of the rock.
-These impacts eventually cause the rocks to be broken apart by these impacts.
-Eventually, the rock, becomes small rocks as a result of this wear and tear.
-By the same force, the rock pieces are getting worn away into smaller and smaller fragments.

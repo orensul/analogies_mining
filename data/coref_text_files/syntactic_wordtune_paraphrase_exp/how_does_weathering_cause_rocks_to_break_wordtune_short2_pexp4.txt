@@ -1,6 +1,0 @@
-The environment interacts with rocks.
-As The environment touch rocks they eliminate small fragments.
-The environment continue to beat, broom against, or obtain bigger against rocks.
-Eventually, the rock is break up.
-Little rocks are created.
-Same forces wear away the rock pieces

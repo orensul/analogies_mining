@@ -1,6 +1,0 @@
-Rocks and particles interact.
-As particles move across the rocks, particles remove pieces.
-When particles hit or brush against the rocks, they grow.
-This eventually breaks the rocks, apart.
-Small rocks are created.
-The same forces wear the rock into smaller pieces.
