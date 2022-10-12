@@ -135,7 +135,8 @@ def get_saved_pairs_results(model_name, cos_sim_threshold=None):
 
 def show_exp_results(result):
     """
-    TODO
+    Write Precision 25 / 50 / 75 / 100 for every method into csv as well draw a full plot (X-axis is K from 1 to 100
+      and Y-axis is the precision@K)
     """
     model_precisions = {}
     for output_file, model_name, cos_sim_threshold in result:
