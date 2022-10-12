@@ -1,6 +1,5 @@
 
 import json
-
 import argparse
 
 
@@ -13,12 +12,16 @@ dataset_type_file = {"train": propara_train_json_file, "dev": propara_dev_json_f
 
 original_text_files_path = '../original_text_files/'
 
+
 def main(args):
+    """
+    Create text files with the ProPara paragraphs by reading the training json file of ProPara
+    """
     paragraph_titles = get_paragraph_titles(propara_train_tsv_file)
     d = {}
     for t in paragraph_titles:
         d[t] = 1 if t not in d else d[t] + 1
-    # max_freq, min_freq = max(d.values()), min(d.values())
+
     data = read_propara_paragraphs(dataset_type_file[args.dataset_type])
     para_id_title_map = {}
     for i in range(len(data)):
@@ -37,7 +40,6 @@ def main(args):
 def write_paragraph_id_title(para_id_title_map, filename):
     with open(filename, 'w') as output_file:
         json.dump(para_id_title_map, output_file)
-
 
 
 def get_paragraph_titles(filename):
@@ -64,7 +66,6 @@ def write_original_text_files(converted_data):
             output_file.write("\n")
 
 
-
 def read_propara_paragraphs(filename):
     f = open(filename, "r")
     lines = f.readlines()
@@ -79,8 +80,6 @@ def read_propara_paragraphs(filename):
     return data
 
 
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset_type', type=str, default='train',
@@ -88,6 +87,7 @@ def parse_args():
 
     args = parser.parse_args()
     return args
+
 
 if __name__ == '__main__':
     args = parse_args()
