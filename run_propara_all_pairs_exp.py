@@ -22,6 +22,7 @@ model_to_cos_sim_thresholds = runner.MODELS_SIM_THRESHOLD
 
 first_batch_from = 7
 first_batch_till = 1500
+run_questions_stats = False
 
 
 def run_exp(run_coref=False, run_qasrl=False, run_mappings=True, run_text_similarity=True, run_random_samples=False):
@@ -52,7 +53,9 @@ def run_exp(run_coref=False, run_qasrl=False, run_mappings=True, run_text_simila
             pair_of_inputs.append((file1, file2))
 
     os.chdir('../')
-    # get_qasrl_questions_stats(pair_of_inputs)
+    if run_questions_stats:
+        print_qasrl_questions_stats(pair_of_inputs)
+
     if run_mappings:
         for model_name in mappings_models:
             run_propara_mappings(model_name, pair_of_inputs, model_to_cos_sim_thresholds[model_name])
@@ -170,7 +173,7 @@ def get_random_pairs_by_seed(pair_of_inputs, seed_val, random_sample_size):
     return random_samples
 
 
-def get_qasrl_questions_stats(pair_of_inputs):
+def print_qasrl_questions_stats(pair_of_inputs):
     pairs = runner.get_pair_of_inputs_qasrl_path(pair_of_inputs)
     histogram = {}
     count_pairs = 0
@@ -213,14 +216,8 @@ def run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold, paragrap
     """
     pair_results = []
     propara_para_id_title_map = read_propara_id_title_map(propara_map_path)
-    saved_pairs_results = {}
     propara_results_path_curr_run = propara_results_path + "_model_" + model_name + "_cos_sim_" + str(cos_sim_threshold) + ".jsonl"
-    if exists(propara_results_path_curr_run):
-        input_file = open(propara_results_path_curr_run, 'r')
-        for json_dict in input_file:
-            json_object = json.loads(json_dict)
-            for l in json_object:
-                saved_pairs_results[(l[0], l[1])] = l[2]
+    saved_pairs_results = get_saved_pairs_results(propara_results_path_curr_run)
 
     pairs = runner.get_pair_of_inputs_qasrl_path(pair_of_inputs)
     count_pairs = 1
@@ -259,6 +256,21 @@ def run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold, paragrap
     format_propara_all_pairs_results(propara_results_path_curr_run, model_name, cos_sim_threshold, paragraph_id_suffix)
 
 
+def get_saved_pairs_results(output_file_name):
+    """
+    Returns the saved pairs scores from existing output jsonl file (if exist) to avoid run FMQ / FMV mappings or SBERT
+    on the pairs, again.
+    """
+    saved_pairs_results = {}
+    if exists(output_file_name):
+        input_file = open(output_file_name, 'r')
+        for json_dict in input_file:
+            json_object = json.loads(json_dict)
+            for l in json_object:
+                saved_pairs_results[(l[0], l[1])] = l[2]
+    return saved_pairs_results
+
+
 def run_propara_sent_bert_similarity(model_name, pair_of_inputs, paragraph_id=None):
     """
     Run SBERT on all pairs of paragraphs by cosine similarity (read propara_results_path_curr_run file before to avoid
@@ -266,14 +278,8 @@ def run_propara_sent_bert_similarity(model_name, pair_of_inputs, paragraph_id=No
     """
     pair_results = []
     propara_para_id_title_map = read_propara_id_title_map(propara_map_path)
-    saved_pairs_results = {}
     propara_results_path_curr_run = propara_results_path + "_model_" + model_name + ".jsonl"
-    if exists(propara_results_path_curr_run):
-        input_file = open(propara_results_path_curr_run, 'r')
-        for json_dict in input_file:
-            json_object = json.loads(json_dict)
-            for l in json_object:
-                saved_pairs_results[(l[0], l[1])] = l[2]
+    saved_pairs_results = get_saved_pairs_results(propara_results_path_curr_run)
 
     count_pairs = 1
     for pair in pair_of_inputs:
