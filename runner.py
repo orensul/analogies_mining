@@ -106,9 +106,16 @@ def extract_file_name_from_full_qasrl_path(path):
 
 
 if __name__ == '__main__':
-    model_name = FMV
+    # choose a model (FMQ / FMV) for run our analogous matching algorithm
+    model_name = FMQ
     cos_sim_threshold = MODELS_SIM_THRESHOLD[model_name]
-    pair_of_inputs = [('propara_para_id_686', 'propara_para_id_687')]
-    run_analogous_matching_algorithm(model_name, cos_sim_threshold, pair_of_inputs)
+
+    # uncomment to run this example (change pair_of_inputs to run on a different pair)
+    # pair_of_inputs = [('propara_para_id_686', 'propara_para_id_687')]
+    # run_analogous_matching_algorithm(model_name, cos_sim_threshold, pair_of_inputs)
+
+    # uncomment to run this example (notice that cosine_similarity is 0.85 instead of 0.7 for this example)
+    # pair_of_inputs = [('animal_cell', 'factory')]
+    # run_analogous_matching_algorithm(model_name, 0.85, pair_of_inputs)
 
 

@@ -186,6 +186,9 @@ def create_scores_labels_from_results(output_file_name):
 
 
 def run_propara_exp_sent_bert(pair_of_inputs, output_file_name):
+    """
+    Run the experiment (automatic paraphrases or responses to the same prompt) for SBERT
+    """
     saved_pairs_results = get_saved_pairs_results(output_file_name)
     results = []
     for pair in pair_of_inputs:
@@ -202,6 +205,10 @@ def run_propara_exp_sent_bert(pair_of_inputs, output_file_name):
 
 
 def run_propara_exp_mappings(model_name, pair_of_inputs, cos_sim_threshold, output_file_name):
+    """
+    Run the experiment (automatic paraphrases or responses to the same prompt) for one of the mappings models
+    (FMQ / FMV)
+    """
     saved_pairs_results = get_saved_pairs_results(output_file_name)
     pairs = runner.get_pair_of_inputs_qasrl_path(pair_of_inputs)
     count_pairs = 1
