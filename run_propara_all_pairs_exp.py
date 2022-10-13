@@ -316,6 +316,6 @@ def get_percent_histogram(histogram):
 if __name__ == '__main__':
     run_exp(run_coref=False, run_qasrl=False, run_mappings=True, run_text_similarity=True, run_random_samples=False)
 
-    # specific_paragraph_id_examples = ['687', '779', '157']
-    # for paragraph_id_example in specific_paragraph_id_examples:
-    #     run_specific_paragraph_id_example(paragraph_id_example, run_coref=False, run_qasrl=False, run_mappings=True, run_text_similarity=True)
+    specific_paragraph_id_examples = ['687', '779', '157']
+    for paragraph_id_example in specific_paragraph_id_examples:
+        run_specific_paragraph_id_example(paragraph_id_example, run_coref=False, run_qasrl=False, run_mappings=True, run_text_similarity=True)
