@@ -1,6 +1,8 @@
 
 import numpy as np
+import runner
 import xlrd
+import csv
 import matplotlib.pyplot as plt
 
 pairs = 'ProParaPairs.xlsx'
@@ -9,9 +11,15 @@ fmv_top_sheet_name = 'FMV_sim_05_pair_1_100'
 
 k = 100
 gains = {'Not': 0, 'Sub': 1, 'Self': 2, 'Close': 3, 'Far': 4}
+models_short_names = {runner.FMV: 'FMV', runner.FMQ: 'FMQ', runner.SBERT: 'SBERT'}
+
+output_csv = "fmq_fmv_p_k_ap_k_ndcg_k.csv"
 
 
 def compare_fmv_fmq_analogies_mining():
+    """
+    Plot figure5 in the paper -- comparison between FMQ and FMV for the top of the ranking, in terms of IR metrics.
+    """
     workbook = xlrd.open_workbook(pairs)
     fmq_top_scores, fmq_top_labels, fmq_top_labels_detailed = read_top_100(workbook.sheet_by_name(fmq_top_sheet_name))
     fmv_top_scores, fmv_top_labels, fmv_top_labels_detailed = read_top_100(workbook.sheet_by_name(fmv_top_sheet_name))
@@ -19,76 +27,55 @@ def compare_fmv_fmq_analogies_mining():
     fmv_top_labels_detailed = convert_label_num_to_desc(fmv_top_labels_detailed)
     fmq_top_labels_detailed = convert_label_num_to_desc(fmq_top_labels_detailed)
 
-    ndcg = {}
-    precision = {}
-    ap = {}
+    ndcg, precision, ap = {}, {}, {}
+    header = ['Method', 'P', 'P@50', 'AP', 'NDCG']
+
 
     print("FMV")
     tuples = list(zip(fmv_top_scores, fmv_top_labels, fmv_top_labels_detailed))
     metrics_k_results = metrics_k(tuples)
-    precision['FMV'] = metrics_k_results[0]
-    ap['FMV'] = metrics_k_results[1]
-    ndcg['FMV'] = metrics_k_results[2]
+    precision['FMV'], ap['FMV'], ndcg['FMV'] = metrics_k_results[0], metrics_k_results[1], metrics_k_results[2]
 
-    # fmv_mAP = (1 / 100) * sum(methods_AP['FMV'])
-
-    fmq_metrics = {}
     print("FMQ")
     tuples = list(zip(fmq_top_scores, fmq_top_labels, fmq_top_labels_detailed))
     metrics_k_results = metrics_k(tuples)
+    precision['FMQ'], ap['FMQ'], ndcg['FMQ'] = metrics_k_results[0], metrics_k_results[1], metrics_k_results[2]
 
-    precision['FMQ'] = metrics_k_results[0]
-    ap['FMQ'] = metrics_k_results[1]
-    ndcg['FMQ'] = metrics_k_results[2]
+    with open(output_csv, 'w', encoding='UTF8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        for k in [25, 50, 75, 100]:
+            writer.writerow(
+                [models_short_names[runner.FMV] + "(" + str(k) + ")",
+                 round(precision['FMV'][k - 1], 2),
+                 round(ap['FMV'][k - 1], 2),
+                 round(ndcg['FMV'][k - 1], 2)])
+        for k in [25, 50, 75, 100]:
+            writer.writerow(
+                [models_short_names[runner.FMQ] + "(" + str(k) + ")",
+                 round(precision['FMQ'][k - 1], 2),
+                 round(ap['FMQ'][k - 1], 2),
+                 round(ndcg['FMQ'][k - 1], 2)])
 
-    # fmq_mAP = (1 / 100) * sum(methods_AP['FMQ'])
+    plot_metric(ndcg, 'Normalized Discount Cumulative Gain (NDCG)')
+    plot_metric(ap, 'Average Precision (AP)')
+    plot_metric(precision, 'Precision (P)')
 
-    print(1)
 
-    for method_name, values in ndcg.items():
+def plot_metric(metric, metric_name):
+    """
+    Plot graph for the metric (Precision /Average Precision /Normalized Discount Cumulative Gain), figure5 in the paper
+    """
+    for method_name, values in metric.items():
         x = [i for i in range(1, k + 1)]
         y = values
-        if method_name == 'FMV':
-            plt.plot(x, y, label=method_name, linestyle='--')
-        else:
-            plt.plot(x, y, label=method_name)
-
-
-        plt.xlabel('K')
-        plt.ylabel('Normalized Discount Cumulative Gain (NDCG)')
-
-    plt.ylim(0, 1.01)
-    plt.xlim(1, 100)
-    plt.legend()
-    plt.show()
-
-
-    for method_name, values in ap.items():
-        x = [i for i in range(1, k + 1)]
-        y = values
-        if method_name == 'FMV':
-            plt.plot(x, y, label=method_name, linestyle='--')
-        else:
-            plt.plot(x, y, label=method_name)
-
-        plt.xlabel('K')
-        plt.ylabel('Average Precision (AP)')
-
-    plt.ylim(0, 1.01)
-    plt.xlim(1, 100)
-    plt.legend()
-    plt.show()
-
-    for method_name, values in precision.items():
-        x = [i for i in range(1, k + 1)]
-        y = values
-        if method_name == 'FMV':
+        if method_name == models_short_names[runner.FMV]:
             plt.plot(x, y, label=method_name, linestyle='--')
         else:
             plt.plot(x, y, label=method_name)
 
         plt.xlabel('K')
-        plt.ylabel('Precision (P)')
+        plt.ylabel(metric_name)
 
     plt.ylim(0, 1.01)
     plt.xlim(1, 100)
@@ -97,19 +84,11 @@ def compare_fmv_fmq_analogies_mining():
 
 
 def metrics_k(tuples):
-    precisions = []
-    AP = []
-    CG = []
-    DCG = []
-    IDCG = []
-    NDCG = []
+    precisions, AP, CG, DCG, IDCG, NDCG = [], [], [], [], [], []
 
     for i in range(1, k + 1):
         TP_seen = []
-        gain_i = 0
-        discount_gain_i = 0
-        count_true = 0
-        idcg_i = 0
+        gain_i, discount_gain_i, count_true, idcg_i = 0, 0, 0, 0
         for j in range(i):
             label = tuples[j][1]
             if label == 1.0:
@@ -120,6 +99,7 @@ def metrics_k(tuples):
             gain_i += gains[tuples[j][2]]
             discount_gain_i += gains[tuples[j][2]] / np.log2(j+2)
             idcg_i += gains['Far'] / np.log2(j+2)
+
         CG.append(gain_i)
         DCG.append(discount_gain_i)
         IDCG.append(idcg_i)
@@ -130,8 +110,9 @@ def metrics_k(tuples):
         AP.append(AP_i)
         precision_i = round(count_true / i, 3)
         precisions.append(precision_i)
+
         if i % 25 == 0:
-            print("metrics: " + str(i)  +  ": " + str(round(precision_i,2)) + "," + str(round(AP_i, 2)) + "," + str(round(ndcg_i, 2)))
+            print("metrics: " + str(i) + ": " + str(round(precision_i,2)) + "," + str(round(AP_i, 2)) + "," + str(round(ndcg_i, 2)))
 
     return precisions, AP, NDCG
 

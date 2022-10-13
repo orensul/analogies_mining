@@ -125,90 +125,6 @@ def run_specific_paragraph_id_example(paragraph_id, run_coref=False, run_qasrl=F
             run_propara_sent_bert_similarity(model_name, pair_of_inputs, paragraph_id)
 
 
-def read_propara_id_title_map(filename):
-    input_file = open(filename, 'r')
-    for json_dict in input_file:
-        json_object = json.loads(json_dict)
-        return json_object
-
-
-def format_propara_all_pairs_results(propara_results_path, model_name, cos_sim_threshold, paragraph_id_suffix):
-    """
-    Write xlsx file with the base paragraph ID, target paragraph ID and the ranking score for pairs of paragraphs.
-    This function is used for exp1 (analogies mining on all pairs of paragraphs) and for a specific demand of paragraph.
-    """
-    input_file = open(propara_results_path, 'r')
-    if cos_sim_threshold is None:
-        propara_results_exp_curr_run_format = propara_results_exp_format + "_model_" + model_name + paragraph_id_suffix + ".xlsx"
-    else:
-        propara_results_exp_curr_run_format = propara_results_exp_format + "_model_" + model_name + "_cos_sim_" + str(cos_sim_threshold) + paragraph_id_suffix + ".xlsx"
-
-    hash_table_result = {'BaseParagraphTopic': [], 'TargetParagraphTopic': [], 'Score': []}
-
-    for json_dict in input_file:
-        json_object = json.loads(json_dict)
-        for row in json_object:
-            paragraph_id = paragraph_id_suffix.partition("_para_id_")[2]
-            base_paragraph_id = row[0].partition("(")[2][:-1]
-            # check if to create the results for specific example, so the chosen paragraph_id should be the base
-            if not paragraph_id_suffix or base_paragraph_id == paragraph_id:
-                hash_table_result['BaseParagraphTopic'].append(row[0])
-                hash_table_result['TargetParagraphTopic'].append(row[1])
-            else:
-                hash_table_result['BaseParagraphTopic'].append(row[1])
-                hash_table_result['TargetParagraphTopic'].append(row[0])
-            hash_table_result['Score'].append(row[2])
-
-    df = pd.DataFrame(hash_table_result)
-    writer = pd.ExcelWriter(propara_results_exp_curr_run_format, engine='xlsxwriter')
-    df.to_excel(writer, sheet_name='Sheet1', index=False)
-    writer.save()
-
-
-def get_random_pairs_by_seed(pair_of_inputs, seed_val, random_sample_size):
-    random_samples = []
-    seed(seed_val)
-    for _ in range(random_sample_size):
-        random_samples.append(choice(pair_of_inputs))
-    return random_samples
-
-
-def print_qasrl_questions_stats(pair_of_inputs):
-    pairs = runner.get_pair_of_inputs_qasrl_path(pair_of_inputs)
-    histogram = {}
-    count_pairs = 0
-    for pair in pairs:
-        text1_answer_question_map = read_parsed_qasrl(pair[0])
-        text2_answer_question_map = read_parsed_qasrl(pair[1])
-        update_histogram_len_q_freq(text1_answer_question_map, histogram)
-        update_histogram_len_q_freq(text2_answer_question_map, histogram)
-        count_pairs += 1
-        if count_pairs % 50 == 0:
-            print("pair #" + str(count_pairs))
-            percent_hist = get_percent_histogram(histogram)
-            print(percent_hist)
-    percent_hist = get_percent_histogram(histogram)
-    print(percent_hist)
-
-
-def update_histogram_len_q_freq(text_answer_question_map, histogram):
-    for key, questions in text_answer_question_map.items():
-        for question_tup in questions:
-            question = question_tup[0]
-            q_len = len(question.split(' '))
-            if q_len not in histogram:
-                histogram[q_len] = 0
-            histogram[q_len] += 1
-
-
-def get_percent_histogram(histogram):
-    hist_percents = {}
-    sum_freqs = sum(histogram.values())
-    for len, freq in histogram.items():
-        hist_percents[len] = round(freq / sum_freqs, 2)
-    return hist_percents
-
-
 def run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold, paragraph_id=None):
     """
     Run mappings (FMQ or FMV) on all pairs of paragraphs (read propara_results_path_curr_run file before to avoid
@@ -256,21 +172,6 @@ def run_propara_mappings(model_name, pair_of_inputs, cos_sim_threshold, paragrap
     format_propara_all_pairs_results(propara_results_path_curr_run, model_name, cos_sim_threshold, paragraph_id_suffix)
 
 
-def get_saved_pairs_results(output_file_name):
-    """
-    Returns the saved pairs scores from existing output jsonl file (if exist) to avoid run FMQ / FMV mappings or SBERT
-    on the pairs, again.
-    """
-    saved_pairs_results = {}
-    if exists(output_file_name):
-        input_file = open(output_file_name, 'r')
-        for json_dict in input_file:
-            json_object = json.loads(json_dict)
-            for l in json_object:
-                saved_pairs_results[(l[0], l[1])] = l[2]
-    return saved_pairs_results
-
-
 def run_propara_sent_bert_similarity(model_name, pair_of_inputs, paragraph_id=None):
     """
     Run SBERT on all pairs of paragraphs by cosine similarity (read propara_results_path_curr_run file before to avoid
@@ -313,9 +214,108 @@ def run_propara_sent_bert_similarity(model_name, pair_of_inputs, paragraph_id=No
     format_propara_all_pairs_results(propara_results_path_curr_run, model_name, None, paragraph_id_suffix)
 
 
+def get_saved_pairs_results(output_file_name):
+    """
+    Returns the saved pairs scores from existing output jsonl file (if exist) to avoid run FMQ / FMV mappings or SBERT
+    on the pairs, again.
+    """
+    saved_pairs_results = {}
+    if exists(output_file_name):
+        input_file = open(output_file_name, 'r')
+        for json_dict in input_file:
+            json_object = json.loads(json_dict)
+            for l in json_object:
+                saved_pairs_results[(l[0], l[1])] = l[2]
+    return saved_pairs_results
+
+
+def format_propara_all_pairs_results(propara_results_path, model_name, cos_sim_threshold, paragraph_id_suffix):
+    """
+    Write xlsx file with the base paragraph ID, target paragraph ID and the ranking score for pairs of paragraphs.
+    This function is used for exp1 (analogies mining on all pairs of paragraphs) and for a specific demand of paragraph.
+    """
+    input_file = open(propara_results_path, 'r')
+    if cos_sim_threshold is None:
+        propara_results_exp_curr_run_format = propara_results_exp_format + "_model_" + model_name + paragraph_id_suffix + ".xlsx"
+    else:
+        propara_results_exp_curr_run_format = propara_results_exp_format + "_model_" + model_name + "_cos_sim_" + str(cos_sim_threshold) + paragraph_id_suffix + ".xlsx"
+
+    hash_table_result = {'BaseParagraphTopic': [], 'TargetParagraphTopic': [], 'Score': []}
+
+    for json_dict in input_file:
+        json_object = json.loads(json_dict)
+        for row in json_object:
+            paragraph_id = paragraph_id_suffix.partition("_para_id_")[2]
+            base_paragraph_id = row[0].partition("(")[2][:-1]
+            # check if to create the results for specific example, so the chosen paragraph_id should be the base
+            if not paragraph_id_suffix or base_paragraph_id == paragraph_id:
+                hash_table_result['BaseParagraphTopic'].append(row[0])
+                hash_table_result['TargetParagraphTopic'].append(row[1])
+            else:
+                hash_table_result['BaseParagraphTopic'].append(row[1])
+                hash_table_result['TargetParagraphTopic'].append(row[0])
+            hash_table_result['Score'].append(row[2])
+
+    df = pd.DataFrame(hash_table_result)
+    writer = pd.ExcelWriter(propara_results_exp_curr_run_format, engine='xlsxwriter')
+    df.to_excel(writer, sheet_name='Sheet1', index=False)
+    writer.save()
+
+
+def read_propara_id_title_map(filename):
+    input_file = open(filename, 'r')
+    for json_dict in input_file:
+        json_object = json.loads(json_dict)
+        return json_object
+
+
+def get_random_pairs_by_seed(pair_of_inputs, seed_val, random_sample_size):
+    random_samples = []
+    seed(seed_val)
+    for _ in range(random_sample_size):
+        random_samples.append(choice(pair_of_inputs))
+    return random_samples
+
+
+def print_qasrl_questions_stats(pair_of_inputs):
+    pairs = runner.get_pair_of_inputs_qasrl_path(pair_of_inputs)
+    histogram = {}
+    count_pairs = 0
+    for pair in pairs:
+        text1_answer_question_map = read_parsed_qasrl(pair[0])
+        text2_answer_question_map = read_parsed_qasrl(pair[1])
+        update_histogram_len_q_freq(text1_answer_question_map, histogram)
+        update_histogram_len_q_freq(text2_answer_question_map, histogram)
+        count_pairs += 1
+        if count_pairs % 50 == 0:
+            print("pair #" + str(count_pairs))
+            percent_hist = get_percent_histogram(histogram)
+            print(percent_hist)
+    percent_hist = get_percent_histogram(histogram)
+    print(percent_hist)
+
+
+def update_histogram_len_q_freq(text_answer_question_map, histogram):
+    for key, questions in text_answer_question_map.items():
+        for question_tup in questions:
+            question = question_tup[0]
+            q_len = len(question.split(' '))
+            if q_len not in histogram:
+                histogram[q_len] = 0
+            histogram[q_len] += 1
+
+
+def get_percent_histogram(histogram):
+    hist_percents = {}
+    sum_freqs = sum(histogram.values())
+    for len, freq in histogram.items():
+        hist_percents[len] = round(freq / sum_freqs, 2)
+    return hist_percents
+
+
 if __name__ == '__main__':
     run_exp(run_coref=False, run_qasrl=False, run_mappings=True, run_text_similarity=True, run_random_samples=False)
 
-    specific_paragraph_id_examples = ['687', '779', '157']
-    for paragraph_id_example in specific_paragraph_id_examples:
-        run_specific_paragraph_id_example(paragraph_id_example, run_coref=False, run_qasrl=False, run_mappings=True, run_text_similarity=True)
+    # specific_paragraph_id_examples = ['687', '779', '157']
+    # for paragraph_id_example in specific_paragraph_id_examples:
+    #     run_specific_paragraph_id_example(paragraph_id_example, run_coref=False, run_qasrl=False, run_mappings=True, run_text_similarity=True)

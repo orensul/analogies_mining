@@ -28,8 +28,8 @@ def read_verbs_cosine_sim(filename, bins, labels):
         results.append(df1[(df1['binned'] == i)])
     print(results)
 
+
 def plot_graph(x, y):
-    fig = plt.figure()
     plt.plot(x, y)
     for a, b in zip(x, y):
         plt.text(a, b, str(b))
@@ -38,6 +38,7 @@ def plot_graph(x, y):
     plt.ylabel('verbs similarity accuracy')
 
     plt.show()
+
 
 if __name__ == '__main__':
     bins = [0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8]
