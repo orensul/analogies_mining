@@ -13,17 +13,17 @@ pip install -r requirements.txt
 Contains the datasets, the labels of the annotators, as well as the data which generates the results in the figures and tables of the three experiments. 
 Each inner folder contains a separate README file.<br/>
 
-**data**:
+**data:**<br/>
 Includes the following folders:<br/>
 **original_text_files** -- all the original texts files (including the stories and paragraphs from ProPara).<br/>
 **coref_text_files** -- all the texts files after coreference (including the stories and paragraphs from ProPara).<br/>
 **propara** -- data files relevant to ProPara dataset, output files of the ranking lists for the different models 
    (see Section 4.1 in the paper), and some code files to read and print stats on ProPara and the methods.<br/>
    
-**s2e-coref**
+**s2e-coref:**<br/>
 Contains the implementation code for the coreference model that we used (see Section 3.1 in the paper).<br/>
 
-**qasrl-modeling**
+**qasrl-modeling**<br/>
 Contains the implementation code for the QA-SRL model that we used (see Section 3.2 in the paper).<br/>
 
 ## Important py. files
