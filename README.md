@@ -1,4 +1,4 @@
-# Life is a Circus and We are the Clowns: Automatically Finding Analogies between Situations and Processes
+# 🎪 Life is a Circus and We are the Clowns: Automatically Finding Analogies between Situations and Processes 🤡
 This repository contains the code for the paper.
 
 ## Setup:
@@ -7,11 +7,16 @@ The code is implemented in python 3.8.12. To run it, please install the requirem
 pip install -r requirements.txt
 ```
 
+## Where to start?
+Explore the paper_experiments_results folder for restoring the results in the experiment 
+(each folder contains a separate README file). <br/>
+Run runner.py for running our algorithm on a specific example of pairs of texts.
+
 ## Important folders:
 
-**paper_experiments_results**:
-Contains the datasets, the labels of the annotators, as well as the data which generates the results in the figures and tables of the three experiments. 
-Each inner folder contains a separate README file.<br/>
+**paper_experiments_results**:<br/>
+Contains the datasets, the labels of the annotators, as well as the data which generates the results in the figures 
+and tables of the three experiments. Each inner folder contains a separate README file.<br/>
 
 **data:**<br/>
 Includes the following folders:<br/>
