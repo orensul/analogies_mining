@@ -6,5 +6,5 @@
 10 pairs of paragraphs to test the other expert (90% agreement). <br/>
 
 **AnnotatorsConsistency_check2.csv** contains the result of check 2 -- 15 volunteer annotators
-This file can be used to restore the confusion matrix in figure3 (code in file **analogies_mining_exp_annotators_consistency.py**). <br/>
+This file can be used to restore the confusion matrix in figure3 (code in file **analogies_mining_exp_annotators_consistency.py**). 
 

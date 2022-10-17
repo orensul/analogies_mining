@@ -7,6 +7,6 @@ which generates the top 3 solutions for the 14 pairs of paragraphs from ProPara 
 from cognitive-psychology literature, for both our method (FMQ) and the baseline FMV. <br/>
   
 **Mappings_Evaluation_ProPara_GT**, **Mappings_Evaluation_Stories_GT** csv files contains 
-the Ground-Truth(GT) mappings according to the annotators. <br/>
+the Ground-Truth(GT) mappings according to the annotators. 
 
 

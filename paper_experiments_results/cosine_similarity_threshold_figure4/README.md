@@ -9,4 +9,4 @@ should be similar and label 0 otherwise. <br/>
 appendix (Figure4) by using the tagging results on the previous files. <br/>
   
 As a reminder -- we got to the conclusion that the best cosine similarity threshold is 
-0.7 for the questions (FMQ) and 0.5 for the verbs (FMV). <br/>
+0.7 for the questions (FMQ) and 0.5 for the verbs (FMV).  

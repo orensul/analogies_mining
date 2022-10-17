@@ -21,5 +21,5 @@ turn on the **run_questions_stats** flag in **run_propara_all_pairs_exp.py** to 
   that we mentioned in the paper (Section 4.1). <br/>
 
 The intersection at the ranked lists of FMQ, FMV and SBERT that we mentioned in the paper (Section 4.1)
-can be printed by running **read_analogies_mining_output_stats.py**. <br/>
+can be printed by running **read_analogies_mining_output_stats.py**. 
    
