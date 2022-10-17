@@ -8,9 +8,9 @@ pip install -r requirements.txt
 ```
 
 ## Where to start?
-Explore the paper_experiments_results folder for restoring the results in the experiment 
+Explore the **paper_experiments_results** folder for restoring the results in the experiment 
 (each folder contains a separate README file). <br/>
-Run runner.py for running our algorithm on a specific example of pairs of texts.
+Run **runner.py** for running our algorithm on a specific example of pairs of texts.
 
 ## Important folders
 
