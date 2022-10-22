@@ -10,7 +10,10 @@ pip install -r requirements.txt
 ## Where to start?
 Explore the **paper_experiments_results** folder for restoring the results in the experiment 
 (each folder contains a separate README file). <br/>
-Run **runner.py** for running our algorithm on a specific example of pairs of texts.
+Run **runner.py** for running our algorithm on a specific example of pairs of texts. <br/>
+Note that you don't need to run coreference and qa_srl, as the output files have already exist in the repo. 
+(You should run coreference and qa_srl only if you use a new input text files, 
+by setting run_coref=False, run_qasrl=False in analogous_matching_algorithm function)
 
 ## Important folders
 
@@ -49,6 +52,7 @@ Contains the implementation code for the QA-SRL model that we used (see Section 
 **run_robustness_to_paraphrases_exp.py** -- run experiment 3 (see Section 4.3 in the paper).<br/>
 
 ## Cite
+TODO
 
 ## Contact
 For inquiries, please send an email to oren.sultan@mail.huji.ac.il.
