@@ -1,5 +1,5 @@
 # 🎪 Life is a Circus and We are the Clowns: Automatically Finding Analogies between Situations and Processes 🤡
-This repository contains the code for the paper: https://arxiv.org/abs/2210.12197
+This repository contains the code for the paper: https://arxiv.org/abs/2210.12197.
 
 ## Setup
 The code is implemented in python 3.8.12. To run it, please install the requirements.txt file:
