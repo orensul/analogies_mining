@@ -1,3 +1,8 @@
+
+![alt text](https://github.com/orensul/analogies_mining/tree/master/logos/hyadataLogo.png)
+![alt text](https://github.com/orensul/analogies_mining/tree/master/logos/hujiLogo.png)
+
+
 # 🎪 Life is a Circus and We are the Clowns 🤡: Automatically Finding Analogies between Situations and Processes 
 This repository contains the code for the paper: https://arxiv.org/abs/2210.12197.
 
