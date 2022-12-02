@@ -60,8 +60,11 @@ Contains the implementation code for the QA-SRL model that we used (see Section 
 @inproceedings{Sultan2022LifeIA, <br/>
   title={Life is a Circus and We are the Clowns: Automatically Finding Analogies between Situations and Processes}, <br/>
   author={Oren Sultan and Dafna Shahaf}, <br/>
+  booktitle={Proceedings of Empirical Methods in Natural Language Processing 2022}, <br/>
   year={2022} <br/>
 }
+
+
 
 ## Contact
 For inquiries, please send an email to oren.sultan@mail.huji.ac.il.
