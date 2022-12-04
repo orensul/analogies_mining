@@ -57,10 +57,10 @@ Contains the implementation code for the QA-SRL model that we used (see Section 
 **run_robustness_to_paraphrases_exp.py** -- run experiment 3 (see Section 4.3 in the paper).<br/>
 
 ## Cite
-@article{sultan2022life,
-  title={Life is a Circus and We are the Clowns: Automatically Finding Analogies between Situations and Processes},
-  author={Sultan, Oren and Shahaf, Dafna},
-  journal={arXiv preprint arXiv:2210.12197},
+@article{sultan2022life, <br/>
+  title={Life is a Circus and We are the Clowns: Automatically Finding Analogies between Situations and Processes}, <br/>
+  author={Sultan, Oren and Shahaf, Dafna}, <br/>
+  journal={arXiv preprint arXiv:2210.12197}, <br/>
   year={2022}
 }
 
