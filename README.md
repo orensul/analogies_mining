@@ -61,7 +61,7 @@ Contains the implementation code for the QA-SRL model that we used (see Section 
   title={Life is a Circus and We are the Clowns: Automatically Finding Analogies between Situations and Processes}, <br/>
   author={Sultan, Oren and Shahaf, Dafna}, <br/>
   journal={arXiv preprint arXiv:2210.12197}, <br/>
-  year={2022}
+  year={2022} <br/>
 }
 
 
