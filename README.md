@@ -2,8 +2,7 @@
 
 # 🎪 Life is a Circus and We are the Clowns 🤡: Automatically Finding Analogies between Situations and Processes 
 This repository contains the code for the paper: https://arxiv.org/abs/2210.12197. </br>
-**Authors: Oren Sultan, Dafna Shahaf**. </br>
-**The Hebrew University of Jerusalem, Israel**. </br>
+**Authors: Oren Sultan, Dafna Shahaf, The Hebrew University of Jerusalem, Israel**. </br>
 **Conference: The Conference on Empirical Methods in Natural Language Processing (EMNLP 2022).** </br>
 
 
