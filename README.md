@@ -4,6 +4,8 @@
 This repository contains the code for the paper: https://arxiv.org/abs/2210.12197. </br>
 **Authors: Oren Sultan, Dafna Shahaf**. </br>
 **The Hebrew University of Jerusalem, Israel**.
+**This work will be presented at the main conference of EMNLP 2022.** </br>
+
 
 
 ## Setup
