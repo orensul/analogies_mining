@@ -1,0 +1,12 @@
+numpy==1.22.0
+matplotlib==3.5.1
+scikit-learn==0.22.2
+networkx==2.6.3
+spacy==2.2.4
+nltk==3.6.3
+pandas==1.4.1
+torch==1.10.1
+transformers==3.3.1
+huggingface-hub==0.2.1
+sentence-transformers
+wheel
