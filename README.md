@@ -10,7 +10,7 @@ This repository contains the code for the paper: https://arxiv.org/abs/2210.1219
 ## Setup
 The code is implemented in python 3.8.12. To run it, please install the requirements.txt file:
 ```bash
-pip install -r requirements.txt
+pip install -r minimalrequirements.txt
 ```
 
 ## Where to start?
